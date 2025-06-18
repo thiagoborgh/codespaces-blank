@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protótipo Prontuário</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Menu Lateral -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="profile p-3">
+                    <img src="https://via.placeholder.com/50" alt="Foto do Paciente" class="rounded-circle">
+                    <h5 class="mt-2">Rafael Almeida Costa</h5>
+                    <p>CPF: 000.000.000-00</p>
+                    <p>Nascimento: 10/02/2004 (20 anos)</p>
+                    <p>Sexo: Masculino</p>
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link active" href="#">Histórico médico</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Informações do atendimento</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Medições</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Lembretes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Histórico familiar</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Quadro de Acompanhamentos</a></li>
+                </ul>
+            </nav>
+
+            <!-- Conteúdo Principal -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 p-4">
+                <h2 class="mb-4">Atendimento</h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">Breadcrumb1</li>
+                        <li class="breadcrumb-item active" aria-current="page">Breadcrumb2</li>
+                    </ol>
+                </nav>
+                <div class="tabs mb-4">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item"><a class="nav-link active" href="#">SOAP</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Vacinação</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Histórico</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Agendamentos</a></li>
+                    </ul>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">Nome da mãe: Lúcia Cristina de Souza Guimarães</div>
+                            <div class="card-body">
+                                <p>Escuta inicial</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">Condições e situações de saúde</div>
+                            <div class="card-body">
+                                <span class="badge bg-success">Hipertenso</span>
+                                <span class="badge bg-success">Diabético</span>
+                                <span class="badge bg-success">PPL</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-header">Histórico médico recente</div>
+                    <div class="card-body">
+                        <p>Histórico médico resumido do paciente</p>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>CIAP 2</th>
+                                    <th>CID 10</th>
+                                    <th>Criticidade</th>
+                                    <th>Status</th>
+                                    <th>Lista de problemas/condições</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Remoção de apêndice</td>
+                                    <td>Remoção de apêndice</td>
+                                    <td><span class="badge bg-primary">Baixa</span></td>
+                                    <td>Ativo</td>
+                                    <td>Não incluído</td>
+                                </tr>
+                                <tr>
+                                    <td>Remoção de apêndice</td>
+                                    <td>Remoção de apêndice</td>
+                                    <td><span class="badge bg-warning">Média</span></td>
+                                    <td>Latente</td>
+                                    <td>Não incluído</td>
+                                </tr>
+                                <tr>
+                                    <td>Remoção de apêndice</td>
+                                    <td>Remoção de apêndice</td>
+                                    <td><span class="badge bg-danger">Alta</span></td>
+                                    <td>Ativo</td>
+                                    <td>Não incluído</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">Alergias e/ou reações adversas</div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Agente Causador ou substância específica</th>
+                                    <th>Data de início</th>
+                                    <th>Manifestações</th>
+                                    <th>Criticidade</th>
+                                    <th>Outras observações registradas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Leite de vaca</td>
+                                    <td>12/08/2024</td>
+                                    <td>Lesões e coceira</td>
+                                    <td><span class="badge bg-primary">Baixa</span></td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>Esportes de fungos e pólen de flores</td>
+                                    <td>12/08/2024</td>
+                                    <td>Corrente líquida e abundante</td>
+                                    <td><span class="badge bg-warning">Média</span></td>
+                                    <td>Esquecido no período</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
