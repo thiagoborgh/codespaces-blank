@@ -170,7 +170,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   // Função para gerar breadcrumb baseado na rota atual
   const getBreadcrumb = () => {
     const pathMap: { [key: string]: { name: string; href: string } } = {
-      '/dashboard': { name: 'Início', href: '/dashboard' },
+      '/dashboard': { name: 'Home', href: '/dashboard' },
       '/patients': { name: 'Pacientes', href: '/patients' },
       '/queue': { name: 'Fila de Atendimento', href: '/queue' },
       '/appointments': { name: 'Agendamentos', href: '/appointments' },
@@ -181,14 +181,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     const currentPath = location.pathname;
     const breadcrumbs = [];
 
-    // Sempre adicionar "Início" como primeiro item
+    // Sempre adicionar "Home" como primeiro item
     if (currentPath !== '/dashboard') {
-      breadcrumbs.push({ name: 'Início', href: '/dashboard', isActive: false });
+      breadcrumbs.push({ name: 'Home', href: '/dashboard', isActive: false });
     }
 
     // Adicionar página atual
     if (pathMap[currentPath]) {
-      breadcrumbs.push({ ...pathMap[currentPath], isActive: true });
+      breadcrumbs.push({ 
+        name: pathMap[currentPath].name, 
+        href: pathMap[currentPath].href, 
+        isActive: true 
+      });
     }
 
     return breadcrumbs;

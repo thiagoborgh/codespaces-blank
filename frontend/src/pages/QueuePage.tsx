@@ -106,12 +106,13 @@ const QueuePage: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'waiting': return 'bg-yellow-100 text-yellow-800';
-      case 'in_progress': return 'bg-green-100 text-green-800';
-      case 'completed': return 'bg-blue-100 text-blue-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      case 'no_show': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'waiting': return 'bg-green-100 text-green-800 border-green-200';
+      case 'in_progress': return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'initial_listening': return 'bg-pink-100 text-pink-800 border-pink-200';
+      case 'completed': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
+      case 'no_show': return 'bg-gray-200 text-gray-800 border-gray-300';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
@@ -519,7 +520,7 @@ const QueuePage: React.FC = () => {
               )}
             </div>
             
-            <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-center p-3 bg-blue-50 border border-blue-200 rounded-lg">
               <input
                 type="checkbox"
                 id="showMyAttendances"
@@ -527,8 +528,8 @@ const QueuePage: React.FC = () => {
                 onChange={(e) => setShowMyAttendances(e.target.checked)}
                 className="mr-3 w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
               />
-              <label htmlFor="showMyAttendances" className="text-sm font-medium text-gray-700">
-                Meus atendimentos
+              <label htmlFor="showMyAttendances" className="text-sm font-medium text-blue-800">
+                Ver somente meus atendimentos
               </label>
             </div>
             
@@ -582,32 +583,32 @@ const QueuePage: React.FC = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          <div className={theme === 'hybrid' ? 'healthcare-stat-card warning' : 'bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-xl shadow-sm border border-yellow-200 p-6'}>
+          <div className={theme === 'hybrid' ? 'healthcare-stat-card success' : 'bg-gradient-to-r from-green-50 to-green-100 rounded-xl shadow-sm border border-green-200 p-6'}>
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className={theme === 'hybrid' ? 'healthcare-stat-icon warning' : 'w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center'}>
+                <div className={theme === 'hybrid' ? 'healthcare-stat-icon success' : 'w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center'}>
                   <ClockIcon className="h-6 w-6 text-white" />
                 </div>
               </div>
               <div className="ml-4">
-                <p className={theme === 'hybrid' ? 'text-sm font-medium text-gray-600' : 'text-sm font-medium text-yellow-700'}>Aguardando</p>
-                <p className={theme === 'hybrid' ? 'text-3xl font-bold text-gray-900' : 'text-3xl font-bold text-yellow-900'}>{queueStats.waiting}</p>
-                <p className={theme === 'hybrid' ? 'text-xs text-gray-500' : 'text-xs text-yellow-600'}>pacientes na fila</p>
+                <p className={theme === 'hybrid' ? 'text-sm font-medium text-gray-600' : 'text-sm font-medium text-green-700'}>Aguardando</p>
+                <p className={theme === 'hybrid' ? 'text-3xl font-bold text-gray-900' : 'text-3xl font-bold text-green-900'}>{queueStats.waiting}</p>
+                <p className={theme === 'hybrid' ? 'text-xs text-gray-500' : 'text-xs text-green-600'}>pacientes na fila</p>
               </div>
             </div>
           </div>
 
-          <div className={theme === 'hybrid' ? 'healthcare-stat-card info' : 'bg-gradient-to-r from-green-50 to-green-100 rounded-xl shadow-sm border border-green-200 p-6'}>
+          <div className={theme === 'hybrid' ? 'healthcare-stat-card info' : 'bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl shadow-sm border border-purple-200 p-6'}>
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className={theme === 'hybrid' ? 'healthcare-stat-icon info' : 'w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center'}>
+                <div className={theme === 'hybrid' ? 'healthcare-stat-icon info' : 'w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center'}>
                   <PlayIcon className="h-6 w-6 text-white" />
                 </div>
               </div>
               <div className="ml-4">
-                <p className={theme === 'hybrid' ? 'text-sm font-medium text-gray-600' : 'text-sm font-medium text-green-700'}>Em Atendimento</p>
-                <p className={theme === 'hybrid' ? 'text-3xl font-bold text-gray-900' : 'text-3xl font-bold text-green-900'}>{queueStats.inProgress}</p>
-                <p className={theme === 'hybrid' ? 'text-xs text-gray-500' : 'text-xs text-green-600'}>sendo atendidos</p>
+                <p className={theme === 'hybrid' ? 'text-sm font-medium text-gray-600' : 'text-sm font-medium text-purple-700'}>Em Atendimento</p>
+                <p className={theme === 'hybrid' ? 'text-3xl font-bold text-gray-900' : 'text-3xl font-bold text-purple-900'}>{queueStats.inProgress}</p>
+                <p className={theme === 'hybrid' ? 'text-xs text-gray-500' : 'text-xs text-purple-600'}>sendo atendidos</p>
               </div>
             </div>
           </div>
@@ -755,7 +756,17 @@ const QueuePage: React.FC = () => {
                   };
 
                   return (
-                  <div key={patient.id} className={getPatientCardClasses()} style={{ overflow: 'visible' }}>
+                  <div key={patient.id} className={`${getPatientCardClasses()} relative`} style={{ overflow: 'visible' }}>
+                    {/* Barra lateral colorida baseada no status */}
+                    <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-lg ${
+                      patient.status === 'waiting' ? 'bg-green-500' :
+                      patient.status === 'in_progress' ? 'bg-purple-500' :
+                      patient.status === 'initial_listening' ? 'bg-pink-500' :
+                      patient.status === 'completed' ? 'bg-blue-500' :
+                      patient.status === 'cancelled' ? 'bg-red-500' :
+                      patient.status === 'no_show' ? 'bg-gray-500' :
+                      'bg-gray-400'
+                    }`}></div>
                     <div className="p-5">
                       <div className="flex flex-col lg:flex-row items-start justify-between gap-4">
                         {/* Conteúdo principal do paciente */}

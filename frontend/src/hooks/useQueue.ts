@@ -581,14 +581,19 @@ export const useQueue = () => {
       }
     }
 
-    // Filtro "Meus atendimentos" - aplicar apenas se não conflitar com busca
+    // Filtro "Meus atendimentos" - aplicar sempre que ativado
     if (showMyAttendances && currentUserId) {
       // Para o mock, vamos simular que pacientes com IDs pares são do usuário logado
-      // Em produção, isso seria baseado no campo user_id do paciente
+      // Em produção, isso seria baseado no campo user_id ou professional_id do paciente
       filtered = filtered.filter((p: QueuePatient) => {
         // Mock: Admin (id=1) atende pacientes com IDs 1,3,5,7,9,11
         // Mock: Dr. Silva (id=2) atende pacientes com IDs 2,4,6,8,10,12
+        // Também pode filtrar por nome do profissional para ser mais realista
         const shouldInclude = currentUserId === 1 ? p.id % 2 === 1 : p.id % 2 === 0;
+        
+        // Alternativa mais realista: filtrar por nome do profissional
+        // const shouldInclude = p.professional && p.professional.toLowerCase().includes(user.name.toLowerCase());
+        
         return shouldInclude;
       });
     }
