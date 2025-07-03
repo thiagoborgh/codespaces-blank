@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Prontuário Eletrônico - Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">
+                🏥 API Prontuário Eletrônico - Demo
+            </h1>
+
+            <!-- Login Section -->
+            <div id="loginSection" class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h2 class="text-xl font-semibold mb-4">🔐 Login</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email:</label>
+                        <input type="email" id="email" value="admin@prontuario.com" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Senha:</label>
+                        <input type="password" id="password" value="password123" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+                <button onclick="login()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition">
+                    Fazer Login
+                </button>
+            </div>
+
+            <!-- User Info Section -->
+            <div id="userSection" class="bg-white p-6 rounded-lg shadow-md mb-6" style="display: none;">
+                <h2 class="text-xl font-semibold mb-4">👤 Usuário Logado</h2>
+                <div id="userInfo" class="text-gray-700"></div>
+                <button onclick="logout()" class="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition">
+                    Logout
+                </button>
+            </div>
+
+            <!-- API Test Section -->
+            <div id="apiSection" class="bg-white p-6 rounded-lg shadow-md mb-6" style="display: none;">
+                <h2 class="text-xl font-semibold mb-4">🧪 Teste da API</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <button onclick="testEndpoint('/api/v1/patients', 'GET')" 
+                            class="bg-green-500 text-white p-3 rounded-md hover:bg-green-600 transition">
+                        📋 Listar Pacientes
+                    </button>
+                    
+                    <button onclick="testEndpoint('/api/v1/users', 'GET')" 
+                            class="bg-blue-500 text-white p-3 rounded-md hover:bg-blue-600 transition">
+                        👥 Listar Usuários
+                    </button>
+                    
+                    <button onclick="testEndpoint('/api/v1/teams', 'GET')" 
+                            class="bg-purple-500 text-white p-3 rounded-md hover:bg-purple-600 transition">
+                        🏢 Listar Equipes
+                    </button>
+                    
+                    <button onclick="testEndpoint('/api/v1/medications', 'GET')" 
+                            class="bg-yellow-500 text-white p-3 rounded-md hover:bg-yellow-600 transition">
+                        💊 Listar Medicamentos
+                    </button>
+                    
+                    <button onclick="testEndpoint('/api/v1/appointments', 'GET')" 
+                            class="bg-indigo-500 text-white p-3 rounded-md hover:bg-indigo-600 transition">
+                        📅 Listar Agendamentos
+                    </button>
+                    
+                    <button onclick="testEndpoint('/api/v1/consultations', 'GET')" 
+                            class="bg-teal-500 text-white p-3 rounded-md hover:bg-teal-600 transition">
+                        🩺 Listar Consultas
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4">📊 Resultados</h2>
+                <div id="results" class="bg-gray-50 p-4 rounded-md">
+                    <p class="text-gray-500">Nenhum teste executado ainda.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let authToken = null;
+        const API_BASE = 'http://localhost:3000';
+
+        // Configurar axios para incluir o token automaticamente
+        axios.interceptors.request.use(config => {
+            if (authToken) {
+                config.headers.Authorization = `Bearer ${authToken}`;
+            }
+            return config;
+        });
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                showResult('🔄 Fazendo login...', 'info');
+                
+                const response = await axios.post(`${API_BASE}/api/v1/auth/login`, {
+                    email: email,
+                    password: password
+                });
+
+                authToken = response.data.data.access_token;
+                
+                // Mostrar informações do usuário
+                const userInfo = response.data.data.user;
+                document.getElementById('userInfo').innerHTML = `
+                    <p><strong>Nome:</strong> ${userInfo.name}</p>
+                    <p><strong>Email:</strong> ${userInfo.email}</p>
+                    <p><strong>Função:</strong> ${userInfo.role}</p>
+                    <p><strong>Registro:</strong> ${userInfo.registration_number || 'N/A'}</p>
+                `;
+
+                // Mostrar seções autenticadas
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('userSection').style.display = 'block';
+                document.getElementById('apiSection').style.display = 'block';
+
+                showResult('✅ Login realizado com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro no login:', error);
+                showResult(`❌ Erro no login: ${error.response?.data?.message || error.message}`, 'error');
+            }
+        }
+
+        function logout() {
+            authToken = null;
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('userSection').style.display = 'none';
+            document.getElementById('apiSection').style.display = 'none';
+            showResult('👋 Logout realizado com sucesso!', 'info');
+        }
+
+        async function testEndpoint(endpoint, method = 'GET', data = null) {
+            try {
+                showResult(`🔄 Testando ${method} ${endpoint}...`, 'info');
+                
+                const config = {
+                    method: method,
+                    url: `${API_BASE}${endpoint}`,
+                };
+
+                if (data && (method === 'POST' || method === 'PUT' || method === 'PATCH')) {
+                    config.data = data;
+                }
+
+                const response = await axios(config);
+                
+                showResult(`✅ ${method} ${endpoint}\n\nStatus: ${response.status}\n\n${JSON.stringify(response.data, null, 2)}`, 'success');
+                
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+                const errorMessage = error.response?.data?.message || error.message;
+                const status = error.response?.status || 'N/A';
+                showResult(`❌ Erro ${method} ${endpoint}\n\nStatus: ${status}\nErro: ${errorMessage}`, 'error');
+            }
+        }
+
+        function showResult(message, type = 'info') {
+            const resultsDiv = document.getElementById('results');
+            const colors = {
+                info: 'text-blue-800 bg-blue-50',
+                success: 'text-green-800 bg-green-50', 
+                error: 'text-red-800 bg-red-50'
+            };
+            
+            resultsDiv.innerHTML = `<pre class="whitespace-pre-wrap ${colors[type]} p-4 rounded-md">${message}</pre>`;
+        }
+
+        // Verificar se há token salvo
+        window.onload = function() {
+            showResult('🚀 Interface carregada! Faça login para testar a API.', 'info');
+        };
+    </script>
+</body>
+</html>
