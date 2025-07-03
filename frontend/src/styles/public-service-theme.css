@@ -1,0 +1,1574 @@
+/* 🏛️ Tema UBS/SUS - Design System para Serviço Público
+   Desenvolvido com foco em usabilidade, acessibilidade e bem-estar do servidor público
+   Cores funcionais, interface intuitiva e visual alegre mas profissional
+*/
+
+/* ===== PALETA DE CORES FUNCIONAIS ===== */
+:root {
+  /* 🎨 Cores de base - tons leves e acolhedores */
+  --bg-app: #f8fafc;                    /* Fundo da aplicação - azul muito suave */
+  --bg-primary: #ffffff;                /* Cards e elementos principais */
+  --bg-secondary: #f1f5f9;              /* Backgrounds alternativos */
+  --bg-tertiary: #e2e8f0;               /* Elementos terciários */
+  --bg-hover: #f0f4f8;                  /* Estados de hover */
+  --bg-active: #e1e7ef;                 /* Estados ativos */
+  
+  /* 📝 Hierarquia de texto clara */
+  --text-primary: #1e293b;              /* Texto principal - legível */
+  --text-secondary: #475569;            /* Texto secundário */
+  --text-tertiary: #64748b;             /* Texto de apoio */
+  --text-muted: #94a3b8;                /* Texto suave */
+  --text-disabled: #cbd5e1;             /* Texto desabilitado */
+  --text-inverse: #ffffff;              /* Texto em fundos escuros */
+  
+  /* 🔲 Sistema de bordas elegante */
+  --border-light: #e2e8f0;
+  --border-medium: #cbd5e1;
+  --border-strong: #94a3b8;
+  --border-radius: 8px;                 /* Cantos arredondados suaves */
+  --border-radius-sm: 6px;
+  --border-radius-lg: 12px;
+  
+  /* 🎯 CORES FUNCIONAIS - Sistema semântico intuitivo */
+  
+  /* Azul - Ações primárias e navegação */
+  --primary: #2563eb;                   /* Azul vibrante mas profissional */
+  --primary-light: #dbeafe;
+  --primary-lighter: #eff6ff;
+  --primary-dark: #1d4ed8;
+  --primary-darker: #1e40af;
+  
+  /* Verde - Sucesso, saúde, concluído */
+  --success: #059669;                   /* Verde saúde mais vibrante */
+  --success-light: #d1fae5;
+  --success-lighter: #ecfdf5;
+  --success-dark: #047857;
+  --success-darker: #065f46;
+  
+  /* Laranja - Atenção, aguardando */
+  --warning: #ea580c;                   /* Laranja mais vibrante que amarelo */
+  --warning-light: #fed7aa;
+  --warning-lighter: #fff7ed;
+  --warning-dark: #c2410c;
+  --warning-darker: #9a3412;
+  
+  /* Vermelho - Urgência, erro, cancelamento */
+  --danger: #dc2626;
+  --danger-light: #fecaca;
+  --danger-lighter: #fef2f2;
+  --danger-dark: #b91c1c;
+  --danger-darker: #991b1b;
+  
+  /* Roxo - Informações, relatórios */
+  --info: #7c3aed;                      /* Roxo para destacar informações */
+  --info-light: #ddd6fe;
+  --info-lighter: #f3f4f6;
+  --info-dark: #6d28d9;
+  --info-darker: #5b21b6;
+  
+  /* Cinza - Neutro, desabilitado */
+  --neutral: #6b7280;
+  --neutral-light: #e5e7eb;
+  --neutral-lighter: #f9fafb;
+  --neutral-dark: #4b5563;
+  
+  /* 🌈 CORES ESPECIAIS - Para elementos únicos */
+  --accent-teal: #0d9488;               /* Verde-azulado para destacar */
+  --accent-teal-light: #ccfbf1;
+  --accent-pink: #ec4899;               /* Rosa para elementos femininos */
+  --accent-pink-light: #fce7f3;
+  --accent-yellow: #eab308;             /* Amarelo para avisos leves */
+  --accent-yellow-light: #fef3c7;
+  
+  /* 💫 Efeitos visuais modernos */
+  --shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-soft: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-strong: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-colored: 0 4px 14px 0 rgba(37, 99, 235, 0.15); /* Sombra com cor primária */
+  
+  /* 📏 Espacamentos consistentes */
+  --space-xs: 0.25rem;    /* 4px */
+  --space-sm: 0.5rem;     /* 8px */
+  --space-md: 1rem;       /* 16px */
+  --space-lg: 1.5rem;     /* 24px */
+  --space-xl: 2rem;       /* 32px */
+  --space-2xl: 3rem;      /* 48px */
+  
+  /* ⚡ Transições suaves */
+  --transition-fast: 150ms ease-in-out;
+  --transition-normal: 250ms ease-in-out;
+  --transition-slow: 350ms ease-in-out;
+}
+
+/* ===== TEMA PRINCIPAL ===== */
+.healthcare-theme {
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, 'Apple Color Emoji', Arial, sans-serif;
+  line-height: 1.6;
+  font-size: 14px;
+  font-weight: 400;
+  
+  /* Suavização de fontes */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Override inteligente do Tailwind */
+.healthcare-theme .bg-white {
+  background-color: var(--bg-primary) !important;
+}
+
+.healthcare-theme .bg-gray-50 {
+  background-color: var(--bg-secondary) !important;
+}
+
+.healthcare-theme .bg-gray-100 {
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* ===== CARDS E CONTAINERS ===== */
+.healthcare-card {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-soft);
+  transition: all var(--transition-normal);
+  overflow: hidden;
+}
+
+.healthcare-card:hover {
+  box-shadow: var(--shadow-medium);
+  border-color: var(--border-medium);
+  transform: translateY(-1px);
+}
+
+.healthcare-card.elevated {
+  box-shadow: var(--shadow-strong);
+}
+
+.healthcare-card.colored {
+  box-shadow: var(--shadow-colored);
+}
+
+/* ===== SISTEMA DE BOTÕES FUNCIONAIS ===== */
+.healthcare-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: 10px 16px;
+  border-radius: var(--border-radius-sm);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.4;
+  text-decoration: none;
+  border: 1px solid var(--border-medium);
+  background-color: var(--bg-primary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-height: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.healthcare-btn:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+}
+
+.healthcare-btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-subtle);
+}
+
+.healthcare-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ===== BOTÕES POR FUNÇÃO - Sistema Inteligente ===== */
+
+/* 🔵 PRIMÁRIO - Ações principais de navegação (mais suave) */
+.healthcare-btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: var(--text-inverse);
+  border-color: var(--primary);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15);
+  opacity: 0.9; /* Mais suave */
+}
+
+.healthcare-btn-primary:hover {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-darker) 100%);
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.25);
+  color: var(--text-inverse);
+  border-color: var(--primary-dark);
+  opacity: 1;
+}
+
+/* 🟢 SUCESSO - Ações de confirmação e finalização */
+.healthcare-btn-success {
+  background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
+  color: var(--text-inverse);
+  border-color: var(--success);
+  box-shadow: 0 2px 6px rgba(5, 150, 105, 0.2);
+}
+
+.healthcare-btn-success:hover {
+  background: linear-gradient(135deg, var(--success-dark) 0%, var(--success-darker) 100%);
+  box-shadow: 0 4px 10px rgba(5, 150, 105, 0.3);
+  color: var(--text-inverse);
+}
+
+/* 🟠 ATENÇÃO - Ações que precisam de cuidado */
+.healthcare-btn-warning {
+  background: linear-gradient(135deg, var(--warning) 0%, var(--warning-dark) 100%);
+  color: var(--text-inverse);
+  border-color: var(--warning);
+  box-shadow: 0 2px 6px rgba(234, 88, 12, 0.2);
+}
+
+.healthcare-btn-warning:hover {
+  background: linear-gradient(135deg, var(--warning-dark) 0%, var(--warning-darker) 100%);
+  box-shadow: 0 4px 10px rgba(234, 88, 12, 0.3);
+  color: var(--text-inverse);
+}
+
+/* 🔴 PERIGO - Ações críticas e irreversíveis */
+.healthcare-btn-danger {
+  background: linear-gradient(135deg, var(--danger) 0%, var(--danger-dark) 100%);
+  color: var(--text-inverse);
+  border-color: var(--danger);
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.2);
+}
+
+.healthcare-btn-danger:hover {
+  background: linear-gradient(135deg, var(--danger-dark) 0%, var(--danger-darker) 100%);
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.3);
+  color: var(--text-inverse);
+}
+
+/* 🟣 INFO - Ações informativas e relatórios */
+.healthcare-btn-info {
+  background: linear-gradient(135deg, var(--info) 0%, var(--info-dark) 100%);
+  color: var(--text-inverse);
+  border-color: var(--info);
+  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.2);
+}
+
+.healthcare-btn-info:hover {
+  background: linear-gradient(135deg, var(--info-dark) 0%, var(--info-darker) 100%);
+  box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3);
+  color: var(--text-inverse);
+}
+
+/* 🔘 NEUTRO - Ações secundárias */
+.healthcare-btn-neutral {
+  background: linear-gradient(135deg, var(--neutral) 0%, var(--neutral-dark) 100%);
+  color: var(--text-inverse);
+  border-color: var(--neutral);
+  box-shadow: 0 2px 6px rgba(107, 114, 128, 0.2);
+}
+
+.healthcare-btn-neutral:hover {
+  background: linear-gradient(135deg, var(--neutral-dark) 0%, #374151 100%);
+  box-shadow: 0 4px 10px rgba(107, 114, 128, 0.3);
+  color: var(--text-inverse);
+}
+
+/* ===== BOTÕES ESPECIAIS ===== */
+
+/* 🩺 ATENDER - Botão especial para iniciar atendimento */
+.healthcare-btn-attend {
+  background: linear-gradient(135deg, var(--accent-teal) 0%, #0f766e 100%);
+  color: var(--text-inverse);
+  border-color: var(--accent-teal);
+  box-shadow: 0 2px 6px rgba(13, 148, 136, 0.2);
+  position: relative;
+}
+
+.healthcare-btn-attend:hover {
+  background: linear-gradient(135deg, #0f766e 0%, #134e4a 100%);
+  box-shadow: 0 4px 10px rgba(13, 148, 136, 0.3);
+  color: var(--text-inverse);
+}
+
+/* 📞 CHAMAR - Botão especial para chamar paciente */
+.healthcare-btn-call {
+  background: linear-gradient(135deg, var(--accent-pink) 0%, #db2777 100%);
+  color: var(--text-inverse);
+  border-color: var(--accent-pink);
+  box-shadow: 0 2px 6px rgba(236, 72, 153, 0.2);
+}
+
+.healthcare-btn-call:hover {
+  background: linear-gradient(135deg, #db2777 0%, #be185d 100%);
+  box-shadow: 0 4px 10px rgba(236, 72, 153, 0.3);
+  color: var(--text-inverse);
+}
+
+/* 📋 ESCUTA - Botão especial para escuta inicial */
+.healthcare-btn-listen {
+  background: linear-gradient(135deg, var(--accent-yellow) 0%, #ca8a04 100%);
+  color: var(--text-primary);
+  border-color: var(--accent-yellow);
+  box-shadow: 0 2px 6px rgba(234, 179, 8, 0.2);
+}
+
+.healthcare-btn-listen:hover {
+  background: linear-gradient(135deg, #ca8a04 0%, #a16207 100%);
+  box-shadow: 0 4px 10px rgba(234, 179, 8, 0.3);
+  color: var(--text-primary);
+}
+
+/* ===== STAT CARDS - Métricas visuais ===== */
+.healthcare-stat-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius-lg);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-soft);
+}
+
+.healthcare-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-strong);
+  border-color: var(--border-medium);
+}
+
+.healthcare-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--info));
+  opacity: 0.8;
+}
+
+.healthcare-stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.healthcare-stat-icon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0.1;
+  transition: opacity var(--transition-fast);
+}
+
+.healthcare-stat-icon:hover::before {
+  opacity: 0.2;
+}
+
+/* Ícones coloridos por função */
+.healthcare-stat-icon.primary {
+  background: var(--primary-lighter);
+  color: var(--primary);
+  border: 2px solid var(--primary-light);
+}
+
+.healthcare-stat-icon.primary::before {
+  background: var(--primary);
+}
+
+.healthcare-stat-icon.success {
+  background: var(--success-lighter);
+  color: var(--success);
+  border: 2px solid var(--success-light);
+}
+
+.healthcare-stat-icon.success::before {
+  background: var(--success);
+}
+
+.healthcare-stat-icon.warning {
+  background: var(--warning-lighter);
+  color: var(--warning);
+  border: 2px solid var(--warning-light);
+}
+
+.healthcare-stat-icon.warning::before {
+  background: var(--warning);
+}
+
+.healthcare-stat-icon.danger {
+  background: var(--danger-lighter);
+  color: var(--danger);
+  border: 2px solid var(--danger-light);
+}
+
+.healthcare-stat-icon.danger::before {
+  background: var(--danger);
+}
+
+.healthcare-stat-icon.info {
+  background: var(--info-lighter);
+  color: var(--info);
+  border: 2px solid var(--info-light);
+}
+
+.healthcare-stat-icon.info::before {
+  background: var(--info);
+}
+
+/* ===== BADGES - Sistema de status vibrante ===== */
+.healthcare-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.healthcare-badge.success {
+  background: var(--success-light);
+  color: var(--success-darker);
+  border-color: var(--success);
+  box-shadow: 0 2px 4px rgba(5, 150, 105, 0.15);
+}
+
+.healthcare-badge.warning {
+  background: var(--warning-light);
+  color: var(--warning-darker);
+  border-color: var(--warning);
+  box-shadow: 0 2px 4px rgba(234, 88, 12, 0.15);
+}
+
+.healthcare-badge.danger {
+  background: var(--danger-light);
+  color: var(--danger-darker);
+  border-color: var(--danger);
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.15);
+}
+
+.healthcare-badge.info {
+  background: var(--info-light);
+  color: var(--info-darker);
+  border-color: var(--info);
+  box-shadow: 0 2px 4px rgba(124, 58, 237, 0.15);
+}
+
+.healthcare-badge.neutral {
+  background: var(--neutral-light);
+  color: var(--neutral-dark);
+  border-color: var(--neutral);
+  box-shadow: 0 2px 4px rgba(107, 114, 128, 0.15);
+}
+
+/* ===== INPUTS E FORMULÁRIOS ===== */
+.healthcare-input {
+  background-color: var(--bg-primary);
+  border: 2px solid var(--border-light);
+  border-radius: var(--border-radius-sm);
+  padding: 12px 16px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 400;
+  transition: all var(--transition-fast);
+  min-height: 44px;
+  width: 100%;
+}
+
+.healthcare-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+  background-color: var(--bg-primary);
+}
+
+.healthcare-input::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* ===== NAVEGAÇÃO ===== */
+.healthcare-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 10px 16px;
+  margin: 2px 8px;
+  border-radius: var(--border-radius-sm);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all var(--transition-fast);
+  min-height: 44px;
+  position: relative;
+  overflow: hidden;
+}
+
+.healthcare-nav-item:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+  transform: translateX(4px);
+}
+
+.healthcare-nav-item.active {
+  background: linear-gradient(135deg, var(--primary-light), var(--primary-lighter));
+  color: var(--primary-darker);
+  font-weight: 600;
+  box-shadow: var(--shadow-soft);
+}
+
+.healthcare-nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--primary);
+}
+
+/* ===== TABELAS ===== */
+.healthcare-table {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+
+.healthcare-table th {
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 16px;
+  border-bottom: 2px solid var(--border-light);
+}
+
+.healthcare-table td {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-primary);
+  transition: background-color var(--transition-fast);
+}
+
+.healthcare-table tr:hover td {
+  background-color: var(--bg-hover);
+}
+
+/* ===== ESTADOS ESPECIAIS ===== */
+.healthcare-urgent {
+  border-left: 4px solid var(--danger);
+  background: linear-gradient(135deg, var(--danger-lighter), rgba(255, 255, 255, 0.8));
+  position: relative;
+}
+
+.healthcare-priority-high {
+  border-left: 4px solid var(--warning);
+  background: linear-gradient(135deg, var(--warning-lighter), rgba(255, 255, 255, 0.8));
+}
+
+.healthcare-completed {
+  border-left: 4px solid var(--success);
+  background: linear-gradient(135deg, var(--success-lighter), rgba(255, 255, 255, 0.8));
+}
+
+.healthcare-in-progress {
+  border-left: 4px solid var(--info);
+  background: linear-gradient(135deg, var(--info-lighter), rgba(255, 255, 255, 0.8));
+}
+
+/* ===== HEADER CUSTOMIZADO ===== */
+.healthcare-theme header {
+  background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary)) !important;
+  border-bottom: 1px solid var(--border-light) !important;
+  box-shadow: var(--shadow-medium);
+  backdrop-filter: blur(10px);
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  .healthcare-stat-card {
+    padding: 16px;
+  }
+  
+  .healthcare-btn {
+    padding: 12px 16px;
+    font-size: 14px;
+    min-height: 48px; /* Touch-friendly */
+  }
+  
+  .healthcare-nav-item {
+    min-height: 48px;
+    padding: 12px 16px;
+  }
+  
+  .healthcare-stat-icon {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* ===== ACESSIBILIDADE ===== */
+.healthcare-theme button:focus,
+.healthcare-theme input:focus,
+.healthcare-theme select:focus,
+.healthcare-theme a:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ===== ANIMAÇÕES SUAVES ===== */
+@keyframes pulse-gentle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.healthcare-loading {
+  animation: pulse-gentle 2s infinite;
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.healthcare-animate-in {
+  animation: slide-in var(--transition-normal) ease-out;
+}
+
+/* ===== SCROLLBAR PERSONALIZADA ===== */
+.healthcare-theme ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.healthcare-theme ::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 4px;
+}
+
+.healthcare-theme ::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--border-medium), var(--border-strong));
+  border-radius: 4px;
+  transition: background var(--transition-fast);
+}
+
+.healthcare-theme ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--border-strong), var(--primary));
+}
+
+/* ===== MODO REDUZIDO DE MOVIMENTO ===== */
+@media (prefers-reduced-motion: reduce) {
+  .healthcare-theme * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ===== ELEMENTOS UTILITÁRIOS ===== */
+.healthcare-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-light), transparent);
+  margin: var(--space-lg) 0;
+}
+
+.healthcare-glow {
+  box-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
+}
+
+.healthcare-text-gradient {
+  background: linear-gradient(135deg, var(--primary), var(--info));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
+}
+
+/* ===== SOBRESCRITA PARA TEMA SERVIÇO PÚBLICO ===== */
+.public-service-theme {
+  /* Aplica o design system do serviço público */
+  background-color: var(--bg-app);
+}
+
+/* Sobrescrita das classes healthcare quando public-service está ativo */
+.public-service-theme .healthcare-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-soft);
+  transition: all var(--transition-normal);
+}
+
+.public-service-theme .healthcare-btn {
+  background-color: var(--bg-primary);
+  border: 2px solid var(--border-light);
+  color: var(--text-secondary);
+  padding: 10px 16px;
+  border-radius: var(--border-radius-sm);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.public-service-theme .healthcare-btn:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--primary);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+}
+
+.public-service-theme .healthcare-btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: var(--text-inverse);
+  border-color: var(--primary);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15);
+  opacity: 0.9;
+}
+
+.public-service-theme .healthcare-btn-success {
+  background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
+  color: var(--text-inverse);
+  border-color: var(--success);
+  box-shadow: 0 2px 6px rgba(5, 150, 105, 0.2);
+}
+
+.public-service-theme .healthcare-btn-warning {
+  background: linear-gradient(135deg, var(--warning) 0%, var(--warning-dark) 100%);
+  color: var(--text-inverse);
+  border-color: var(--warning);
+  box-shadow: 0 2px 6px rgba(234, 88, 12, 0.2);
+}
+
+.public-service-theme .healthcare-btn-danger {
+  background: linear-gradient(135deg, var(--danger) 0%, var(--danger-dark) 100%);
+  color: var(--text-inverse);
+  border-color: var(--danger);
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.2);
+}
+
+.public-service-theme .healthcare-btn-info {
+  background: linear-gradient(135deg, var(--info) 0%, var(--info-dark) 100%);
+  color: var(--text-inverse);
+  border-color: var(--info);
+  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.2);
+}
+
+.public-service-theme .healthcare-btn-attend {
+  background: linear-gradient(135deg, var(--accent-teal) 0%, #0f766e 100%);
+  color: var(--text-inverse);
+  border-color: var(--accent-teal);
+  box-shadow: 0 2px 6px rgba(13, 148, 136, 0.2);
+}
+
+.public-service-theme .healthcare-btn-call {
+  background: linear-gradient(135deg, var(--accent-pink) 0%, #db2777 100%);
+  color: var(--text-inverse);
+  border-color: var(--accent-pink);
+  box-shadow: 0 2px 6px rgba(236, 72, 153, 0.2);
+}
+
+.public_service-theme .healthcare-btn-listen {
+  background: linear-gradient(135deg, var(--accent-yellow) 0%, #ca8a04 100%);
+  color: var(--text-primary);
+  border-color: var(--accent-yellow);
+  box-shadow: 0 2px 6px rgba(234, 179, 8, 0.2);
+}
+
+/* ===== CARDS DE ESTATÍSTICAS - PUBLIC SERVICE (vibrante) ===== */
+.public-service-theme .healthcare-stat-card {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 2px solid var(--primary-light);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.public-service-theme .healthcare-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, var(--primary), var(--accent-teal));
+}
+
+.public-service-theme .healthcare-stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.25);
+  border-color: var(--primary);
+}
+
+/* ===== ÍCONES DE ESTATÍSTICAS - PUBLIC SERVICE (coloridos) ===== */
+.public-service-theme .healthcare-stat-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--primary-light), var(--primary-lighter));
+  color: var(--primary);
+  border-radius: 12px;
+  border: 2px solid var(--primary-light);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.public-service-theme .healthcare-stat-icon:hover {
+  transform: scale(1.05);
+  border-color: var(--primary);
+}
+
+/* ===== CARDS DE PACIENTES - PUBLIC SERVICE (alegre) ===== */
+.public-service-theme .healthcare-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid var(--border-light);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.public-service-theme .healthcare-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  border-color: var(--primary-light);
+}
+
+/* ===== BOTÕES - PUBLIC SERVICE (vibrantes) ===== */
+.public-service-theme .healthcare-btn-success {
+  background: linear-gradient(135deg, var(--success), var(--accent-teal));
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 28px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  transition: all 0.3s ease;
+}
+
+.public-service-theme .healthcare-btn-success:hover {
+  background: linear-gradient(135deg, var(--success-dark), #0d9488);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* ===== CARDS DE ESTATÍSTICAS - TEMA PÚBLICO ORIGINAL ===== */
+.public-service-theme .healthcare-card {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 2px solid var(--primary);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-colored);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  transform: perspective(1000px) rotateX(0deg);
+}
+
+.public-service-theme .healthcare-card:hover {
+  transform: perspective(1000px) rotateX(2deg) translateY(-8px);
+  box-shadow: var(--shadow-strong);
+  border-color: var(--primary-dark);
+}
+
+.public-service-theme .healthcare-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, var(--accent-teal), var(--primary), var(--accent-pink));
+  animation: pulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.8; }
+  100% { opacity: 1; }
+}
+
+/* ===== PACIENTE EM ATENDIMENTO - TEMA PÚBLICO VIBRANTE ===== */
+.public-service-theme .current-patient-card {
+  background: linear-gradient(135deg, var(--success) 0%, var(--accent-teal) 100%);
+  border: none;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-colored);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.public-service-theme .current-patient-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #10b981, #06d6a0);
+}
+
+.public-service-theme .current-patient-card h3 {
+  color: white;
+  font-weight: 600;
+}
+
+.public-service-theme .current-patient-card .patient-name {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.public-service-theme .current-patient-card .patient-info {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.public-service-theme .healthcare-btn-success {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.public-service-theme .healthcare-btn-success:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+/* ===== TEMA HÍBRIDO - Cards de Estatísticas Otimizados ===== */
+
+/* Cards de estatísticas - estrutura base */
+.hybrid-theme .healthcare-stat-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.hybrid-theme .healthcare-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+/* Faixas superiores com a MESMA COR DOS ÍCONES */
+.hybrid-theme .healthcare-stat-card.warning::before {
+  background: var(--warning-dark); /* laranja escuro - mesma cor do ícone "Aguardando" */
+}
+
+.hybrid-theme .healthcare-stat-card.info::before {
+  background: var(--info-dark); /* azul escuro - mesma cor do ícone "Em Atendimento" */
+}
+
+.hybrid-theme .healthcare-stat-card.success::before {
+  background: var(--success-dark); /* verde escuro - mesma cor do ícone "Atendidos" */
+}
+
+.hybrid-theme .healthcare-stat-card.primary::before {
+  background: var(--neutral-dark); /* cinza escuro - mesma cor do ícone "Total Hoje" */
+}
+
+/* Ícones com fundos claros e cores escuras (contraste otimizado) */
+.hybrid-theme .healthcare-stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hybrid-theme .healthcare-stat-icon.warning {
+  background: var(--warning-light); /* fundo laranja claro */
+  color: var(--warning-dark); /* ícone laranja escuro - contraste */
+}
+
+.hybrid-theme .healthcare-stat-icon.warning .h-6 {
+  color: var(--warning-dark) !important;
+}
+
+.hybrid-theme .healthcare-stat-icon.info {
+  background: var(--info-light); /* fundo azul claro */
+  color: var(--info-dark); /* ícone azul escuro - contraste */
+}
+
+.hybrid-theme .healthcare-stat-icon.info .h-6 {
+  color: var(--info-dark) !important;
+}
+
+.hybrid-theme .healthcare-stat-icon.success {
+  background: var(--success-light); /* fundo verde claro */
+  color: var(--success-dark); /* ícone verde escuro - contraste */
+}
+
+.hybrid-theme .healthcare-stat-icon.success .h-6 {
+  color: var(--success-dark) !important;
+}
+
+.hybrid-theme .healthcare-stat-icon.primary {
+  background: var(--neutral-light); /* fundo cinza claro */
+  color: var(--neutral-dark); /* ícone cinza escuro - contraste */
+}
+
+.hybrid-theme .healthcare-stat-icon.primary .h-6 {
+  color: var(--neutral-dark) !important;
+}
+
+/* Hover dos cards */
+.hybrid-theme .healthcare-stat-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-color: #d1d5db;
+}
+
+/* Card do paciente em atendimento - fundo verde claro (cor do status) */
+.hybrid-theme .current-patient-card {
+  background: var(--success-light);
+  color: var(--success-dark);
+  border: 1px solid var(--success);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+}
+
+.hybrid-theme .current-patient-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--success);
+}
+
+.hybrid-theme .current-patient-card h3 {
+  color: var(--success-dark);
+  font-weight: 600;
+  font-size: 1.125rem;
+  margin-bottom: 12px;
+}
+
+.hybrid-theme .current-patient-card .patient-name {
+  color: var(--success-dark);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.hybrid-theme .current-patient-card .patient-info {
+  color: var(--success-dark);
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.hybrid-theme .current-patient-card .healthcare-btn-success {
+  background-color: #059669;
+  color: white;
+  border: 1px solid #059669;
+  font-weight: 500;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.15s ease-in-out;
+}
+
+.hybrid-theme .current-patient-card .healthcare-btn-success:hover {
+  background-color: #047857;
+  border-color: #047857;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* ===== BOTÕES - ESTILO PADRÃO (sóbrio e profissional) ===== */
+
+/* Botão primário - azul sólido */
+.hybrid-theme .healthcare-btn-primary {
+  background-color: #2563eb;
+  color: white;
+  border: 1px solid #2563eb;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.15s ease-in-out;
+}
+
+.hybrid-theme .healthcare-btn-primary:hover {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Botão de sucesso - verde sólido */
+.hybrid-theme .healthcare-btn-success {
+  background-color: #059669;
+  color: white;
+  border: 1px solid #059669;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.15s ease-in-out;
+}
+
+.hybrid-theme .healthcare-btn-success:hover {
+  background-color: #047857;
+  border-color: #047857;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Botão neutro/padrão - cinza claro */
+.hybrid-theme .healthcare-btn {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.15s ease-in-out;
+}
+
+.hybrid-theme .healthcare-btn:hover {
+  background-color: #e5e7eb;
+  border-color: #9ca3af;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Botão de chamada - laranja/amarelo */
+.hybrid-theme .healthcare-btn-call {
+  background-color: #f59e0b;
+  color: white;
+  border: 1px solid #f59e0b;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.15s ease-in-out;
+}
+
+.hybrid-theme .healthcare-btn-call:hover {
+  background-color: #d97706;
+  border-color: #d97706;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Botão de atendimento - verde água */
+.hybrid-theme .healthcare-btn-attend {
+  background-color: #0d9488;
+  color: white;
+  border: 1px solid #0d9488;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.15s ease-in-out;
+}
+
+.hybrid-theme .healthcare-btn-attend:hover {
+  background-color: #0f766e;
+  border-color: #0f766e;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Botão de escuta - roxo claro */
+.hybrid-theme .healthcare-btn-listen {
+  background-color: #8b5cf6;
+  color: white;
+  border: 1px solid #8b5cf6;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.15s ease-in-out;
+}
+
+.hybrid-theme .healthcare-btn-listen:hover {
+  background-color: #7c3aed;
+  border-color: #7c3aed;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Estados desabilitados */
+.hybrid-theme .healthcare-btn:disabled,
+.hybrid-theme .healthcare-btn-primary:disabled,
+.hybrid-theme .healthcare-btn-success:disabled,
+.hybrid-theme .healthcare-btn-call:disabled,
+.hybrid-theme .healthcare-btn-attend:disabled,
+.hybrid-theme .healthcare-btn-listen:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.hybrid-theme .healthcare-btn:disabled:hover,
+.hybrid-theme .healthcare-btn-primary:disabled:hover,
+.hybrid-theme .healthcare-btn-success:disabled:hover,
+.hybrid-theme .healthcare-btn-call:disabled:hover,
+.hybrid-theme .healthcare-btn-attend:disabled:hover,
+.hybrid-theme .healthcare-btn-listen:disabled:hover {
+  background-color: initial;
+  border-color: initial;
+  box-shadow: initial;
+}
+
+/* ===== CARDS DA FILA - Faixas laterais coloridas por status ===== */
+
+/* Cards da fila - estrutura base com faixa lateral */
+.hybrid-theme .healthcare-card.patient-card {
+  position: relative;
+  border-left: 4px solid transparent; /* espaço para a faixa */
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  overflow: visible; /* Garantir que o dropdown seja visível */
+}
+
+/* Faixas laterais com cores dos STATUS dos pacientes */
+.hybrid-theme .healthcare-card.patient-card.waiting {
+  border-left-color: var(--accent-yellow); /* amarelo - paciente aguardando */
+}
+
+.hybrid-theme .healthcare-card.patient-card.in-progress {
+  border-left-color: var(--success); /* verde - paciente em atendimento */
+}
+
+.hybrid-theme .healthcare-card.patient-card.completed {
+  border-left-color: var(--primary); /* azul - paciente atendido */
+}
+
+.hybrid-theme .healthcare-card.patient-card.cancelled {
+  border-left-color: var(--danger); /* vermelho - paciente cancelado */
+}
+
+/* Pacientes urgentes AGUARDANDO - faixa amarela mais grossa para destacar */
+.hybrid-theme .healthcare-card.patient-card.urgent-waiting {
+  border-left-color: var(--accent-yellow); /* mantém amarelo do status "aguardando" */
+  border-left-width: 6px; /* faixa mais grossa para destacar urgência */
+}
+
+.hybrid-theme .healthcare-card.patient-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-color: #d1d5db;
+  /* Removido transform: translateY() para não interferir com o dropdown */
+}
+
+/* ===== CARDS DA FILA - Tipografia sóbria e backgrounds mínimos ===== */
+
+/* Tipografia mais sóbria - Títulos dos pacientes */
+.hybrid-theme .patient-card h4 {
+  font-size: 1.125rem !important; /* 18px */
+  font-weight: 600 !important;
+  color: #111827 !important;
+  line-height: 1.4 !important;
+}
+
+/* Remover backgrounds dos elementos visuais desnecessários */
+.hybrid-theme .patient-card .service-type,
+.hybrid-theme .patient-card .bg-blue-50,
+.hybrid-theme .patient-card .bg-blue-100,
+.hybrid-theme .patient-card .bg-gradient-to-r {
+  background: none !important;
+  color: #374151 !important;
+  font-weight: 500 !important;
+  font-size: 0.875rem !important;
+  padding: 0.25rem 0.5rem !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.375rem !important;
+}
+
+/* Ícones de serviço mais discretos */
+.hybrid-theme .patient-card .service-icon,
+.hybrid-theme .patient-card .w-8.h-8 {
+  background: #f9fafb !important;
+  border: 1px solid #e5e7eb !important;
+  padding: 0.5rem !important;
+  border-radius: 0.5rem !important;
+}
+
+/* Círculos de posição/status mais sóbrios */
+.hybrid-theme .patient-card .position-circle,
+.hybrid-theme .patient-card .w-12.h-12 {
+  background: #f9fafb !important;
+  border: 2px solid #d1d5db !important;
+  color: #374151 !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+}
+
+/* Informações do paciente mais limpas */
+.hybrid-theme .patient-card .patient-info {
+  color: #6b7280 !important;
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
+}
+
+.hybrid-theme .patient-card .patient-info strong {
+  color: #374151 !important;
+  font-weight: 500 !important;
+}
+
+/* Tempo estimado mais discreto */
+.hybrid-theme .patient-card .text-orange-600,
+.hybrid-theme .patient-card .bg-orange-50 {
+  background: #f9fafb !important;
+  color: #6b7280 !important;
+  border: 1px solid #e5e7eb !important;
+  font-size: 0.75rem !important;
+}
+
+/* Remover backgrounds desnecessários, manter apenas status/prioridade */
+.hybrid-theme .patient-card .status-badge {
+  /* Mantém background para badges de status */
+  background: var(--badge-bg) !important;
+  border: 1px solid var(--badge-border) !important;
+  padding: 0.25rem 0.5rem !important;
+  border-radius: 0.375rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+}
+
+.hybrid-theme .patient-card .priority-badge {
+  /* Mantém background para badges de prioridade */
+  border: 1px solid !important;
+  padding: 0.25rem 0.5rem !important;
+  border-radius: 0.375rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+}
+
+/* Texto das informações do paciente mais compacto */
+.hybrid-theme .patient-card .text-sm {
+  font-size: 0.8125rem !important; /* 13px - mais compacto */
+  line-height: 1.4 !important;
+  color: #6b7280 !important;
+}
+
+.hybrid-theme .patient-card .font-medium {
+  font-weight: 500 !important;
+  color: #374151 !important;
+}
+
+/* Remoção de gradientes e backgrounds coloridos específicos */
+.hybrid-theme .patient-card .bg-gradient-to-r.from-blue-50.to-blue-100,
+.hybrid-theme .patient-card .bg-gradient-to-r.from-green-50.to-green-100 {
+  background: #f9fafb !important;
+  border: 2px solid #d1d5db !important;
+}
+
+.hybrid-theme .patient-card .text-blue-600,
+.hybrid-theme .patient-card .text-green-600 {
+  color: #374151 !important;
+}
+
+/* Observações mais discretas */
+.hybrid-theme .patient-card .bg-blue-50.border.border-blue-200 {
+  background: #f9fafb !important;
+  border: 1px solid #e5e7eb !important;
+  color: #374151 !important;
+}
+
+.hybrid-theme .patient-card .text-blue-800 {
+  color: #374151 !important;
+  font-size: 0.8125rem !important;
+}
+
+/* Campo de observações mais limpo */
+.hybrid-theme .patient-card .notes-section {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.hybrid-theme .patient-card .notes-section .notes-indicator {
+  background: #e5e7eb;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.hybrid-theme .patient-card .notes-text {
+  color: #374151;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+/* Botões de ação mais compactos */
+.hybrid-theme .patient-card .action-buttons {
+  gap: 0.5rem;
+}
+
+.hybrid-theme .patient-card .action-buttons button {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  border-radius: 0.375rem;
+  min-height: 2.25rem;
+}
+
+/* Círculo de posição mais sóbrio */
+.hybrid-theme .patient-card .position-circle {
+  background: #f3f4f6;
+  border: 2px solid #d1d5db;
+  color: #374151;
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+/* ===== RESPONSIVIDADE - Esconder nomes dos campos em telas pequenas ===== */
+
+/* Em telas pequenas (mobile), esconder os nomes dos campos mas manter os valores */
+@media (max-width: 768px) {
+  /* Esconder os labels/nomes dos campos usando a classe field-label */
+  .hybrid-theme .patient-card .field-label {
+    display: none !important;
+  }
+
+  /* Compactar ainda mais o espaçamento em mobile */
+  .hybrid-theme .patient-card {
+    padding: 0.75rem !important;
+  }
+
+  .hybrid-theme .patient-card .patient-info {
+    gap: 0.375rem !important;
+  }
+
+  .hybrid-theme .patient-card .text-sm {
+    margin-bottom: 0.25rem !important;
+  }
+
+  /* Ícones e elementos visuais menores em mobile */
+  .hybrid-theme .patient-card .position-circle {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    font-size: 1rem !important;
+  }
+
+  .hybrid-theme .patient-card .service-icon,
+  .hybrid-theme .patient-card .w-8.h-8 {
+    width: 1.75rem !important;
+    height: 1.75rem !important;
+    padding: 0.375rem !important;
+  }
+
+  /* Botões de ação mais compactos em mobile */
+  .hybrid-theme .patient-card .action-buttons button {
+    padding: 0.5rem !important;
+    font-size: 0.8125rem !important;
+    min-height: 2rem !important;
+  }
+
+  /* Nome do paciente (título) menor em mobile */
+  .hybrid-theme .patient-card h4 {
+    font-size: 1rem !important;
+    line-height: 1.3 !important;
+  }
+
+  /* Grid responsivo para informações do paciente */
+  .hybrid-theme .patient-card .grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Espaçamentos dos itens flex reduzidos */
+  .hybrid-theme .patient-card .flex.items-center {
+    gap: 0.5rem !important;
+  }
+
+  .hybrid-theme .patient-card .space-x-2 > * + * {
+    margin-left: 0.25rem !important;
+  }
+}
+
+/* ===== DROPDOWN "MAIS OPÇÕES" - COMPORTAMENTO IGUAL AO TEMA PADRÃO ===== */
+
+/* Garantir overflow visível para dropdown - aplicado aos cards específicos */
+.hybrid-theme .healthcare-card.patient-card {
+  overflow: visible !important;
+}
+
+.hybrid-theme .grid,
+.hybrid-theme .flex,
+.hybrid-theme .lg\\:flex-col {
+  overflow: visible !important;
+}
+
+/* Cancelar TODAS as transformações que podem interferir com dropdown */
+.hybrid-theme .healthcare-card.patient-card button:hover {
+  transform: none !important;
+}
+
+.hybrid-theme .healthcare-card.patient-card .hover\\:scale-105:hover,
+.hybrid-theme .healthcare-card.patient-card button.hover\\:scale-105:hover {
+  transform: none !important;
+}
+
+/* Garantir que o dropdown apareça acima de outros elementos */
+.hybrid-theme .healthcare-card.patient-card .relative {
+  z-index: 10;
+}
+
+.hybrid-theme .healthcare-card.patient-card .relative > div[class*="absolute"] {
+  z-index: 1000 !important;
+}
+
+/* Impedir que hover de cards adjacentes feche dropdown aberto */
+.hybrid-theme .healthcare-card.patient-card:hover {
+  /* Manter apenas box-shadow e border-color, sem transform */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-color: #d1d5db;
+  transform: none !important;
+}

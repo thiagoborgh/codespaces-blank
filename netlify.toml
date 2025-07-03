@@ -1,0 +1,11 @@
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[build]
+  publish = "frontend/build"
+  command = "cd frontend && npm ci && npm run build"
+
+[build.environment]
+  NODE_VERSION = "18"

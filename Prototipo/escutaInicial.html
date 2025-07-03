@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escuta Inicial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Menu Superior -->
+            <header class="col-12 p-3 bg-light border-bottom d-flex justify-content-between align-items-center">
+                <div>
+                    <button class="navbar-toggler me-2" type="button" id="sidebarToggle">
+                        <span class="bi bi-list"></span>
+                    </button>
+                    <button class="btn btn-outline-secondary" id="fullscreenToggle">
+                        <span class="bi bi-arrows-fullscreen"></span>
+                    </button>
+                </div>
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-outline-secondary me-2">
+                        <span class="bi bi-bell"></span><span class="badge bg-danger">9</span>
+                    </button>
+                    <span class="me-2">Lorem Ipsum</span>
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNqfsaj9DZ8KXSSkfFvzUgr0JWQeOfWGJs3Iv3DxOkQUkh7-KT3jq4a594uSgPjfnBoMA&usqp=CAU" alt="Usuário" class="rounded-circle profile-img" style="width: 32px; height: 32px;">
+                </div>
+            </header>
+
+            <!-- Menu Lateral -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar" id="sidebar">
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link active" href="#"><i class="bi bi-house"></i> Histórico médico</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-info-circle"></i> Informações do atendimento</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-thermometer"></i> Medições</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-bell"></i> Lembretes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-people"></i> Histórico familiar</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-clipboard-check"></i> Quadro de Acompanhamentos</a></li>
+                </ul>
+            </nav>
+
+            <!-- Conteúdo Principal -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 p-4" id="mainContent">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">Home</li>
+                        <li class="breadcrumb-item active" aria-current="page">Escuta Inicial</li>
+                    </ol>
+                </nav>
+                <h2 class="mb-3">Escuta Inicial</h2>
+
+                <!-- Dados do Paciente -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <img src="https://via.placeholder.com/100" alt="Foto do Paciente" class="rounded-circle">
+                            </div>
+                            <div class="col-md-5">
+                                <p><strong>Maria Antoinieta Albuquerque Soares</strong></p>
+                                <p>(Mário Henrique da Silva Oliveira Gomes dos Santos Albuquerque Soares)</p>
+                                <p>CPF: 094556799-80</p>
+                                <p>Data de nascimento: 10/02/2004 - 21a 4m 15d</p>
+                                <p>Sexo: Feminino</p>
+                            </div>
+                            <div class="col-md-5">
+                                <p><strong>Condições e situações de saúde</strong></p>
+                                <span class="badge bg-success me-2">Hipertenso</span>
+                                <span class="badge bg-success me-2">Diabético</span>
+                                <p><strong>Alergias/Reações adversas</strong></p>
+                                <span class="badge bg-warning me-2">Dipirona</span>
+                                <span class="badge bg-danger me-2">Leite</span>
+                                <span class="badge bg-danger">Mofo</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <!-- Escuta Inicial como Card Editável -->
+                                <div class="col-md-12 mb-4">
+                                    <div class="card editable-card" data-content="Escuta Inicial">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            Escuta Inicial
+                                            <button class="edit-btn"><span class="bi bi-pencil"></span></button>
+                                        </div>
+                                        <div class="card-body">
+                                            <!-- Formulário de Escuta Inicial -->
+                                            <form id="escuta-inicial-form">
+                                                <div class="row g-3">
+                                                    <div class="col-12 col-md-6">
+                                                        <div class="form-group mb-4">
+                                                            <label class="form-label fw-bold">CIAP <span class="text-danger">*</span></label>
+                                                            <select class="form-select" id="ciap">
+                                                                <option value="">Selecione o código CIAP</option>
+                                                                <option value="A01">A01 - Febre</option>
+                                                                <option value="L02">L02 - Dor de cabeça</option>
+                                                                <option value="R05">R05 - Tosse</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-18">
+                                                            <label class="form-label fw-bold">Observações</label>
+                                                            <textarea class="form-control" id="observations" rows="4" placeholder="Observações do profissional"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Antropometria -->
+                                                <div class="form-section mt-4">
+                                                    <h5 class="fw-bold mb-3">Antropometria</h5>
+                                                    <div class="row g-3">
+                                                        <div class="col-12 col-md-4">
+                                                            <div class="form-group mb-4">
+                                                                <label class="form-label">Altura (cm)</label>
+                                                                <input type="number" class="form-control" id="height" placeholder="Ex.: 170">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-4">
+                                                            <div class="form-group mb-4">
+                                                                <label class="form-label">Peso (kg)</label>
+                                                                <input type="number" class="form-control" id="weight" placeholder="Ex.: 65">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-4">
+                                                            <div class="form-group mb-4">
+                                                                <label class="form-label">IMC</label>
+                                                                <input type="number" class="form-control" id="imc" placeholder="Ex.: 22.5" readonly>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Sinais Vitais -->
+                                                <div class="form-section mt-4">
+                                                    <h5 class="fw-bold mb-3">Sinais Vitais</h5>
+                                                    <div class="row g-3">
+                                                        <div class="col-12 col-md-4">
+                                                            <div class="form-group mb-4">
+                                                                <label class="form-label">Pressão Arterial (mmHg)</label>
+                                                                <input type="text" class="form-control" id="bloodPressure" placeholder="Ex.: 120/80">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-4">
+                                                            <div class="form-group mb-4">
+                                                                <label class="form-label">Frequência Cardíaca (bpm)</label>
+                                                                <input type="number" class="form-control" id="heartRate" placeholder="Ex.: 72">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-4">
+                                                            <div class="form-group mb-4">
+                                                                <label class="form-label">Temperatura (°C)</label>
+                                                                <input type="number" class="form-control" id="temperature" placeholder="Ex.: 36.5">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Procedimentos -->
+                                                <div class="form-section mt-4">
+                                                    <h5 class="fw-bold mb-3">Procedimentos</h5>
+                                                    <div class="row g-3">
+                                                        <div class="col-12">
+                                                            <div class="form-group mb-4">
+                                                                <label class="form-label">Procedimentos Realizados</label>
+                                                                <textarea class="form-control" id="procedures" rows="3" placeholder="Ex.: Exame de sangue, curativo"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Classificação de Riscos -->
+                                                <div class="form-section mt-4">
+                                                    <h5 class="fw-bold mb-3">Classificação de Riscos</h5>
+                                                    <div class="row g-3">
+                                                        <div class="col-12">
+                                                            <div class="form-group mb-4">
+                                                                <label class="form-label">Nível de Risco <span class="text-danger">*</span></label>
+                                                                <div class="row row-cols-1 g-3 risk-cards">
+                                                                    <div class="col">
+                                                                        <div class="card risk-card green">
+                                                                            <div class="card-body">
+                                                                                <input type="radio" class="form-check-input" id="riskGreen" name="riskLevel" value="verde" required>
+                                                                                <label class="card-title form-check-label" for="riskGreen">Verde - Não Urgente</label>
+                                                                                <p class="card-text">Condição estável, sem risco imediato. Pode aguardar atendimento.</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col">
+                                                                        <div class="card risk-card yellow">
+                                                                            <div class="card-body">
+                                                                                <input type="radio" class="form-check-input" id="riskYellow" name="riskLevel" value="amarelo" required>
+                                                                                <label class="card-title form-check-label" for="riskYellow">Amarelo - Pouco Urgente</label>
+                                                                                <p class="card-text">Condição que requer atenção, mas sem risco iminente.</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col">
+                                                                        <div class="card risk-card orange">
+                                                                            <div class="card-body">
+                                                                                <input type="radio" class="form-check-input" id="riskOrange" name="riskLevel" value="laranja" required>
+                                                                                <label class="card-title form-check-label" for="riskOrange">Laranja - Urgente</label>
+                                                                                <p class="card-text">Condição que precisa de atendimento rápido devido a risco moderado.</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col">
+                                                                        <div class="card risk-card red">
+                                                                            <div class="card-body">
+                                                                                <input type="radio" class="form-check-input" id="riskRed" name="riskLevel" value="vermelho" required>
+                                                                                <label class="card-title form-check-label" for="riskRed">Vermelho - Emergência</label>
+                                                                                <p class="card-text">Condição crítica, atendimento imediato necessário.</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group mb-4">
+                                                                <label class="form-label">Justificativa</label>
+                                                                <textarea class="form-control" id="riskJustification" rows="3" placeholder="Descreva a justificativa para o nível de risco (opcional)"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Desfecho -->
+                                                <div class="form-section mt-4">
+                                                    <h5 class="fw-bold mb-3">Desfecho</h5>
+                                                    <div class="row g-3">
+                                                        <div class="col-12 col-md-4">
+                                                            <div class="form-group mb-4">
+                                                                <label class="form-label">Desfecho <span class="text-danger">*</span></label>
+                                                                <div class="form-check">
+                                                                    <input type="radio" class="form-check-input" id="releasePatient" name="outcome" value="liberar">
+                                                                    <label class="form-check-label" for="releasePatient">Liberar Paciente</label>
+                                                                </div>
+                                                                <div class="form-check">
+                                                                    <input type="radio" class="form-check-input" id="addToQueue" name="outcome" value="adicionar_lista">
+                                                                    <label class="form-check-label" for="addToQueue">Adicionar Paciente na Fila de Atendimento</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-8">
+                                                            <div class="form-group mb-4 collapse" id="scheduleCollapse">
+                                                                <label class="form-label">Agendar Consulta (Opcional)</label>
+                                                                <div class="row g-2">
+                                                                    <div class="col-12 col-md-6">
+                                                                        <input type="date" class="form-control" id="scheduleDate" min="2025-06-25" value="2025-06-25">
+                                                                    </div>
+                                                                    <div class="col-12 col-md-6">
+                                                                        <input type="time" class="form-control" id="scheduleTime" value="15:36">
+                                                                    </div>
+                                                                </div>
+                                                                <small class="text-muted">Selecione a data e hora para o agendamento.</small>
+                                                            </div>
+                                                            <button type="button" class="btn btn-link text-decoration-none" data-bs-toggle="collapse" data-bs-target="#scheduleCollapse" aria-expanded="false" aria-controls="scheduleCollapse">
+                                                                <span class="expand-icon">+</span> Agendar Consulta
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="text-end mt-4">
+                                                    <button type="submit" class="btn btn-success">Salvar</button>
+                                                    <button type="button" class="btn btn-secondary ms-2">Cancelar</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SOAP (Placeholder) -->
+                        <div class="tab-pane fade" id="soap" role="tabpanel">
+                            <p>Conteúdo da aba SOAP.</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Toggle sidebar
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('d-none');
+            document.getElementById('mainContent').classList.toggle('col-md-12');
+            document.getElementById('mainContent').classList.toggle('col-lg-12');
+        });
+    </script>
+</body>
+</html>

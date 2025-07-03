@@ -1,0 +1,160 @@
+/* Estilos personalizados para melhorar a experiência mobile */
+
+/* Melhorar o tamanho dos alvos de toque */
+@media (max-width: 768px) {
+  .mobile-touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Melhorar espaçamento em cards */
+  .mobile-card-spacing {
+    padding: 1rem;
+  }
+
+  /* Melhorar scroll nos modais */
+  .mobile-modal-scroll {
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Melhorar checkboxes para toque */
+  input[type="checkbox"] {
+    min-width: 20px;
+    min-height: 20px;
+  }
+
+  /* Melhorar botões para toque */
+  button {
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+  }
+
+  /* Melhorar inputs para toque */
+  input[type="text"],
+  input[type="date"],
+  input[type="tel"],
+  select,
+  textarea {
+    min-height: 44px;
+    padding: 0.75rem;
+    font-size: 16px; /* Evita zoom no iOS */
+  }
+
+  /* Melhorar scroll horizontal */
+  .horizontal-scroll {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .horizontal-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Melhorar visibilidade de foco */
+  button:focus,
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  /* Melhorar estados de hover em dispositivos de toque */
+  @media (hover: none) {
+    .hover\:bg-gray-100:hover {
+      background-color: inherit;
+    }
+    
+    .hover\:bg-blue-700:hover {
+      background-color: inherit;
+    }
+  }
+
+  /* Adicionar estados de active para feedback visual */
+  button:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+
+  /* Melhorar grids para mobile */
+  .mobile-grid-1 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Melhorar espaçamento entre elementos */
+  .mobile-spacing > * + * {
+    margin-top: 1rem;
+  }
+
+  /* Melhorar tipografia para mobile */
+  .mobile-title {
+    font-size: 1.5rem;
+    line-height: 1.3;
+  }
+
+  .mobile-subtitle {
+    font-size: 1.125rem;
+    line-height: 1.4;
+  }
+
+  /* Melhorar contraste para acessibilidade */
+  .mobile-high-contrast {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+  }
+}
+
+/* Estilos para tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .tablet-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .tablet-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Melhorar modais para tablets */
+  .tablet-modal {
+    max-width: 90vw;
+    margin: 2rem auto;
+  }
+}
+
+/* Melhorias de acessibilidade */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Alto contraste */
+@media (prefers-contrast: high) {
+  .contrast-border {
+    border-width: 2px;
+    border-color: #000;
+  }
+
+  .contrast-text {
+    color: #000;
+    font-weight: 600;
+  }
+}
+
+/* Modo escuro (para futuro) */
+@media (prefers-color-scheme: dark) {
+  .dark-mode {
+    background-color: #1f2937;
+    color: #f9fafb;
+  }
+
+  .dark-mode-card {
+    background-color: #374151;
+    border-color: #4b5563;
+  }
+}

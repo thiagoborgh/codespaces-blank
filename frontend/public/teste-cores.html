@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Cores - Cards de Estatísticas</title>
+    <style>
+        :root {
+            --success-light: #d1fae5;
+            --success-dark: #047857;
+            --warning-light: #fed7aa;
+            --warning-dark: #c2410c;
+            --info-light: #ddd6fe;
+            --info-dark: #6d28d9;
+            --neutral-light: #e5e7eb;
+            --neutral-dark: #4b5563;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 20px;
+            background: #f8fafc;
+        }
+
+        .demo-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 800px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .stat-card.warning::before { background: var(--warning-light); }
+        .stat-card.info::before { background: var(--info-light); }
+        .stat-card.success::before { background: var(--success-light); }
+        .stat-card.primary::before { background: var(--neutral-light); }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+
+        .stat-icon.warning {
+            background: var(--warning-light);
+            color: var(--warning-dark);
+        }
+
+        .stat-icon.info {
+            background: var(--info-light);
+            color: var(--info-dark);
+        }
+
+        .stat-icon.success {
+            background: var(--success-light);
+            color: var(--success-dark);
+        }
+
+        .stat-icon.primary {
+            background: var(--neutral-light);
+            color: var(--neutral-dark);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 8px;
+        }
+
+        .badge.warning {
+            background: var(--warning-light);
+            color: var(--warning-dark);
+        }
+
+        .badge.info {
+            background: var(--info-light);
+            color: var(--info-dark);
+        }
+
+        .badge.success {
+            background: var(--success-light);
+            color: var(--success-dark);
+        }
+
+        .badge.primary {
+            background: var(--neutral-light);
+            color: var(--neutral-dark);
+        }
+
+        h3 {
+            color: #374151;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 0 0 8px 0;
+        }
+
+        .number {
+            color: #1f2937;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 Teste: Cores dos Ícones = Cores dos Badges</h1>
+    <p>Os fundos dos ícones agora usam exatamente as mesmas cores dos badges correspondentes:</p>
+    
+    <div class="demo-container">
+        <div class="stat-card warning">
+            <div class="stat-icon warning">⏰</div>
+            <h3>Aguardando</h3>
+            <p class="number">5</p>
+            <div class="badge warning">Aguardando</div>
+        </div>
+
+        <div class="stat-card info">
+            <div class="stat-icon info">▶️</div>
+            <h3>Em Atendimento</h3>
+            <p class="number">2</p>
+            <div class="badge info">Em Atendimento</div>
+        </div>
+
+        <div class="stat-card success">
+            <div class="stat-icon success">✅</div>
+            <h3>Atendidos</h3>
+            <p class="number">8</p>
+            <div class="badge success">Atendidos</div>
+        </div>
+
+        <div class="stat-card primary">
+            <div class="stat-icon primary">👤</div>
+            <h3>Total Hoje</h3>
+            <p class="number">15</p>
+            <div class="badge primary">Total Hoje</div>
+        </div>
+    </div>
+
+    <div style="margin-top: 40px; padding: 20px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
+        <h2>✅ Confirmação Visual</h2>
+        <p>Compare as cores:</p>
+        <ul>
+            <li><strong>Aguardando:</strong> Ícone e badge com fundo laranja claro (<code>#fed7aa</code>)</li>
+            <li><strong>Em Atendimento:</strong> Ícone e badge com fundo roxo claro (<code>#ddd6fe</code>)</li>
+            <li><strong>Atendidos:</strong> Ícone e badge com fundo verde claro (<code>#d1fae5</code>) ← <strong>Este era o problema!</strong></li>
+            <li><strong>Total Hoje:</strong> Ícone e badge com fundo cinza claro (<code>#e5e7eb</code>)</li>
+        </ul>
+    </div>
+</body>
+</html>

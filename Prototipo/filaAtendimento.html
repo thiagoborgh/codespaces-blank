@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protótipo Prontuário - Fila de Atendimento</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800">
+    <div class="flex h-screen">
+        <!-- Menu Lateral -->
+        <nav class="w-64 bg-white shadow-md hidden md:block">
+            <ul class="p-4 space-y-2">
+                <li><a href="/Prototipo/index.html" class="flex items-center p-2 text-blue-600 hover:bg-blue-50 rounded"><i class="bi bi-house mr-2"></i> Tela Inicial</a></li>
+                <li><a href="#" class="flex items-center p-2 text-gray-600 hover:bg-blue-50 rounded"><i class="bi bi-clipboard-pulse mr-2"></i> Informações do Atendimento</a></li>
+                <li><a href="#" class="flex items-center p-2 text-gray-600 hover:bg-blue-50 rounded"><i class="bi bi-thermometer-half mr-2"></i> Medições</a></li>
+                <li><a href="#" class="flex items-center p-2 text-gray-600 hover:bg-blue-50 rounded"><i class="bi bi-bell-fill mr-2"></i> Lembretes</a></li>
+                <li><a href="/Prototipo/filaAtendimento.html" class="flex items-center p-2 text-blue-600 hover:bg-blue-50 rounded"><i class="bi bi-people-fill mr-2"></i> Fila de Atendimento</a></li>
+                <li><a href="#" class="flex items-center p-2 text-gray-600 hover:bg-blue-50 rounded"><i class="bi bi-clipboard2-check mr-2"></i> Quadro de Acompanhamentos</a></li>
+                <li><a href="#" class="flex items-center p-2 text-gray-600 hover:bg-blue-50 rounded"><i class="bi bi-file-medical mr-2"></i> SOAP</a></li>
+                <li><a href="#" class="flex items-center p-2 text-gray-600 hover:bg-blue-50 rounded"><i class="bi bi-syringe mr-2"></i> Vacinação</a></li>
+                <li><a href="#" class="flex items-center p-2 text-gray-600 hover:bg-blue-50 rounded"><i class="bi bi-clock-history mr-2"></i> Histórico</a></li>
+                <li><a href="#" class="flex items-center p-2 text-gray-600 hover:bg-blue-50 rounded"><i class="bi bi-calendar-check mr-2"></i> Agendamentos</a></li>
+            </ul>
+        </nav>
+
+        <!-- Conteúdo Principal -->
+        <div class="flex-1 p-6 overflow-auto">
+            <header class="bg-white shadow-md p-4 mb-6 flex justify-between items-center">
+                <div>
+                    <button class="md:hidden p-2 text-gray-600 hover:text-blue-600" id="sidebarToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <button class="p-2 text-gray-600 hover:text-blue-600" id="fullscreenToggle">
+                        <i class="bi bi-arrows-fullscreen"></i>
+                    </button>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 text-gray-600 hover:text-blue-600 relative">
+                        <i class="bi bi-bell"></i><span class="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">9</span>
+                    </button>
+                    <span class="text-gray-600">Lorem Ipsum</span>
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNqfsaj9DZ8KXSSkfFvzUgr0JWQeOfWGJs3Iv3DxOkQUkh7-KT3jq4a594uSgPjfnBoMA&usqp=CAU" alt="Usuário" class="w-8 h-8 rounded-full">
+                </div>
+            </header>
+
+            <nav class="text-sm text-gray-500 mb-6" aria-label="breadcrumb">
+                <ol class="flex space-x-2">
+                    <li><a href="#" class="hover:text-blue-600">Home</a></li>
+                    <li class="text-gray-800">Fila de Atendimento</li>
+                </ol>
+            </nav>
+
+            <!-- Header da Fila -->
+            <div class="bg-white shadow-md p-4 mb-6 rounded-lg">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
+                    <div>
+                        <input type="text" id="citizenSearch" placeholder="Pesquisar por Nome, CPF, CNS ou Data de Nascimento" class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="showMyAttendances" class="mr-2">
+                            <label for="showMyAttendances" class="text-sm">Ver somente meus atendimentos</label>
+                        </div>
+                    </div>
+                    <div>
+                        <select id="sortBy" class="w-full p-2 border rounded">
+                            <option value="arrival">Hora de chegada (crescente)</option>
+                            <option value="risk">Classificação de risco</option>
+                        </select>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button id="filterBtn" class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Filtro</button>
+                        <button id="resetFilter" class="bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300">Voltar para padrão</button>
+                    </div>
+                    <div>
+                        <button id="addCitizenBtn" class="bg-blue-600 text-white p-2 rounded w-full hover:bg-blue-700">Adicionar Cidadão</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção Adicionar Cidadão -->
+            <div id="addCitizenSection" class="collapse bg-white shadow-md p-4 mb-6 rounded-lg">
+                <div class="mb-4">
+                    <label for="citizenSearch" class="block text-sm font-medium text-gray-700">Cidadão <span class="text-red-500">*</span></label>
+                    <input type="text" id="citizenSearch" placeholder="Nome, CPF, CNS ou Data de Nascimento" class="w-full p-2 border rounded mt-1">
+                    <small id="searchResult" class="text-gray-500 mt-1 block">Nenhum resultado encontrado. Clique em 'Adicionar Novo' para cadastrar.</small>
+                    <button type="button" id="addNewCitizenBtn" class="text-blue-600 hover:underline mt-1" style="display: none;">Adicionar Novo</button>
+                </div>
+                <div class="mb-4">
+                    <label for="appointmentDate" class="block text-sm font-medium text-gray-700">Agendamento do dia</label>
+                    <input type="date" id="appointmentDate" value="2025-06-27" class="w-full p-2 border rounded mt-1">
+                </div>
+                <div class="mb-4">
+                    <label for="professional" class="block text-sm font-medium text-gray-700">Profissional</label>
+                    <select id="professional" class="w-full p-2 border rounded mt-1">
+                        <option value="">Selecione o profissional</option>
+                        <option value="maria">Maria Assunção - Médica</option>
+                        <option value="joao">João Silva - Enfermeiro</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="team" class="block text-sm font-medium text-gray-700">Equipe</label>
+                    <select id="team" class="w-full p-2 border rounded mt-1">
+                        <option value="">Selecione a equipe</option>
+                        <option value="equipe1">Equipe 1</option>
+                        <option value="equipe2">Equipe 2</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Tipo de Serviço</label>
+                    <div class="grid grid-cols-2 gap-2 mt-1">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="serviceAdmMed" class="mr-2">
+                            <label for="serviceAdmMed" class="text-sm">Administração de Medicamento</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="serviceEscuta" class="mr-2">
+                            <label for="serviceEscuta" class="text-sm">Escuta Inicial</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="serviceOdonto" class="mr-2">
+                            <label for="serviceOdonto" class="text-sm">Odontologia</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="serviceCurativo" class="mr-2">
+                            <label for="serviceCurativo" class="text-sm">Curativo</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="serviceExames" class="mr-2">
+                            <label for="serviceExames" class="text-sm">Exames</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="serviceProced" class="mr-2">
+                            <label for="serviceProced" class="text-sm">Procedimentos</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="serviceDemEsp" class="mr-2">
+                            <label for="serviceDemEsp" class="text-sm">Demanda Espontânea</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="serviceNebul" class="mr-2">
+                            <label for="serviceNebul" class="text-sm">Nebulização</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="serviceVacina" class="mr-2">
+                            <label for="serviceVacina" class="text-sm">Vacina</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex space-x-2">
+                    <button id="clearFields" class="bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300">Limpar Campos</button>
+                    <button id="addCitizenConfirm" class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Adicionar</button>
+                </div>
+                <div id="newCitizenForm" class="collapse mt-4">
+                    <h6 class="text-lg font-semibold text-gray-800">Cadastro de Novo Cidadão</h6>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                        <div>
+                            <label for="newCitizenName" class="block text-sm font-medium text-gray-700">Nome Completo <span class="text-red-500">*</span></label>
+                            <input type="text" id="newCitizenName" class="w-full p-2 border rounded mt-1" required>
+                        </div>
+                        <div>
+                            <label for="newCitizenCPF" class="block text-sm font-medium text-gray-700">CPF <span class="text-red-500">*</span></label>
+                            <input type="text" id="newCitizenCPF" class="w-full p-2 border rounded mt-1" required>
+                        </div>
+                        <div>
+                            <label for="newCitizenCNS" class="block text-sm font-medium text-gray-700">CNS <span class="text-red-500">*</span></label>
+                            <input type="text" id="newCitizenCNS" class="w-full p-2 border rounded mt-1" required>
+                        </div>
+                        <div>
+                            <label for="newCitizenRace" class="block text-sm font-medium text-gray-700">Raça/Cor <span class="text-red-500">*</span></label>
+                            <select id="newCitizenRace" class="w-full p-2 border rounded mt-1" required>
+                                <option value="">Selecione</option>
+                                <option value="branca">Branca</option>
+                                <option value="preta">Preta</option>
+                                <option value="parda">Parda</option>
+                                <option value="amarela">Amarela</option>
+                                <option value="indigena">Indígena</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="newCitizenBirthDate" class="block text-sm font-medium text-gray-700">Data de Nascimento <span class="text-red-500">*</span></label>
+                            <input type="date" id="newCitizenBirthDate" class="w-full p-2 border rounded mt-1" required>
+                        </div>
+                        <div>
+                            <label for="newCitizenSex" class="block text-sm font-medium text-gray-700">Sexo <span class="text-red-500">*</span></label>
+                            <select id="newCitizenSex" class="w-full p-2 border rounded mt-1" required>
+                                <option value="">Selecione</option>
+                                <option value="masculino">Masculino</option>
+                                <option value="feminino">Feminino</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="newCitizenMother" class="block text-sm font-medium text-gray-700">Nome da Mãe</label>
+                            <div class="flex mt-1">
+                                <input type="text" id="newCitizenMother" class="w-full p-2 border rounded" disabled>
+                                <div class="ml-2">
+                                    <input type="checkbox" id="unknownMother" class="mr-1">
+                                    <label for="unknownMother" class="text-sm">Desconhece</label>
+                                </div>
+                            </div>
+                            <small class="text-gray-500 mt-1 block">Marque se desconhece a informação.</small>
+                        </div>
+                        <div>
+                            <label for="newCitizenFather" class="block text-sm font-medium text-gray-700">Nome do Pai</label>
+                            <div class="flex mt-1">
+                                <input type="text" id="newCitizenFather" class="w-full p-2 border rounded" disabled>
+                                <button id="unknownFatherToggle" class="ml-2 bg-gray-200 text-gray-700 p-1 rounded hover:bg-gray-300">Desconhecido</button>
+                            </div>
+                            <small class="text-gray-500 mt-1 block">Clique para marcar como desconhecido.</small>
+                        </div>
+                        <div>
+                            <label for="newCitizenNationality" class="block text-sm font-medium text-gray-700">Nacionalidade <span class="text-red-500">*</span></label>
+                            <select id="newCitizenNationality" class="w-full p-2 border rounded mt-1" required>
+                                <option value="">Selecione</option>
+                                <option value="brasileiro">Brasileiro</option>
+                                <option value="estrangeiro">Estrangeiro</option>
+                                <option value="naturalizado">Naturalizado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="newCitizenBirthState" class="block text-sm font-medium text-gray-700">Estado de Nascimento <span class="text-red-500">*</span></label>
+                            <select id="newCitizenBirthState" class="w-full p-2 border rounded mt-1" required>
+                                <option value="">Selecione</option>
+                                <option value="SP">São Paulo</option>
+                                <option value="RJ">Rio de Janeiro</option>
+                                <option value="MG">Minas Gerais</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="newCitizenPhone" class="block text-sm font-medium text-gray-700">Telefone Celular <span class="text-red-500">*</span></label>
+                            <input type="tel" id="newCitizenPhone" class="w-full p-2 border rounded mt-1" required>
+                        </div>
+                        <div>
+                            <label for="newCitizenContactPhone" class="block text-sm font-medium text-gray-700">Telefone de Contato <span class="text-red-500">*</span></label>
+                            <input type="tel" id="newCitizenContactPhone" class="w-full p-2 border rounded mt-1" required>
+                        </div>
+                        <div>
+                            <label for="newCitizenCEP" class="block text-sm font-medium text-gray-700">CEP <span class="text-red-500">*</span></label>
+                            <input type="text" id="newCitizenCEP" class="w-full p-2 border rounded mt-1" required>
+                        </div>
+                        <div>
+                            <label for="newCitizenStreetType" class="block text-sm font-medium text-gray-700">Tipo de Logradouro <span class="text-red-500">*</span></label>
+                            <select id="newCitizenStreetType" class="w-full p-2 border rounded mt-1" required>
+                                <option value="">Selecione</option>
+                                <option value="rua">Rua</option>
+                                <option value="av">Avenida</option>
+                                <option value="est">Estrada</option>
+                                <option value="trav">Travessa</option>
+                                <option value="beco">Beco</option>
+                                <option value="viela">Viela</option>
+                                <option value="outros">Outros</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="newCitizenStreet" class="block text-sm font-medium text-gray-700">Logradouro <span class="text-red-500">*</span></label>
+                            <input type="text" id="newCitizenStreet" class="w-full p-2 border rounded mt-1" required>
+                        </div>
+                        <div>
+                            <label for="newCitizenNumber" class="block text-sm font-medium text-gray-700">Número <span class="text-red-500">*</span></label>
+                            <input type="text" id="newCitizenNumber" class="w-full p-2 border rounded mt-1" required>
+                        </div>
+                        <div>
+                            <label for="newCitizenNeighborhood" class="block text-sm font-medium text-gray-700">Bairro <span class="text-red-500">*</span></label>
+                            <input type="text" id="newCitizenNeighborhood" class="w-full p-2 border rounded mt-1" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Atendimento -->
+            <div class="bg-white shadow-md p-4 rounded-lg">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b text-gray-600">
+                            <th class="p-2 text-left">Status</th>
+                            <th class="p-2 text-left">Horário de Chegada</th>
+                            <th class="p-2 text-left">Nome</th>
+                            <th class="p-2 text-left">Idade</th>
+                            <th class="p-2 text-left">Tipo de Serviço</th>
+                            <th class="p-2 text-left">Vulnerabilidade</th>
+                            <th class="p-2 text-left">Profissional</th>
+                            <th class="p-2 text-left">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="p-2"><span class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Aguardando</span></td>
+                            <td class="p-2">08:00</td>
+                            <td class="p-2">João Silva</td>
+                            <td class="p-2">35</td>
+                            <td class="p-2"><span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Escuta Inicial</span></td>
+                            <td class="p-2"><span class="inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded">Alta</span></td>
+                            <td class="p-2">Maria Oliveira</td>
+                            <td class="p-2">
+                                <a href="/Prototipo/escutaInicial.html" class="text-blue-600 hover:underline">Escuta Inicial</a>
+                                <button class="text-gray-600 hover:text-blue-600 ml-2">Atender</button>
+                                <button class="text-gray-600 hover:text-blue-600 ml-2">Mais Opções</button>
+                            </td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="p-2"><span class="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">Em Atendimento</span></td>
+                            <td class="p-2">08:15</td>
+                            <td class="p-2">Ana Souza</td>
+                            <td class="p-2">28</td>
+                            <td class="p-2"><span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Consulta</span></td>
+                            <td class="p-2"><span class="inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded">Média</span></td>
+                            <td class="p-2">Carlos Pereira</td>
+                            <td class="p-2">
+                                <button class="text-blue-600 hover:underline">Atender</button>
+                                <button class="text-gray-600 hover:text-blue-600 ml-2">Mais Opções</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Modal de Filtro -->
+            <div id="filterModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden" tabindex="-1">
+                <div class="bg-white p-4 rounded-lg max-w-md mx-auto mt-20">
+                    <div class="flex justify-between items-center mb-4">
+                        <h5 class="text-lg font-semibold">Filtros</h5>
+                        <button id="closeFilter" class="text-gray-600 hover:text-blue-600"><i class="bi bi-x-lg"></i></button>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Status do Atendimento</label>
+                            <div class="grid grid-cols-2 gap-2 mt-1">
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="statusWaiting" checked class="mr-2">
+                                    <label for="statusWaiting" class="text-sm"><span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Aguardando</span></label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="statusInService" checked class="mr-2">
+                                    <label for="statusInService" class="text-sm"><span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">Em Atendimento</span></label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="statusInitial" checked class="mr-2">
+                                    <label for="statusInitial" class="text-sm"><span class="bg-pink-100 text-pink-800 text-xs px-2 py-1 rounded">Escuta Inicial</span></label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="statusDone" class="mr-2">
+                                    <label for="statusDone" class="text-sm"><span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Realizado</span></label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="statusNotWaited" class="mr-2">
+                                    <label for="statusNotWaited" class="text-sm"><span class="bg-gray-200 text-gray-800 text-xs px-2 py-1 rounded">Não Aguardou</span></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Período</label>
+                            <input type="date" id="periodStart" value="2025-06-26" class="w-full p-2 border rounded mt-1">
+                            <input type="date" id="periodEnd" value="2025-06-26" class="w-full p-2 border rounded mt-1">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Tipo de Serviço</label>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="serviceTypeVacina" class="mr-2">
+                                <label for="serviceTypeVacina" class="text-sm">Vacina</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Equipe</label>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="team1" class="mr-2">
+                                <label for="team1" class="text-sm">Equipe 1</label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Profissional</label>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="professional1" class="mr-2">
+                                <label for="professional1" class="text-sm">Maria Oliveira</label>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="onlyUnfinished" class="mr-2">
+                            <label for="onlyUnfinished" class="text-sm">Ver somente atendimentos não finalizados</label>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-2 mt-4">
+                        <button id="closeFilter" class="bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300">Fechar</button>
+                        <button id="resetFilterModal" class="bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300">Voltar para padrão</button>
+                        <button id="applyFilter" class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Filtrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('filterBtn').addEventListener('click', function() {
+            document.getElementById('filterModal').classList.remove('hidden');
+        });
+        document.getElementById('closeFilter').addEventListener('click', function() {
+            document.getElementById('filterModal').classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
