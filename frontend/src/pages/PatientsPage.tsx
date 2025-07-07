@@ -10,7 +10,7 @@ import {
   EyeIcon,
 } from '@heroicons/react/24/outline';
 import { formatDate, formatCPF, formatPhone, getStatusColor, getStatusText, calculateAge } from '../utils/format';
-import { calculateDetailedAge, formatBirthDateWithAge, formatAgeCompact } from '../utils/ageUtils';
+import { calculateDetailedAgeShort, formatBirthDateWithAge, formatAgeCompact } from '../utils/ageUtils';
 
 const PatientsPage: React.FC = () => {
   const {

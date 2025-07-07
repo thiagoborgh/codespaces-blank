@@ -7,7 +7,9 @@ import AttendanceStatementModal from '../components/queue/AttendanceStatementMod
 import EditPatientModal from '../components/queue/EditPatientModal';
 import MedicalRecordModal from '../components/queue/MedicalRecordModal';
 import DayAttendancesModal from '../components/queue/DayAttendancesModal';
+import InitialListeningModal from '../components/InitialListeningModal';
 import { useQueue } from '../hooks/useQueue';
+import type { QueuePatient } from '../hooks/useQueue';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { formatAgeFromShort, formatAgeCompact, formatBirthDateWithAge, formatBirthDateWithAgeNoLabel } from '../utils/ageUtils';
@@ -70,14 +72,143 @@ const QueuePage: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isMedicalRecordModalOpen, setIsMedicalRecordModalOpen] = useState(false);
   const [isDayAttendancesModalOpen, setIsDayAttendancesModalOpen] = useState(false);
+  const [isInitialListeningModalOpen, setIsInitialListeningModalOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [selectedPatientForModal, setSelectedPatientForModal] = useState<{ id: number; name: string } | null>(null);
   const [selectedPatientForAttendances, setSelectedPatientForAttendances] = useState<any>(null);
+  const [selectedPatientForListening, setSelectedPatientForListening] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showMyAttendances, setShowMyAttendances] = useState(false);
   const [sortBy, setSortBy] = useState('arrival');
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
   const [searchFeedback, setSearchFeedback] = useState(false);
+
+  // RF14: Função para obter tooltips indicativos baseados no status da escuta inicial
+  const getInitialListeningTooltip = (patient: QueuePatient): string => {
+    // Se já está em escuta inicial por outro profissional
+    if (patient.status === 'initial_listening') {
+      return 'Cidadão está em escuta inicial com outro profissional';
+    }
+
+    // Se escuta inicial foi finalizada
+    if (patient.initialListeningCompleted) {
+      // Se o atendimento já foi finalizado
+      if (patient.status === 'completed') {
+        return 'Visualizar escuta inicial (atendimento finalizado)';
+      }
+      
+      // Se ainda está em atendimento ou aguardando
+      return 'Visualizar escuta inicial (escuta finalizada)';
+    }
+
+    // Se escuta inicial não foi feita ainda
+    if (!patient.initialListeningCompleted) {
+      // Se o atendimento já foi finalizado sem escuta
+      if (patient.status === 'completed') {
+        return 'Cidadão sem escuta inicial (atendimento finalizado sem escuta)';
+      }
+      
+      // Se ainda está em atendimento sem escuta
+      if (patient.status === 'in_progress') {
+        return 'O cidadão ainda não fez escuta inicial (em atendimento)';
+      }
+      
+      // Se está aguardando atendimento
+      return 'O cidadão ainda não fez escuta inicial';
+    }
+
+    // Fallback
+    return 'Visualizar/Realizar escuta inicial';
+  };
+
+  // Função para verificar se o usuário pode executar escuta inicial
+  const canPerformInitialListening = (): boolean => {
+    return user?.role === 'doctor' || user?.role === 'nurse';
+  };
+
+  // Função para obter o texto do botão principal baseado no tipo de demanda
+  const getMainButtonData = (patient: any) => {
+    // Para vacinação, sempre mostrar botão de vacina
+    if (isVaccineService(patient.serviceType)) {
+      return {
+        text: 'Vacina',
+        icon: BeakerIcon,
+        action: () => handleAttend(patient.id),
+        className: 'bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200',
+        tooltip: 'Aplicar vacina',
+        disabled: false
+      };
+    }
+
+    // Para demanda espontânea, verificar se precisa de escuta inicial
+    if (patient.appointmentType === 'spontaneous') {
+      // Se já está em escuta inicial por outro profissional
+      if (patient.status === 'initial_listening') {
+        return {
+          text: 'Em Escuta',
+          icon: MicrophoneIcon,
+          action: () => {}, // Sem ação
+          className: 'bg-pink-100 text-pink-600 border border-pink-300 cursor-default',
+          tooltip: getInitialListeningTooltip(patient), // RF14: Tooltip dinâmico
+          disabled: true
+        };
+      }
+
+      // Se escuta inicial não foi feita ainda
+      if (!patient.initialListeningCompleted) {
+        const hasPermission = canPerformInitialListening();
+        
+        return {
+          text: 'Escuta Inicial',
+          icon: MicrophoneIcon,
+          action: () => handleInitialListening(patient.id),
+          className: hasPermission 
+            ? 'bg-pink-50 text-pink-700 hover:bg-pink-100 border border-pink-200'
+            : 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed',
+          tooltip: hasPermission 
+            ? getInitialListeningTooltip(patient) // RF14: Tooltip dinâmico para realizar escuta
+            : 'Ação não permitida para seu perfil. Apenas Enfermeiros e Médicos podem executar Escuta Inicial',
+          disabled: !hasPermission
+        };
+      } else {
+        // RF14: Escuta inicial já feita - permitir visualizar
+        const hasPermission = canPerformInitialListening();
+        
+        return {
+          text: 'Visualizar Escuta',
+          icon: EyeIcon,
+          action: () => handleViewInitialListening(patient.id), // Nova função para visualizar
+          className: hasPermission 
+            ? 'bg-green-50 text-green-700 hover:bg-green-100 border border-green-200'
+            : 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed',
+          tooltip: getInitialListeningTooltip(patient), // RF14: Tooltip dinâmico para visualizar
+          disabled: !hasPermission
+        };
+      }
+    }
+
+    // Para demanda agendada, mostrar pré-atendimento ou atendimento
+    if (patient.appointmentType === 'scheduled') {
+      return {
+        text: 'Pré-Atendimento',
+        icon: ClockIcon,
+        action: () => handleAttend(patient.id),
+        className: 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200',
+        tooltip: 'Iniciar pré-atendimento',
+        disabled: false
+      };
+    }
+
+    // Caso padrão (fallback)
+    return {
+      text: 'Atender',
+      icon: CheckIcon,
+      action: () => handleAttend(patient.id),
+      className: 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200',
+      tooltip: 'Iniciar atendimento',
+      disabled: false
+    };
+  };
 
   // Debug log para dropdown
   useEffect(() => {
@@ -105,6 +236,19 @@ const QueuePage: React.FC = () => {
   };
 
   const getStatusColor = (status: string) => {
+    if (theme === 'hybrid') {
+      switch (status) {
+        case 'waiting': return 'healthcare-badge success'; // verde - aguardando atendimento
+        case 'in_progress': return 'healthcare-badge info'; // roxo - em atendimento
+        case 'initial_listening': return 'healthcare-badge pink'; // rosa - em escuta inicial
+        case 'completed': return 'healthcare-badge primary'; // azul - atendimento realizado
+        case 'cancelled': return 'healthcare-badge danger'; // vermelho - cancelado
+        case 'no_show': return 'healthcare-badge neutral'; // cinza - não aguardou
+        default: return 'healthcare-badge neutral';
+      }
+    }
+    
+    // Cores para tema padrão
     switch (status) {
       case 'waiting': return 'bg-green-100 text-green-800 border-green-200';
       case 'in_progress': return 'bg-purple-100 text-purple-800 border-purple-200';
@@ -177,10 +321,173 @@ const QueuePage: React.FC = () => {
     }
   };
 
-  const handleListening = async (patientId: number) => {
-    // TODO: Implementar abertura da tela de escuta inicial
-    console.log('Iniciando escuta inicial para paciente:', patientId);
-    setOpenDropdown(null);
+  const handleInitialListening = async (patientId: number) => {
+    // RN00: Validação de permissão do profissional logado
+    if (!canPerformInitialListening()) {
+      setError('Ação não permitida para seu perfil. Apenas Enfermeiros e Médicos podem executar Escuta Inicial');
+      return;
+    }
+    
+    // Buscar dados do paciente na fila
+    const patient = patients.find(p => p.id === patientId);
+    if (!patient) {
+      setError('Cidadão não encontrado na lista de atendimentos. Selecione um cidadão válido antes de prosseguir.');
+      return;
+    }
+
+    // RN00: Validação de pré-condições
+    // Verificar se é demanda espontânea
+    if (patient.appointmentType !== 'spontaneous') {
+      setError('Escuta inicial só pode ser realizada para demanda espontânea.');
+      return;
+    }
+
+    // Verificar se não tem escuta inicial já finalizada no mesmo dia
+    if (patient.initialListeningCompleted) {
+      setError('Escuta inicial já registrada e finalizada para este cidadão hoje.');
+      return;
+    }
+
+    // Verificar se não está em escuta inicial por outro profissional
+    if (patient.status === 'initial_listening') {
+      setError('Este cidadão já está em escuta inicial com outro profissional.');
+      return;
+    }
+
+    try {
+      console.log('🎯 [RN00] Iniciando escuta inicial para paciente:', patientId);
+      console.log('👨‍⚕️ Usuário autorizado:', user?.name, 'Perfil:', user?.role);
+      console.log('📋 Paciente:', patient.name, 'Nascimento:', patient.birthDate);
+      
+      // RN00: Registrar automaticamente data/hora de início
+      const startTime = new Date();
+      console.log('⏰ Hora de início da escuta:', startTime.toISOString());
+      
+      // RN00: Alterar status para "Em Escuta Inicial" 
+      // TODO: Implementar chamada para API para atualizar status
+      // await updatePatientStatus(patientId, 'initial_listening');
+      
+      // RN00: Registros de auditoria (Log)
+      console.log('📊 [AUDITORIA] Escuta Inicial Iniciada:', {
+        profissional: user?.name,
+        profissionalId: user?.id,
+        perfil: user?.role,
+        cidadao: patient.name,
+        cidadaoId: patient.id,
+        dataHoraInicio: startTime.toISOString(),
+        terminal: navigator.userAgent,
+        ip: 'localhost' // TODO: obter IP real
+      });
+
+      // RN00: Abrir tela estruturada para escuta inicial
+      console.log('🔄 Abrindo modal de escuta inicial...');
+      
+      // Preparar dados do paciente para o modal
+      setSelectedPatientForListening({
+        id: patient.id,
+        name: patient.name,
+        birthDate: patient.birthDate,
+        cpf: patient.cpf,
+        phone: patient.phone,
+        serviceType: patient.serviceType,
+        arrivalTime: patient.arrivalTime
+      });
+      
+      // Fechar dropdown e abrir modal
+      setOpenDropdown(null);
+      setIsInitialListeningModalOpen(true);
+      
+    } catch (error) {
+      console.error('❌ Erro ao iniciar escuta inicial:', error);
+      setError('Erro ao iniciar escuta inicial. Tente novamente.');
+    }
+  };
+
+  // Função para salvar dados da escuta inicial
+  const handleSaveInitialListening = async (data: any) => {
+    try {
+      console.log('💾 [RN02/RN03] Salvando dados da escuta inicial:', data);
+      
+      // RN02: Log da descrição livre
+      if (data.consultationDescription.trim()) {
+        console.log('📝 [RN02-LOG] Descrição complementar registrada:', {
+          usuario: user?.name,
+          usuarioId: user?.id,
+          dataHora: new Date().toISOString(),
+          textoInserido: data.consultationDescription,
+          tamanho: data.consultationDescription.length
+        });
+      } else {
+        console.log('📝 [RN02-LOG] Campo de descrição mantido vazio');
+      }
+
+      // RN03: Log da antropometria
+      if (data.weight !== undefined) {
+        console.log('⚖️ [RN03-LOG] Peso registrado:', {
+          usuario: user?.name,
+          usuarioId: user?.id,
+          dataHora: new Date().toISOString(),
+          peso: data.weight,
+          unidade: 'kg'
+        });
+      }
+
+      // TODO: Implementar chamada real para API
+      // await api.saveInitialListening(selectedPatientForListening.id, data);
+      
+      // Simular salvamento com delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      console.log('✅ Escuta inicial salva com sucesso para:', selectedPatientForListening?.name);
+      
+      // Atualizar estado do paciente (simulado)
+      // TODO: Integrar com useQueue para atualizar status real
+      
+      // Fechar modal
+      setIsInitialListeningModalOpen(false);
+      setSelectedPatientForListening(null);
+      
+    } catch (error) {
+      console.error('❌ Erro ao salvar escuta inicial:', error);
+      throw error;
+    }
+  };
+
+  // RN15: Handler para cancelamento de atendimento
+  const handleCancelInitialListening = async (patientId: number, justification?: string) => {
+    try {
+      console.log('🚫 [RN15] Cancelando escuta inicial:', {
+        pacienteId: patientId,
+        justificativa: justification,
+        profissional: user?.name,
+        profissionalId: user?.id,
+        timestamp: new Date().toISOString()
+      });
+      
+      // TODO: Implementar chamada real para API
+      // await api.cancelInitialListening(patientId, justification);
+      
+      // Simular cancelamento com delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      console.log('✅ [RN15] Escuta inicial cancelada com sucesso:', {
+        pacienteId: patientId,
+        statusAnterior: 'em_escuta_inicial',
+        statusNovo: 'aguardando_atendimento',
+        timestamp: new Date().toISOString()
+      });
+      
+      // TODO: Integrar com useQueue para atualizar status real do paciente
+      // O paciente deve retornar para status 'waiting'
+      
+      // Fechar modal
+      setIsInitialListeningModalOpen(false);
+      setSelectedPatientForListening(null);
+      
+    } catch (error) {
+      console.error('❌ [RN15] Erro ao cancelar escuta inicial:', error);
+      throw error;
+    }
   };
 
   const handleAttend = async (patientId: number) => {
@@ -613,10 +920,10 @@ const QueuePage: React.FC = () => {
             </div>
           </div>
 
-          <div className={theme === 'hybrid' ? 'healthcare-stat-card success' : 'bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl shadow-sm border border-blue-200 p-6'}>
+          <div className={theme === 'hybrid' ? 'healthcare-stat-card primary' : 'bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl shadow-sm border border-blue-200 p-6'}>
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className={theme === 'hybrid' ? 'healthcare-stat-icon success' : 'w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center'}>
+                <div className={theme === 'hybrid' ? 'healthcare-stat-icon primary' : 'w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center'}>
                   <CheckCircleIcon className="h-6 w-6 text-white" />
                 </div>
               </div>
@@ -628,10 +935,10 @@ const QueuePage: React.FC = () => {
             </div>
           </div>
 
-          <div className={theme === 'hybrid' ? 'healthcare-stat-card primary' : 'bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl shadow-sm border border-purple-200 p-6'}>
+          <div className={theme === 'hybrid' ? 'healthcare-stat-card neutral' : 'bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl shadow-sm border border-purple-200 p-6'}>
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className={theme === 'hybrid' ? 'healthcare-stat-icon primary' : 'w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center'}>
+                <div className={theme === 'hybrid' ? 'healthcare-stat-icon neutral' : 'w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center'}>
                   <UserIcon className="h-6 w-6 text-white" />
                 </div>
               </div>
@@ -742,8 +1049,10 @@ const QueuePage: React.FC = () => {
                       // Adicionar classe de status (prioridade principal)
                       if (patient.status === 'waiting') classes += ' waiting';
                       else if (patient.status === 'in_progress') classes += ' in-progress';
+                      else if (patient.status === 'initial_listening') classes += ' initial_listening';
                       else if (patient.status === 'completed') classes += ' completed';
                       else if (patient.status === 'cancelled') classes += ' cancelled';
+                      else if (patient.status === 'no_show') classes += ' no_show';
                       
                       // Para pacientes urgentes aguardando, usar uma classe especial
                       if (patient.priority === 'urgent' && patient.status === 'waiting') {
@@ -802,6 +1111,7 @@ const QueuePage: React.FC = () => {
                               <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(patient.status)}`}>
                                 {patient.status === 'waiting' ? 'Aguardando' :
                                  patient.status === 'in_progress' ? 'Em Atendimento' :
+                                 patient.status === 'initial_listening' ? 'Em Escuta Inicial' :
                                  patient.status === 'completed' ? 'Atendido' : 
                                  patient.status === 'no_show' ? 'Não Aguardou' : 'Cancelado'}
                               </span>
@@ -900,45 +1210,22 @@ const QueuePage: React.FC = () => {
 
                         {/* Action Buttons - À direita do card */}
                         <div className="flex lg:flex-col flex-wrap gap-2 lg:min-w-[160px] xl:min-w-[180px]" style={{ overflow: 'visible' }}>
-                          {/* Escuta Inicial */}
-                          <button
-                            onClick={() => handleListening(patient.id)}
-                            disabled={patient.initialListeningCompleted}
-                            className={`px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center whitespace-nowrap shadow-sm ${
-                              patient.initialListeningCompleted
-                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
-                                : 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 hover:shadow-md hover:scale-105'
-                            }`}
-                            title={patient.initialListeningCompleted ? 'Escuta já realizada' : 'Realizar escuta inicial'}
-                          >
-                            <MicrophoneIcon className="h-4 w-4 lg:mr-2" />
-                            <span className="hidden lg:inline">
-                              {patient.initialListeningCompleted ? 'Escuta Feita' : 'Escuta'}
-                            </span>
-                          </button>
-
-                          {/* Atender/Vacina */}
-                          <button
-                            onClick={() => handleAttend(patient.id)}
-                            className={`px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center whitespace-nowrap shadow-sm hover:shadow-md hover:scale-105 ${
-                              isVaccineService(patient.serviceType)
-                                ? 'bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200'
-                                : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200'
-                            }`}
-                            title={isVaccineService(patient.serviceType) ? 'Aplicar vacina' : 'Iniciar atendimento'}
-                          >
-                            {isVaccineService(patient.serviceType) ? (
-                              <>
-                                <BeakerIcon className="h-4 w-4 lg:mr-2" />
-                                <span className="hidden lg:inline">Vacina</span>
-                              </>
-                            ) : (
-                              <>
-                                <CheckIcon className="h-4 w-4 lg:mr-2" />
-                                <span className="hidden lg:inline">Atender</span>
-                              </>
-                            )}
-                          </button>
+                          {(() => {
+                            const mainButton = getMainButtonData(patient);
+                            const ButtonIcon = mainButton.icon;
+                            
+                            return (
+                              <button
+                                onClick={mainButton.action}
+                                disabled={mainButton.disabled}
+                                className={`px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center whitespace-nowrap shadow-sm hover:shadow-md hover:scale-105 ${mainButton.className}`}
+                                title={mainButton.tooltip}
+                              >
+                                <ButtonIcon className="h-4 w-4 lg:mr-2" />
+                                <span className="hidden lg:inline">{mainButton.text}</span>
+                              </button>
+                            );
+                          })()}
 
                           {/* Chamar */}
                           <button
@@ -1244,11 +1531,14 @@ const QueuePage: React.FC = () => {
           onResetFilter={handleResetFilter}
         />
 
-        <AttendanceStatementModal
-          isOpen={isAttendanceModalOpen}
-          onClose={() => setIsAttendanceModalOpen(false)}
-          patient={selectedPatient}
-        />
+        {selectedPatient && (
+          <AttendanceStatementModal
+            isOpen={isAttendanceModalOpen}
+            onClose={() => setIsAttendanceModalOpen(false)}
+            patient={selectedPatient}
+          />
+        )}
+      
 
         <EditPatientModal
           isOpen={isEditModalOpen}
@@ -1274,6 +1564,20 @@ const QueuePage: React.FC = () => {
             setSelectedPatientForAttendances(null);
           }}
           patient={selectedPatientForAttendances}
+        />
+
+        <InitialListeningModal
+          isOpen={isInitialListeningModalOpen}
+          onClose={() => {
+            setIsInitialListeningModalOpen(false);
+            setSelectedPatientForListening(null);
+          }}
+          patient={selectedPatientForListening}
+          onSave={handleSaveInitialListening}
+          onCancel={handleCancelInitialListening}
+          // RN16: Props para controle de finalização
+          initialData={undefined} // TODO: buscar dados existentes se houver
+          isViewOnly={false} // TODO: definir baseado no status da escuta
         />
       </div>
     </Layout>

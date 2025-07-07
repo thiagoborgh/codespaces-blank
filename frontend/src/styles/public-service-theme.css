@@ -66,6 +66,13 @@
   --info-dark: #6d28d9;
   --info-darker: #5b21b6;
   
+  /* Rosa - Escuta inicial */
+  --pink: #ec4899;                      /* Rosa para escuta inicial */
+  --pink-light: #fce7f3;
+  --pink-lighter: #fdf2f8;
+  --pink-dark: #db2777;
+  --pink-darker: #be185d;
+  
   /* Cinza - Neutro, desabilitado */
   --neutral: #6b7280;
   --neutral-light: #e5e7eb;
@@ -448,6 +455,11 @@
   transition: all var(--transition-fast);
 }
 
+/* Garantir que no tema híbrido os badges tenham o border-radius correto */
+.hybrid-theme .healthcare-badge {
+  border-radius: 20px !important;
+}
+
 .healthcare-badge.success {
   background: var(--success-light);
   color: var(--success-darker);
@@ -474,6 +486,20 @@
   color: var(--info-darker);
   border-color: var(--info);
   box-shadow: 0 2px 4px rgba(124, 58, 237, 0.15);
+}
+
+.healthcare-badge.primary {
+  background: var(--primary-light);
+  color: var(--primary-darker);
+  border-color: var(--primary);
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.15);
+}
+
+.healthcare-badge.pink {
+  background: var(--pink-light);
+  color: var(--pink-darker);
+  border-color: var(--pink);
+  box-shadow: 0 2px 4px rgba(236, 72, 153, 0.15);
 }
 
 .healthcare-badge.neutral {
@@ -1010,6 +1036,10 @@
 }
 
 .hybrid-theme .healthcare-stat-card.primary::before {
+  background: var(--primary-dark); /* azul escuro - mesma cor do ícone "Atendidos" */
+}
+
+.hybrid-theme .healthcare-stat-card.neutral::before {
   background: var(--neutral-dark); /* cinza escuro - mesma cor do ícone "Total Hoje" */
 }
 
@@ -1052,11 +1082,20 @@
 }
 
 .hybrid-theme .healthcare-stat-icon.primary {
+  background: var(--primary-light); /* fundo azul claro */
+  color: var(--primary-dark); /* ícone azul escuro - contraste */
+}
+
+.hybrid-theme .healthcare-stat-icon.primary .h-6 {
+  color: var(--primary-dark) !important;
+}
+
+.hybrid-theme .healthcare-stat-icon.neutral {
   background: var(--neutral-light); /* fundo cinza claro */
   color: var(--neutral-dark); /* ícone cinza escuro - contraste */
 }
 
-.hybrid-theme .healthcare-stat-icon.primary .h-6 {
+.hybrid-theme .healthcare-stat-icon.neutral .h-6 {
   color: var(--neutral-dark) !important;
 }
 
@@ -1274,11 +1313,15 @@
 
 /* Faixas laterais com cores dos STATUS dos pacientes */
 .hybrid-theme .healthcare-card.patient-card.waiting {
-  border-left-color: var(--accent-yellow); /* amarelo - paciente aguardando */
+  border-left-color: var(--success); /* verde - paciente aguardando atendimento */
 }
 
 .hybrid-theme .healthcare-card.patient-card.in-progress {
-  border-left-color: var(--success); /* verde - paciente em atendimento */
+  border-left-color: var(--info); /* roxo - paciente em atendimento */
+}
+
+.hybrid-theme .healthcare-card.patient-card.initial_listening {
+  border-left-color: var(--pink); /* rosa - paciente em escuta inicial */
 }
 
 .hybrid-theme .healthcare-card.patient-card.completed {
@@ -1287,6 +1330,10 @@
 
 .hybrid-theme .healthcare-card.patient-card.cancelled {
   border-left-color: var(--danger); /* vermelho - paciente cancelado */
+}
+
+.hybrid-theme .healthcare-card.patient-card.no_show {
+  border-left-color: var(--neutral); /* cinza - paciente não aguardou */
 }
 
 /* Pacientes urgentes AGUARDANDO - faixa amarela mais grossa para destacar */

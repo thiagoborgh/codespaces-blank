@@ -1,39 +1,9 @@
 /**
- * Calcula a idade detalhada em anos, meses e dias a partir de uma data de nascimento
- * @param birthDate - Data de nascimento no formato YYYY-MM-DD ou objeto Date
- * @returns String formatada "XXanos XXmeses XXdias de idade"
+ * Utilitários para formatação de idade
  */
-export const calculateDetailedAge = (birthDate: string | Date): string => {
-  const birth = typeof birthDate === 'string' ? new Date(birthDate) : birthDate;
-  const today = new Date();
-  
-  let years = today.getFullYear() - birth.getFullYear();
-  let months = today.getMonth() - birth.getMonth();
-  let days = today.getDate() - birth.getDate();
-  
-  // Ajustar se os dias são negativos
-  if (days < 0) {
-    months--;
-    const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
-    days += lastMonth.getDate();
-  }
-  
-  // Ajustar se os meses são negativos
-  if (months < 0) {
-    years--;
-    months += 12;
-  }
-  
-  // Formatação
-  const yearsText = years === 1 ? 'ano' : 'anos';
-  const monthsText = months === 1 ? 'mês' : 'meses';
-  const daysText = days === 1 ? 'dia' : 'dias';
-  
-  return `${years} ${yearsText} ${months} ${monthsText} ${days} ${daysText} de idade`;
-};
 
 /**
- * Calcula a idade detalhada em formato abreviado a partir de uma data de nascimento
+ * Calcula a idade detalhada em anos, meses e dias a partir de uma data de nascimento
  * @param birthDate - Data de nascimento no formato YYYY-MM-DD ou objeto Date
  * @returns String formatada "XXa XXm XXd"
  */
@@ -83,16 +53,12 @@ export const formatAgeFromShort = (ageFormatted: string): string => {
 };
 
 /**
- * Versão compacta da idade (só para compatibilidade)
+ * Versão compacta para exibição em cards
  * @param ageFormatted - Idade no formato "XXa XXm XXd"
- * @returns String formatada "XX anos"
+ * @returns String formatada mais compacta
  */
 export const formatAgeCompact = (ageFormatted: string): string => {
-  const match = ageFormatted.match(/(\d+)a/);
-  if (!match) return ageFormatted;
-  
-  const years = parseInt(match[1]);
-  return `${years} ${years === 1 ? 'ano' : 'anos'}`;
+  return ageFormatted; // Já está no formato compacto
 };
 
 /**
@@ -106,14 +72,14 @@ export const formatBirthDateWithAge = (birthDate: string | Date): string => {
   // Formatar data de nascimento
   const birthFormatted = birth.toLocaleDateString('pt-BR');
   
-  // Calcular idade no formato abreviado
-  const ageShort = calculateDetailedAgeShort(birth);
+  // Calcular idade
+  const ageFormatted = calculateDetailedAgeShort(birthDate);
   
-  return `Nascimento: ${birthFormatted} (${ageShort})`;
+  return `Nascimento: ${birthFormatted} (${ageFormatted})`;
 };
 
 /**
- * Formata a data de nascimento sem label (apenas para mobile)
+ * Formata a data de nascimento sem o label "Nascimento:"
  * @param birthDate - Data de nascimento no formato YYYY-MM-DD ou objeto Date
  * @returns String formatada "dd/mm/aaaa (XXa Xm XXd)"
  */
@@ -123,16 +89,16 @@ export const formatBirthDateWithAgeNoLabel = (birthDate: string | Date): string 
   // Formatar data de nascimento
   const birthFormatted = birth.toLocaleDateString('pt-BR');
   
-  // Calcular idade no formato abreviado
-  const ageShort = calculateDetailedAgeShort(birth);
+  // Calcular idade
+  const ageFormatted = calculateDetailedAgeShort(birthDate);
   
-  return `${birthFormatted} (${ageShort})`;
+  return `${birthFormatted} (${ageFormatted})`;
 };
 
 /**
- * Calcula apenas a idade em anos
+ * Calcula apenas a idade em anos (para compatibilidade)
  * @param birthDate - Data de nascimento no formato YYYY-MM-DD ou objeto Date
- * @returns Número de anos
+ * @returns Idade em anos
  */
 export const calculateAge = (birthDate: string | Date): number => {
   const birth = typeof birthDate === 'string' ? new Date(birthDate) : birthDate;
