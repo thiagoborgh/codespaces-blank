@@ -177,7 +177,7 @@ const QueuePage: React.FC = () => {
         return {
           text: 'Visualizar Escuta',
           icon: EyeIcon,
-          action: () => handleViewInitialListening(patient.id), // Nova função para visualizar
+          action: () => handleInitialListening(patient.id), // Nova função para visualizar
           className: hasPermission 
             ? 'bg-green-50 text-green-700 hover:bg-green-100 border border-green-200'
             : 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed',
