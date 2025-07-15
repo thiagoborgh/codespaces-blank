@@ -1,267 +1,69 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Patient } from '../types/types';
-import AttendanceReport from './AttendanceReport';
-import { ClockIcon, XMarkIcon } from '@heroicons/react/24/outline';
-
-interface SOAPTabProps {
-  patient: Patient;
-  consultationId?: number;
-  onSave?: (soapData: any) => void;
-}
-
-interface SOAPData {
-  subjective: {
-    subjective_impressions: string;
-    consultation_reason: string;
-    ciap2_code: string;
-    ciap2_description: string;
-  };
-  objective: {
-    general_info: {
-      vaccination_up_to_date: boolean | null;
-      last_menstrual_period: string;
-    };
-    anthropometry: {
-      weight: string;
-      height: string;
-      bmi: string;
-      abdominal_circumference: string;
-      head_circumference: string;
-      calf_circumference: string;
-      systolic_pressure: string;
-      diastolic_pressure: string;
-      respiratory_rate: string;
-      heart_rate: string;
-      temperature: string;
-      oxygen_saturation: string;
-      capillary_glucose: string;
-      glucose_collection_time: string;
-    };
-    food_consumption_markers: string;
-    exam_results: string;
-  };
-  assessment: {
-    problems_conditions: {
-      condition: string;
-      ciap2_code: string;
-      cid10_code: string;
-      include_in_list: boolean;
-      situation: 'active' | 'inactive' | 'latent';
-    }[];
-    allergies_reactions: {
-      category: string;
-      specific_agent: string;
-    }[];
-    clinical_impressions: string;
-  };
-  plan: string;
-  vital_signs: {
-    systolic_pressure: string;
-    diastolic_pressure: string;
-    heart_rate: string;
-    temperature: string;
-    respiratory_rate: string;
-    oxygen_saturation: string;
-  };
-  measurements: {
-    weight: string;
-    height: string;
-    bmi: string;
-    head_circumference: string;
-    abdominal_circumference: string;
-  };
-  problems: string[];
-  allergies: string[];
-  medications: string[];
-  procedures: string[];
-  exams: string[];
-  prescriptions: {
-    medication: string;
-    dosage: string;
-    frequency: string;
-    duration: string;
-    instructions: string;
-  }[];
-  follow_up: {
-    date: string;
-    type: string;
-    notes: string;
-  };
-}
-
-const SOAPTab: React.FC<SOAPTabProps> = ({ patient, consultationId, onSave }) => {
-  const [soapData, setSoapData] = useState<SOAPData>({
-    subjective: {
-      subjective_impressions: '',
-      consultation_reason: '',
-      ciap2_code: '',
-      ciap2_description: ''
+// ...existing code...
+      referrals: '',
+      certificates: '',
+      general_guidance: '',
+      food_guidance: '',
+      exercise_guidance: '',
+      selfcare_guidance: '',
+      referral_reason: '',
+      care_sharing: '',
+      certificate_observations: '',
+      procedures: ''
     },
-    objective: {
-      general_info: {
-        vaccination_up_to_date: null,
-        last_menstrual_period: ''
-      },
-      anthropometry: {
-        weight: '',
-        height: '',
-        bmi: '',
-        abdominal_circumference: '',
-        head_circumference: '',
-        calf_circumference: '',
-        systolic_pressure: '',
-        diastolic_pressure: '',
-        respiratory_rate: '',
-        heart_rate: '',
-        temperature: '',
-        oxygen_saturation: '',
-        capillary_glucose: '',
-        glucose_collection_time: 'nao-especificado'
-      },
-      food_consumption_markers: '',
-      exam_results: ''
-    },
-    assessment: {
-      problems_conditions: [],
-      allergies_reactions: [],
-      clinical_impressions: ''
-    },
-    plan: '',
     vital_signs: {
       systolic_pressure: '',
       diastolic_pressure: '',
       heart_rate: '',
       temperature: '',
-      respiratory_rate: '',
       oxygen_saturation: ''
     },
-    measurements: {
-      weight: '',
-      height: '',
-      bmi: '',
-      head_circumference: '',
-      abdominal_circumference: ''
-    },
-    problems: [],
-    allergies: [],
-    medications: [],
-    procedures: [],
-    exams: [],
     prescriptions: [],
+    exams: [],
+    procedures: [],
     follow_up: {
-      date: '',
-      type: 'return',
       notes: ''
     }
   });
-
-  const [autoSaving, setAutoSaving] = useState(false);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [showReport, setShowReport] = useState(false);
-  const [showTimeline, setShowTimeline] = useState(true);
-  const [newPrescription, setNewPrescription] = useState({
-    medication: '',
-    dosage: '',
-    frequency: '',
-    duration: '',
-    instructions: ''
-  });
-
-  // Estado para controlar auto-save inteligente
   const [lastSavedData, setLastSavedData] = useState<SOAPData | null>(null);
-  const [hasChanges, setHasChanges] = useState(false);
 
-  // Estados para controlar accordion SOAP
-  const [openAccordion, setOpenAccordion] = useState<string | null>('subjective');
-  const [objectiveSubTab, setObjectiveSubTab] = useState<'general' | 'anthropometry' | 'food_markers' | 'exam_results'>('general');
-  const [assessmentSubTab, setAssessmentSubTab] = useState<'problems' | 'allergies'>('problems');
-  const [planSubTab, setPlanSubTab] = useState<'procedures' | 'medications' | 'exams' | 'certificates' | 'guidance' | 'referrals' | 'care_sharing' | 'followup'>('procedures');
+  // Keep localSubjective in sync with soapData.subjective.subjective_impressions
+  useEffect(() => {
+    setLocalSubjective(soapData.subjective.subjective_impressions || '');
+  }, [soapData.subjective.subjective_impressions]);
 
-  // Estados para novos problemas/condições
-  const [newProblem, setNewProblem] = useState({
-    condition: '',
-    ciap2_code: '',
-    cid10_code: '',
-    include_in_list: false,
-    situation: 'active' as 'active' | 'inactive' | 'latent'
-  });
-
-  // Estados para novas alergias
-  const [newAllergy, setNewAllergy] = useState({
-    category: '',
-    specific_agent: ''
-  });
-
-  /**
- * Componente SOAPTab - Interface para preenchimento do prontuário SOAP
- * 
- * Features de Auto-Save Inteligente:
- * - Só salva quando há mudanças reais no conteúdo
- * - Não salva campos vazios ou dados duplicados
- * - Delay de 2 segundos para evitar requisições excessivas
- * - Indicador visual de mudanças não salvas
- * - Botão de salvamento manual disponível
- * - Logs informativos para debugging
- * 
- * @param patient - Dados do paciente
- * @param consultationId - ID da consulta
- * @param onSave - Callback para salvar dados
- */
-
-  // Verificar se há mudanças reais nos dados
-  const hasRealChanges = (currentData: SOAPData, previousData: SOAPData | null) => {
-    if (!previousData) return false;
-    
-    // Verifica se há conteúdo real (não apenas strings vazias)
-    const hasContent = (obj: any): boolean => {
-      if (typeof obj === 'string') return obj.trim() !== '';
-      if (Array.isArray(obj)) return obj.length > 0;
-      if (typeof obj === 'object' && obj !== null) {
-        return Object.values(obj).some(val => hasContent(val));
+  // When saving, update soapData.subjective.subjective_impressions from localSubjective
+  const handleSave = () => {
+    setSoapData(prev => ({
+      ...prev,
+      subjective: {
+        ...prev.subjective,
+        subjective_impressions: localSubjective
       }
-      return false;
-    };
-
-    // Verifica se há mudanças significativas
-    const isDifferent = JSON.stringify(currentData) !== JSON.stringify(previousData);
-    const hasRealContent = hasContent(currentData);
-    
-    return isDifferent && hasRealContent;
+    }));
+    if (onSave) {
+      setAutoSaving(true);
+      onSave({
+        ...soapData,
+        subjective: {
+          ...soapData.subjective,
+          subjective_impressions: localSubjective
+        }
+      });
+      setLastSaved(new Date());
+      setLastSavedData({
+        ...soapData,
+        subjective: {
+          ...soapData.subjective,
+          subjective_impressions: localSubjective
+        }
+      });
+      setHasChanges(false);
+      setTimeout(() => setAutoSaving(false), 500);
+    }
   };
 
-  // Auto-save inteligente - só salva quando há mudanças reais
-  useEffect(() => {
-    // Não salva se não há mudanças reais
-    if (!hasRealChanges(soapData, lastSavedData)) {
-      return;
-    }
-
-    const timeoutId = setTimeout(() => {
-      if (onSave && hasChanges) {
-        console.log('🔄 Auto-salvando SOAP com mudanças reais...');
-        setAutoSaving(true);
-        onSave(soapData);
-        setLastSaved(new Date());
-        setLastSavedData(soapData);
-        setHasChanges(false);
-        setTimeout(() => setAutoSaving(false), 500);
-      }
-    }, 2000); // Aumentado para 2 segundos para evitar salvamentos excessivos
-
-    return () => clearTimeout(timeoutId);
-  }, [soapData, onSave, hasChanges, lastSavedData]);
-
-  // Marcar que há mudanças quando dados são alterados
-  useEffect(() => {
-    if (hasRealChanges(soapData, lastSavedData)) {
-      setHasChanges(true);
-    }
-  }, [soapData, lastSavedData]);
-
-  const updateSOAPField = (field: keyof SOAPData, value: any) => {
-    console.log(`📝 Atualizando campo ${field} com valor:`, value);
-    setSoapData(prev => ({ ...prev, [field]: value }));
-  };
+  // ...existing code (all other handlers and rendering)...
 
   const updateNestedField = useCallback((parent: keyof SOAPData, field: string, value: any) => {
     console.log(`📝 Atualizando campo aninhado ${parent}.${field} com valor:`, value);
@@ -271,7 +73,34 @@ const SOAPTab: React.FC<SOAPTabProps> = ({ patient, consultationId, onSave }) =>
         ? { ...prev[parent] as any, [field]: value }
         : { [field]: value }
     }));
+    // Removido setHasChanges para não interferir na digitação
   }, []);
+
+
+  // Função para salvar imediatamente quando usuário sai do campo
+  const handleFieldBlur = useCallback((field: keyof SOAPData, value: any) => {
+    console.log(`💾 Campo ${field} perdeu foco, salvando imediatamente...`);
+    if (onSave && hasRealChanges(soapData, lastSavedData)) {
+      setAutoSaving(true);
+      onSave(soapData);
+      setLastSaved(new Date());
+      setLastSavedData(soapData);
+      setHasChanges(false);
+      setTimeout(() => setAutoSaving(false), 500);
+    }
+  }, [soapData, lastSavedData, onSave, hasRealChanges]);
+
+  const handleNestedFieldBlur = useCallback((parent: keyof SOAPData, field: string) => {
+    console.log(`💾 Campo ${parent}.${field} perdeu foco, salvando imediatamente...`);
+    if (onSave && hasRealChanges(soapData, lastSavedData)) {
+      setAutoSaving(true);
+      onSave(soapData);
+      setLastSaved(new Date());
+      setLastSavedData(soapData);
+      setHasChanges(false);
+      setTimeout(() => setAutoSaving(false), 500);
+    }
+  }, [soapData, lastSavedData, onSave, hasRealChanges]);
 
   const addPrescription = () => {
     if (newPrescription.medication && newPrescription.dosage && newPrescription.frequency) {
@@ -500,11 +329,9 @@ const SOAPTab: React.FC<SOAPTabProps> = ({ patient, consultationId, onSave }) =>
                     Descreva as impressões subjetivas...
                   </label>
                   <textarea
-                    value={soapData.subjective.subjective_impressions}
-                    onChange={(e) => updateSOAPField('subjective', {
-                      ...soapData.subjective,
-                      subjective_impressions: e.target.value
-                    })}
+                    value={localSubjective}
+                    onChange={e => setLocalSubjective(e.target.value)}
+                    // onBlur removido para não salvar automaticamente
                     rows={4}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
                     placeholder="Descreva as impressões subjetivas..."
@@ -1393,8 +1220,8 @@ const SOAPTab: React.FC<SOAPTabProps> = ({ patient, consultationId, onSave }) =>
                         Intervenções e/ou Procedimentos
                       </label>
                       <textarea
-                        value={soapData.plan}
-                        onChange={(e) => updateSOAPField('plan', e.target.value)}
+                        value={soapData.plan.procedures || ''}
+                        onChange={e => updateNestedField('plan', 'procedures', e.target.value)}
                         rows={4}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                         placeholder="Descreva as intervenções e procedimentos realizados ou planejados..."
@@ -1571,6 +1398,8 @@ const SOAPTab: React.FC<SOAPTabProps> = ({ patient, consultationId, onSave }) =>
                         Solicitação de Exames
                       </label>
                       <textarea
+                        value={soapData.plan.requested_exams || ''}
+                        onChange={e => updateNestedField('plan', 'requested_exams', e.target.value)}
                         rows={4}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                         placeholder="Descreva os exames solicitados..."
@@ -1633,6 +1462,8 @@ const SOAPTab: React.FC<SOAPTabProps> = ({ patient, consultationId, onSave }) =>
                         Atestados e Declarações
                       </label>
                       <textarea
+                        value={soapData.plan.certificates || ''}
+                        onChange={e => updateNestedField('plan', 'certificates', e.target.value)}
                         rows={4}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                         placeholder="Descreva os atestados e declarações emitidos..."
@@ -1666,13 +1497,15 @@ const SOAPTab: React.FC<SOAPTabProps> = ({ patient, consultationId, onSave }) =>
                     
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Observações
-                      </label>
-                      <textarea
-                        rows={3}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                        placeholder="Observações adicionais sobre o atestado..."
-                      />
+                      Observações
+                    </label>
+                    <textarea
+                        value={soapData.plan.certificate_observations || ''}
+                        onChange={e => updateNestedField('plan', 'certificate_observations', e.target.value)}
+                      rows={3}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      placeholder="Observações adicionais sobre o atestado..."
+                    />
                     </div>
                   </div>
                 )}
@@ -1684,18 +1517,22 @@ const SOAPTab: React.FC<SOAPTabProps> = ({ patient, consultationId, onSave }) =>
                         Orientações Gerais
                       </label>
                       <textarea
+                        value={soapData.plan.general_guidance || ''}
+                        onChange={e => updateNestedField('plan', 'general_guidance', e.target.value)}
                         rows={4}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                         placeholder="Orientações sobre cuidados, estilo de vida, prevenção..."
                       />
                     </div>
-                    
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Orientações Alimentares
                         </label>
                         <textarea
+                          value={soapData.plan.food_guidance || ''}
+                          onChange={e => updateNestedField('plan', 'food_guidance', e.target.value)}
+                          onBlur={handleAutoSave}
                           rows={3}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                           placeholder="Orientações sobre dieta e alimentação..."
@@ -1706,18 +1543,23 @@ const SOAPTab: React.FC<SOAPTabProps> = ({ patient, consultationId, onSave }) =>
                           Orientações de Atividade Física
                         </label>
                         <textarea
+                        value={soapData.plan.exercise_guidance || ''}
+                        onChange={e => updateNestedField('plan', 'exercise_guidance', e.target.value)}
+                          onBlur={handleAutoSave}
                           rows={3}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                           placeholder="Orientações sobre exercícios e atividades..."
                         />
                       </div>
                     </div>
-                    
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Orientações de Autocuidado
                       </label>
                       <textarea
+                        value={soapData.plan.selfcare_guidance || ''}
+                        onChange={e => updateNestedField('plan', 'selfcare_guidance', e.target.value)}
+                        onBlur={handleAutoSave}
                         rows={3}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                         placeholder="Orientações sobre autocuidado e prevenção..."
@@ -1733,6 +1575,9 @@ const SOAPTab: React.FC<SOAPTabProps> = ({ patient, consultationId, onSave }) =>
                         Encaminhamentos
                       </label>
                       <textarea
+                        value={soapData.plan.referrals || ''}
+                        onChange={e => updateNestedField('plan', 'referrals', e.target.value)}
+                        onBlur={handleAutoSave}
                         rows={4}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                         placeholder="Descreva os encaminhamentos realizados..."
@@ -1833,6 +1678,9 @@ const SOAPTab: React.FC<SOAPTabProps> = ({ patient, consultationId, onSave }) =>
                         Objetivo do Compartilhamento
                       </label>
                       <textarea
+                        value={soapData.plan.care_sharing || ''}
+                        onChange={e => updateNestedField('plan', 'care_sharing', e.target.value)}
+                        onBlur={handleAutoSave}
                         rows={3}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                         placeholder="Descreva o objetivo do compartilhamento de cuidado..."
@@ -1990,6 +1838,21 @@ const SOAPTab: React.FC<SOAPTabProps> = ({ patient, consultationId, onSave }) =>
     </button>
   )}
 
+  {/* Botões de ação principais */}
+  <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 py-4 px-6 flex justify-end gap-4 z-30">
+    <button
+      onClick={handleSave}
+      className="px-6 py-2 bg-green-600 text-white rounded-md font-semibold hover:bg-green-700 transition-colors"
+    >
+      Salvar e Finalizar
+    </button>
+    <button
+      onClick={handleSave}
+      className="px-6 py-2 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors"
+    >
+      Salvar Rascunho
+    </button>
+  </div>
   {/* Modal de Relatório */}
   {showReport && (
     <AttendanceReport
@@ -2001,8 +1864,6 @@ const SOAPTab: React.FC<SOAPTabProps> = ({ patient, consultationId, onSave }) =>
       }}
     />
   )}
-</div>
-  );
-};
+
 
 export default SOAPTab;

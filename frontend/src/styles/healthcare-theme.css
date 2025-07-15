@@ -711,3 +711,45 @@ div[data-dropdown-menu="true"] {
   box-shadow: var(--shadow-soft);
   transform: none !important;
 }
+
+/* === ESCUTA INICIAL MODAL - TEMA HÍBRIDO IGUAL AO PADRÃO === */
+.healthcare-theme .healthcare-modal {
+  background: #fff !important;
+  border-radius: 16px !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 8px 32px 0 rgba(60, 60, 90, 0.12), 0 1.5px 6px 0 rgba(60, 60, 90, 0.08) !important;
+  padding: 0 !important;
+}
+
+.healthcare-theme .healthcare-modal-header {
+  background: linear-gradient(90deg, #ec4899 0%, #8b5cf6 100%) !important;
+  color: #fff !important;
+  border-radius: 16px 16px 0 0 !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+.healthcare-theme .healthcare-modal-content {
+  background: #fff !important;
+  border-radius: 0 0 16px 16px !important;
+}
+
+.healthcare-theme .healthcare-modal-footer {
+  background: #f9fafb !important;
+  border-top: 1px solid #e5e7eb !important;
+  border-radius: 0 0 16px 16px !important;
+}
+
+.healthcare-theme .healthcare-modal input,
+.healthcare-theme .healthcare-modal textarea,
+.healthcare-theme .healthcare-modal select {
+  background: #fff !important;
+  color: #1a202c !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+.healthcare-theme .healthcare-modal input:focus,
+.healthcare-theme .healthcare-modal textarea:focus,
+.healthcare-theme .healthcare-modal select:focus {
+  border-color: #ec4899 !important;
+  box-shadow: 0 0 0 2px #ec489922 !important;
+}

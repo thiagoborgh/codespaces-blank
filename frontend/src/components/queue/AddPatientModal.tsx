@@ -187,7 +187,7 @@ const AddPatientModal: React.FC<AddPatientModalProps> = ({ isOpen, onClose, onAd
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-start justify-center p-4">
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-[9999] flex items-start justify-center p-4">
       <div className="relative w-full max-w-4xl max-h-[95vh] bg-white rounded-lg shadow-xl overflow-hidden">
         <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-3 sm:px-6">
           <div className="flex items-center justify-between">

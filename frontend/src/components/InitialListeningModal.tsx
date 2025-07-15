@@ -417,9 +417,9 @@ const InitialListeningModal: React.FC<InitialListeningModalProps> = ({
     return `${age} anos`;
   };
 
-  // RN03: Validação e formatação do peso
+  // RN03: Validação e formatação do peso (simplificada)
   const handleWeightChange = (value: string) => {
-    // Remover caracteres não numéricos exceto vírgula
+    // Permite digitação livre, validação ao final
     const cleanValue = value.replace(/[^0-9,]/g, '');
     
     if (cleanValue === '') {
@@ -428,31 +428,24 @@ const InitialListeningModal: React.FC<InitialListeningModalProps> = ({
       return;
     }
 
-    // Converter vírgula para ponto para processamento
+    // Atualiza o estado permitindo digitação
     const numericValue = parseFloat(cleanValue.replace(',', '.'));
     
-    if (isNaN(numericValue)) {
-      setWeightError('Este campo aceita apenas números.');
-      return;
+    if (!isNaN(numericValue)) {
+      // Validação suave - só mostra erro se muito fora dos limites
+      if (numericValue > 0 && numericValue <= 500) {
+        setWeightError('');
+        setFormData(prev => ({ ...prev, weight: numericValue }));
+      } else if (numericValue > 500) {
+        setWeightError('Peso máximo: 500 kg');
+        setFormData(prev => ({ ...prev, weight: numericValue }));
+      } else {
+        setFormData(prev => ({ ...prev, weight: numericValue }));
+      }
     }
-
-    // RN03: Validação dos limites (0,5 kg a 500 kg)
-    if (numericValue < 0.5) {
-      setWeightError('Deve ser entre 0,5 e 500 kg.');
-      return;
-    }
-    
-    if (numericValue > 500) {
-      setWeightError('Deve ser entre 0,5 e 500 kg.');
-      return;
-    }
-
-    // Validação passou
-    setWeightError('');
-    setFormData(prev => ({ ...prev, weight: numericValue }));
   };
 
-  // RN04: Validação e formatação da altura (melhorada)
+  // RN04: Validação e formatação da altura (simplificada)
   const handleHeightChange = (value: string) => {
     console.log('[ESCUTA_INICIAL] RN04 - Altura sendo alterada:', {
       user: 'Usuario atual', // TODO: pegar do contexto
@@ -461,94 +454,30 @@ const InitialListeningModal: React.FC<InitialListeningModalProps> = ({
       pacienteId: patient?.id
     });
 
-    // RN04: Função auxiliar para formatar altura durante digitação
-    const formatHeightInput = (value: string): string => {
-      // Remove caracteres inválidos
-      let cleaned = value.replace(/[^0-9,.]/g, '');
-      
-      // Se começar com 0, permite apenas se for seguido de vírgula/ponto
-      if (cleaned.startsWith('0') && cleaned.length > 1 && !cleaned.startsWith('0,') && !cleaned.startsWith('0.')) {
-        cleaned = cleaned.substring(1);
-      }
-      
-      // Limita a 5 caracteres
-      cleaned = cleaned.slice(0, 5);
-      
-      // Garante apenas uma vírgula ou ponto
-      const separators = cleaned.match(/[,.]/g);
-      if (separators && separators.length > 1) {
-        // Mantém apenas o primeiro separador
-        const firstSeparatorIndex = cleaned.search(/[,.]/);
-        cleaned = cleaned.substring(0, firstSeparatorIndex + 1) + 
-                  cleaned.substring(firstSeparatorIndex + 1).replace(/[,.]/g, '');
-      }
-      
-      return cleaned;
-    };
-
-    // Formatar valor antes de atualizar o estado
-    const formattedValue = formatHeightInput(value);
-    setFormData(prev => ({ ...prev, height: formattedValue ? parseFloat(formattedValue.replace(',', '.')) : undefined }));
-
-    if (formattedValue === '') {
+    // Permite digitação livre, apenas remove caracteres inválidos
+    const cleanValue = value.replace(/[^0-9,]/g, '');
+    
+    if (cleanValue === '') {
+      setFormData(prev => ({ ...prev, height: undefined }));
       setHeightError('');
       return;
     }
 
-    // Validar formato: máximo uma vírgula ou ponto
-    const commaCount = (formattedValue.match(/,/g) || []).length;
-    const dotCount = (formattedValue.match(/\./g) || []).length;
-    
-    if (commaCount + dotCount > 1) {
-      setHeightError('Formato inválido. Use apenas uma vírgula ou ponto.');
-      return;
-    }
-
     // Converter vírgula para ponto para processamento
-    const processValue = formattedValue.replace(',', '.');
-    const numericValue = parseFloat(processValue);
+    const numericValue = parseFloat(cleanValue.replace(',', '.'));
     
-    // Validar se é um número válido
-    if (isNaN(numericValue)) {
-      setHeightError('Valor inválido. Digite um número válido.');
-      return;
+    if (!isNaN(numericValue)) {
+      // Validação suave - só mostra erro se muito fora dos limites
+      if (numericValue > 0 && numericValue <= 250) {
+        setHeightError('');
+        setFormData(prev => ({ ...prev, height: numericValue }));
+      } else if (numericValue > 250) {
+        setHeightError('Altura máxima: 250 cm');
+        setFormData(prev => ({ ...prev, height: numericValue }));
+      } else {
+        setFormData(prev => ({ ...prev, height: numericValue }));
+      }
     }
-
-    // RN04: Validação dos limites (20 cm a 250 cm)
-    if (numericValue < 20) {
-      setHeightError('A altura deve ser entre 20 cm e 250 cm.');
-      console.log('[ESCUTA_INICIAL] RN04 - Erro: altura menor que 20cm:', {
-        valorInformado: numericValue,
-        minimoPermitido: 20
-      });
-      return;
-    }
-    
-    if (numericValue > 250) {
-      setHeightError('A altura deve ser entre 20 cm e 250 cm.');
-      console.log('[ESCUTA_INICIAL] RN04 - Erro: altura maior que 250cm:', {
-        valorInformado: numericValue,
-        maximoPermitido: 250
-      });
-      return;
-    }
-
-    // Validar casas decimais (máximo 1)
-    const decimalPart = processValue.split('.')[1];
-    if (decimalPart && decimalPart.length > 1) {
-      setHeightError('Use no máximo 1 casa decimal.');
-      return;
-    }
-
-    // Validação passou - log de sucesso
-    setHeightError('');
-    setFormData(prev => ({ ...prev, height: numericValue }));
-    
-    console.log('[ESCUTA_INICIAL] RN04 - Altura validada com sucesso:', {
-      valorFinal: numericValue,
-      unidade: 'cm',
-      status: 'validado'
-    });
   };
 
   // RN05: Validação da pressão arterial sistólica
@@ -1250,7 +1179,7 @@ const InitialListeningModal: React.FC<InitialListeningModalProps> = ({
     <>
       {/* RN15: Modal de Confirmação de Cancelamento */}
       {showCancelConfirmation && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-60 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[10000] p-4">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
             <div className="p-6">
               <div className="flex items-center mb-4">
@@ -1320,9 +1249,9 @@ const InitialListeningModal: React.FC<InitialListeningModalProps> = ({
       )}
 
       {/* Modal Principal de Escuta Inicial */}
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
         <div className={`${
-          theme === 'hybrid' ? 'healthcare-modal' : 'bg-white'
+          theme === 'hybrid' ? 'healthcare-modal bg-white' : 'bg-white'
         } rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden`}>
         
         {/* Header */}
@@ -1377,7 +1306,9 @@ const InitialListeningModal: React.FC<InitialListeningModalProps> = ({
         </div>
 
         {/* Form Content */}
-        <div className="overflow-y-auto max-h-[60vh] p-6">
+        <div className={`overflow-y-auto max-h-[60vh] p-6 ${
+          theme === 'hybrid' ? 'healthcare-modal-content bg-white' : 'bg-white'
+        }`}>
           <div className="space-y-6">
             
             {/* RN01: Motivo da Consulta CIAP2 */}
@@ -2320,7 +2251,7 @@ const InitialListeningModal: React.FC<InitialListeningModalProps> = ({
 
         {/* Footer */}
         <div className={`${
-          theme === 'hybrid' ? 'healthcare-modal-footer' : 'bg-gray-50'
+          theme === 'hybrid' ? 'healthcare-modal-footer bg-gray-50' : 'bg-gray-50'
         } px-6 py-4 border-t flex items-center justify-between`}>
           <div className="flex items-center space-x-4">
             {/* RN15: Botão Cancelar Atendimento */}

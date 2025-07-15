@@ -26,7 +26,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     id: 1,
     name: 'Usuario Desenvolvimento',
     email: 'dev@exemplo.com',
-    role: 'doctor',
+    role: 'admin', // MESTRA: todas as permissões
     active: true,
     registration_number: undefined,
     created_at: new Date().toISOString(),

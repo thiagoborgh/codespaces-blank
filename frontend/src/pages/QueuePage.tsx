@@ -125,7 +125,12 @@ const QueuePage: React.FC = () => {
 
   // Função para verificar se o usuário pode executar escuta inicial
   const canPerformInitialListening = (): boolean => {
-    return user?.role === 'doctor' || user?.role === 'nurse';
+    console.log('🔍 Verificando permissão para escuta inicial:', {
+      user: user,
+      role: user?.role,
+      hasPermission: user?.role === 'doctor' || user?.role === 'nurse' || user?.role === 'admin'
+    });
+    return user?.role === 'doctor' || user?.role === 'nurse' || user?.role === 'admin';
   };
 
   // Função para obter o texto do botão principal baseado no tipo de demanda
@@ -324,35 +329,49 @@ const QueuePage: React.FC = () => {
   };
 
   const handleInitialListening = async (patientId: number) => {
+    console.log('🎯 [DEBUG] Iniciando handleInitialListening para paciente:', patientId);
+    
     // RN00: Validação de permissão do profissional logado
     if (!canPerformInitialListening()) {
-      setError('Ação não permitida para seu perfil. Apenas Enfermeiros e Médicos podem executar Escuta Inicial');
+      const errorMsg = 'Ação não permitida para seu perfil. Apenas Enfermeiros e Médicos podem executar Escuta Inicial';
+      console.error('❌ [PERMISSÃO] Error:', errorMsg);
+      setError(errorMsg);
       return;
     }
     
     // Buscar dados do paciente na fila
     const patient = patients.find(p => p.id === patientId);
     if (!patient) {
-      setError('Cidadão não encontrado na lista de atendimentos. Selecione um cidadão válido antes de prosseguir.');
+      const errorMsg = 'Cidadão não encontrado na lista de atendimentos. Selecione um cidadão válido antes de prosseguir.';
+      console.error('❌ [PACIENTE] Error:', errorMsg);
+      setError(errorMsg);
       return;
     }
+
+    console.log('✅ [DEBUG] Paciente encontrado:', patient);
 
     // RN00: Validação de pré-condições
     // Verificar se é demanda espontânea
     if (patient.appointmentType !== 'spontaneous') {
-      setError('Escuta inicial só pode ser realizada para demanda espontânea.');
+      const errorMsg = 'Escuta inicial só pode ser realizada para demanda espontânea.';
+      console.error('❌ [TIPO_DEMANDA] Error:', errorMsg);
+      setError(errorMsg);
       return;
     }
 
     // Verificar se não tem escuta inicial já finalizada no mesmo dia
     if (patient.initialListeningCompleted) {
-      setError('Escuta inicial já registrada e finalizada para este cidadão hoje.');
+      const errorMsg = 'Escuta inicial já registrada e finalizada para este cidadão hoje.';
+      console.error('❌ [JA_FINALIZADA] Error:', errorMsg);
+      setError(errorMsg);
       return;
     }
 
     // Verificar se não está em escuta inicial por outro profissional
     if (patient.status === 'initial_listening') {
-      setError('Este cidadão já está em escuta inicial com outro profissional.');
+      const errorMsg = 'Este cidadão já está em escuta inicial com outro profissional.';
+      console.error('❌ [EM_ESCUTA] Error:', errorMsg);
+      setError(errorMsg);
       return;
     }
 
