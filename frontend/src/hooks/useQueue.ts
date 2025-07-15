@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import api from '../services/api';
 import { QueueFilters } from '../components/queue/FilterModal';
 
 // IMPORTANTE: Cada item na fila é um AGENDAMENTO, não apenas um paciente
@@ -14,7 +13,7 @@ export interface QueuePatient {
   phone?: string;
   arrivalTime: string;
   priority: 'low' | 'normal' | 'high' | 'urgent';
-  status: 'waiting' | 'in_progress' | 'completed' | 'cancelled' | 'initial_listening' | 'no_show';
+  status: 'waiting' | 'in_progress' | 'completed' | 'cancelled' | 'initial_listening' | 'no_show' | 'paused';
   serviceType: string; // O serviço específico deste agendamento
   estimatedWaitTime: number;
   notes?: string;
@@ -571,7 +570,6 @@ export const useQueue = () => {
       
       // Filtro por status específico (apenas quando não há busca)
       if (statusFilter && statusFilter !== 'all' && statusFilter !== 'undefined') {
-        const beforeStatusFilter = filtered.length;
         filtered = filtered.filter((p: QueuePatient) => {
           const shouldInclude = p.status === statusFilter;
           if (!shouldInclude) {
@@ -603,14 +601,12 @@ export const useQueue = () => {
       
       // Filtro por status (apenas se não há busca ativa)
       if (filters.status.length > 0 && !hasSearchTerm) {
-        const beforeStatusFilter = filtered.length;
         filtered = filtered.filter((p: QueuePatient) => filters.status.includes(p.status));
       } else if (filters.status.length > 0 && hasSearchTerm) {
       }
 
       // Filtro por tipo de serviço
       if (filters.serviceTypes.length > 0) {
-        const beforeServiceFilter = filtered.length;
         filtered = filtered.filter((p: QueuePatient) => 
           filters.serviceTypes.some(st => p.serviceType.toLowerCase().includes(st))
         );
@@ -618,19 +614,16 @@ export const useQueue = () => {
 
       // Filtro por equipe
       if (filters.teams.length > 0) {
-        const beforeTeamFilter = filtered.length;
         filtered = filtered.filter((p: QueuePatient) => p.team && filters.teams.includes(p.team));
       }
 
       // Filtro por profissional
       if (filters.professionals.length > 0) {
-        const beforeProfessionalFilter = filtered.length;
         filtered = filtered.filter((p: QueuePatient) => p.professional && filters.professionals.includes(p.professional));
       }
 
       // Filtro de não finalizados (apenas se não há busca ativa)
       if (filters.onlyUnfinished && !hasSearchTerm) {
-        const beforeUnfinishedFilter = filtered.length;
         filtered = filtered.filter((p: QueuePatient) => p.status !== 'completed' && p.status !== 'cancelled');
       } else if (filters.onlyUnfinished && hasSearchTerm) {
       }

@@ -1,0 +1,139 @@
+<!-- Seção Subjetivo -->
+<div class="soap-section">
+    <div class="soap-row" data-target="#subjetivo-form" style="background-color: #c6f6d5;">
+        <h5 class="mb-0">Subjetivo (S)</h5>
+        <i class="bi bi-chevron-down"></i>
+    </div>
+    
+    <div id="subjetivo-form" class="soap-form collapse">
+        <%= form_with model: [@patient, @consultation], local: false, remote: true, 
+                      url: attendance_path(@patient, @consultation), 
+                      method: :patch, class: "soap-form-data" do |form| %>
+            
+            <p class="text-muted mb-3">Informe as impressões subjetivas expressadas pelo paciente</p>
+            
+            <div class="mb-3">
+                <label class="form-label">Queixa principal e história da doença atual</label>
+                <%= form.text_area :subjective_content, 
+                                   rows: 4, 
+                                   class: "form-control", 
+                                   placeholder: "Descreva as impressões subjetivas do paciente...",
+                                   value: @soap_records.find_by(soap_type: 'subjective')&.content %>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Motivo da consulta - CIAP 2</label>
+                <%= form.select :ciap2_code, 
+                               options_for_select([
+                                   ['Selecione o CIAP 2', ''],
+                                   ['A01 - Dor generalizada', 'A01'],
+                                   ['A02 - Calafrios', 'A02'],
+                                   ['A03 - Febre', 'A03'],
+                                   ['A04 - Fraqueza/cansaço geral', 'A04'],
+                                   ['A05 - Sentir-se doente', 'A05'],
+                                   ['K86 - Hipertensão sem complicações', 'K86'],
+                                   ['K87 - Hipertensão com complicações', 'K87'],
+                                   ['T90 - Diabetes não insulino-dependente', 'T90']
+                               ], @soap_records.find_by(soap_type: 'subjective')&.ciap2),
+                               { include_blank: false }, 
+                               { class: "form-select" } %>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Código CIAP 2</label>
+                <%= form.text_field :ciap2_additional, 
+                                   class: "form-control", 
+                                   placeholder: "Informe código adicional se necessário",
+                                   value: @soap_records.find_by(soap_type: 'subjective')&.ciap2_additional %>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Sintomas associados</label>
+                <%= form.text_area :subjective_symptoms, 
+                                  rows: 3, 
+                                  class: "form-control", 
+                                  placeholder: "Descreva sintomas associados...",
+                                  value: @soap_records.find_by(soap_type: 'subjective')&.symptoms %>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Escala de dor (0-10)</label>
+                <%= form.range_field :pain_scale, 
+                                    in: 0..10, 
+                                    step: 1,
+                                    class: "form-range",
+                                    value: @soap_records.find_by(soap_type: 'subjective')&.pain_scale || 0 %>
+                <div class="d-flex justify-content-between">
+                    <small>0 - Sem dor</small>
+                    <small>10 - Dor máxima</small>
+                </div>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> Salvar
+                </button>
+                <button type="button" class="btn btn-secondary cancel-btn">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+            </div>
+        <% end %>
+    </div>
+</div>
+                               class: "form-control", 
+                               rows: 4,
+                               value: @soap_records.find { |r| r.soap_type == 'subjective' }&.content %>
+        </div>
+        
+        <div class="mb-3">
+            <label for="historia_doenca_atual" class="form-label">História da Doença Atual</label>
+            <textarea class="form-control" 
+                      name="soap_data[historia_doenca_atual]" 
+                      rows="4" 
+                      placeholder="Detalhe a evolução dos sintomas..."><%= @consultation.observations %></textarea>
+        </div>
+        
+        <div class="mb-3">
+            <label for="revisao_sistemas" class="form-label">Revisão de Sistemas</label>
+            <textarea class="form-control" 
+                      name="soap_data[revisao_sistemas]" 
+                      rows="3" 
+                      placeholder="Informações adicionais sobre outros sistemas..."></textarea>
+        </div>
+        
+        <div class="mb-3">
+            <label for="historia_social" class="form-label">História Social</label>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="soap_data[tabagismo]" id="tabagismo">
+                        <label class="form-check-label" for="tabagismo">Tabagismo</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="soap_data[etilismo]" id="etilismo">
+                        <label class="form-check-label" for="etilismo">Etilismo</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="soap_data[atividade_fisica]" id="atividade_fisica">
+                        <label class="form-check-label" for="atividade_fisica">Atividade Física Regular</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="soap_data[outras_substancias]" id="outras_substancias">
+                        <label class="form-check-label" for="outras_substancias">Uso de Outras Substâncias</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-success save-btn">
+                <i class="bi bi-check-circle"></i> Salvar
+            </button>
+            <button type="button" class="btn btn-secondary cancel-btn">
+                <i class="bi bi-x-circle"></i> Cancelar
+            </button>
+        </div>
+    <% end %>
+</div>

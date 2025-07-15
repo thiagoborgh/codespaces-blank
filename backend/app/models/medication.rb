@@ -15,6 +15,7 @@ class Medication < ApplicationRecord
   scope :inactive, -> { where(active: false) }
   scope :by_patient, ->(patient_id) { where(patient_id: patient_id) }
   scope :current, -> { where('start_date <= ? AND (end_date IS NULL OR end_date >= ?)', Date.current, Date.current) }
+  scope :recent, -> { order(created_at: :desc) }
 
   # Instance methods
   def active?

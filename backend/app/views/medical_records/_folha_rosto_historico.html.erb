@@ -1,0 +1,42 @@
+<div class="tab-pane fade" id="historico" role="tabpanel">
+  <div class="row">
+    <div class="col-md-12">
+      <h5>Histórico de Atendimentos</h5>
+      
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Tipo</th>
+              <th>Profissional</th>
+              <th>Diagnóstico</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if @patient.medical_appointments.any? %>
+              <% @patient.medical_appointments.order(date: :desc).each do |appointment| %>
+                <tr>
+                  <td><%= appointment.date.strftime('%d/%m/%Y') %></td>
+                  <td><%= appointment.appointment_type %></td>
+                  <td><%= appointment.doctor_name %></td>
+                  <td><%= appointment.diagnosis %></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewAppointment(<%= appointment.id %>)">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                  </td>
+                </tr>
+              <% end %>
+            <% else %>
+              <tr>
+                <td colspan="5" class="text-center text-muted">Nenhum atendimento registrado</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

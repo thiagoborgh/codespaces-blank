@@ -1,0 +1,448 @@
+<script>
+// Gráfico de Antropometria
+document.addEventListener('DOMContentLoaded', function() {
+  initializeCharts();
+  setupEditableCells();
+});
+
+function initializeCharts() {
+  // Gráfico de Antropometria
+  const anthropometryCtx = document.getElementById('anthropometryChart');
+  if (anthropometryCtx) {
+    const anthropometryData = {
+      labels: [
+        <% @measurements.where.not(weight: nil).order(:created_at).limit(10).pluck(:created_at).each do |date| %>
+          '<%= date.strftime("%d/%m") %>',
+        <% end %>
+      ],
+      datasets: [{
+        label: 'Peso (kg)',
+        data: [
+          <% @measurements.where.not(weight: nil).order(:created_at).limit(10).pluck(:weight).each do |weight| %>
+            <%= weight || 0 %>,
+          <% end %>
+        ],
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+        tension: 0.1
+      }, {
+        label: 'IMC',
+        data: [
+          <% @measurements.where.not(weight: nil).order(:created_at).limit(10).each do |m| %>
+            <%= m.weight && m.height ? calculate_bmi(m.weight, m.height) : 0 %>,
+          <% end %>
+        ],
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+        tension: 0.1,
+        yAxisID: 'y1'
+      }]
+    };
+
+    new Chart(anthropometryCtx, {
+      type: 'line',
+      data: anthropometryData,
+      options: {
+        responsive: true,
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
+        scales: {
+          y: {
+            type: 'linear',
+            display: true,
+            position: 'left',
+            title: {
+              display: true,
+              text: 'Peso (kg)'
+            }
+          },
+          y1: {
+            type: 'linear',
+            display: true,
+            position: 'right',
+            title: {
+              display: true,
+              text: 'IMC'
+            },
+            grid: {
+              drawOnChartArea: false,
+            },
+          }
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'Evolução do Peso e IMC'
+          },
+          legend: {
+            display: true
+          }
+        }
+      }
+    });
+  }
+
+  // Gráfico de Sinais Vitais
+  const vitalSignsCtx = document.getElementById('vitalSignsChart');
+  if (vitalSignsCtx) {
+    const vitalSignsData = {
+      labels: [
+        <% @vital_signs.order(:created_at).limit(10).pluck(:created_at).each do |date| %>
+          '<%= date.strftime("%d/%m") %>',
+        <% end %>
+      ],
+      datasets: [{
+        label: 'Pressão Sistólica',
+        data: [
+          <% @vital_signs.order(:created_at).limit(10).each do |vs| %>
+            <%= vs.blood_pressure ? vs.blood_pressure.split('/')[0].to_i : 0 %>,
+          <% end %>
+        ],
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+        tension: 0.1
+      }, {
+        label: 'Pressão Diastólica',
+        data: [
+          <% @vital_signs.order(:created_at).limit(10).each do |vs| %>
+            <%= vs.blood_pressure ? vs.blood_pressure.split('/')[1].to_i : 0 %>,
+          <% end %>
+        ],
+        borderColor: 'rgb(54, 162, 235)',
+        backgroundColor: 'rgba(54, 162, 235, 0.1)',
+        tension: 0.1
+      }, {
+        label: 'Frequência Cardíaca',
+        data: [
+          <% @vital_signs.order(:created_at).limit(10).pluck(:heart_rate).each do |hr| %>
+            <%= hr || 0 %>,
+          <% end %>
+        ],
+        borderColor: 'rgb(255, 206, 86)',
+        backgroundColor: 'rgba(255, 206, 86, 0.1)',
+        tension: 0.1
+      }]
+    };
+
+    new Chart(vitalSignsCtx, {
+      type: 'line',
+      data: vitalSignsData,
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Evolução dos Sinais Vitais'
+          },
+          legend: {
+            display: true
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Valores'
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // Gráfico de Glicemia
+  const glycemiaCtx = document.getElementById('glycemiaChart');
+  if (glycemiaCtx) {
+    const glycemiaData = {
+      labels: [
+        <% @glycemia_measurements.order(:created_at).limit(10).pluck(:created_at).each do |date| %>
+          '<%= date.strftime("%d/%m") %>',
+        <% end %>
+      ],
+      datasets: [{
+        label: 'Glicemia (mg/dL)',
+        data: [
+          <% @glycemia_measurements.order(:created_at).limit(10).pluck(:value).each do |value| %>
+            <%= value || 0 %>,
+          <% end %>
+        ],
+        borderColor: 'rgb(153, 102, 255)',
+        backgroundColor: 'rgba(153, 102, 255, 0.1)',
+        tension: 0.1,
+        fill: true
+      }]
+    };
+
+    new Chart(glycemiaCtx, {
+      type: 'line',
+      data: glycemiaData,
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Evolução da Glicemia'
+          },
+          legend: {
+            display: true
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Glicemia (mg/dL)'
+            },
+            // Linhas de referência para glicemia
+            plugins: {
+              annotation: {
+                annotations: {
+                  line1: {
+                    type: 'line',
+                    yMin: 70,
+                    yMax: 70,
+                    borderColor: 'rgb(255, 99, 132)',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    label: {
+                      content: 'Hipoglicemia',
+                      enabled: true,
+                      position: 'start'
+                    }
+                  },
+                  line2: {
+                    type: 'line',
+                    yMin: 180,
+                    yMax: 180,
+                    borderColor: 'rgb(255, 99, 132)',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    label: {
+                      content: 'Hiperglicemia',
+                      enabled: true,
+                      position: 'start'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+}
+
+// Células editáveis
+function setupEditableCells() {
+  const editableCells = document.querySelectorAll('.editable-cell');
+  editableCells.forEach(cell => {
+    cell.addEventListener('click', function() {
+      if (this.classList.contains('editing')) return;
+      
+      const originalValue = this.textContent.trim();
+      const field = this.dataset.field;
+      const id = this.dataset.id;
+      
+      this.classList.add('editing');
+      this.innerHTML = `<input type="text" class="form-control form-control-sm" value="${originalValue}" onblur="saveCell(this, '${field}', ${id}, '${originalValue}')" onkeypress="if(event.key==='Enter') this.blur()">`;
+      this.querySelector('input').focus();
+    });
+  });
+}
+
+function saveCell(input, field, id, originalValue) {
+  const cell = input.parentElement;
+  const newValue = input.value.trim();
+  
+  if (newValue === originalValue) {
+    cell.textContent = originalValue;
+    cell.classList.remove('editing');
+    return;
+  }
+  
+  // Aqui você pode adicionar uma chamada AJAX para salvar o valor
+  fetch(`/medical_records/update_measurement`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    },
+    body: JSON.stringify({
+      id: id,
+      field: field,
+      value: newValue
+    })
+  }).then(response => {
+    if (response.ok) {
+      cell.textContent = newValue;
+      cell.classList.remove('editing');
+      cell.classList.add('text-success');
+      setTimeout(() => cell.classList.remove('text-success'), 2000);
+    } else {
+      cell.textContent = originalValue;
+      cell.classList.remove('editing');
+      alert('Erro ao salvar');
+    }
+  }).catch(error => {
+    cell.textContent = originalValue;
+    cell.classList.remove('editing');
+    alert('Erro ao salvar');
+  });
+}
+
+// Funções para visualizar consultas e encaminhamentos
+function viewConsultation(id) {
+  // Implementar modal ou redirecionamento para visualizar consulta
+  window.open(`/consultations/${id}`, '_blank');
+}
+
+function viewReferral(id) {
+  // Implementar modal ou redirecionamento para visualizar encaminhamento
+  window.open(`/referrals/${id}`, '_blank');
+}
+
+// Funções para editar medições
+function editMeasurement(id) {
+  // Implementar modal de edição ou tornar linha editável
+  console.log('Editando medição:', id);
+}
+
+function editVitalSign(id) {
+  // Implementar modal de edição ou tornar linha editável
+  console.log('Editando sinal vital:', id);
+}
+
+function editGlycemia(id) {
+  // Implementar modal de edição ou tornar linha editável
+  console.log('Editando glicemia:', id);
+}
+
+// Filtros por competência
+document.getElementById('ageRange')?.addEventListener('change', function() {
+  // Filtrar dados de antropometria por faixa etária
+  console.log('Filtro idade:', this.value);
+});
+
+document.getElementById('competenceVital')?.addEventListener('change', function() {
+  // Filtrar dados de sinais vitais por competência
+  console.log('Filtro vital:', this.value);
+});
+
+document.getElementById('competenceGlycemia')?.addEventListener('change', function() {
+  // Filtrar dados de glicemia por competência
+  console.log('Filtro glicemia:', this.value);
+});
+
+// Helpers para cálculos
+function calculateBMI(weight, height) {
+  if (!weight || !height) return 0;
+  const heightInMeters = height / 100;
+  return (weight / (heightInMeters * heightInMeters)).toFixed(1);
+}
+
+function getBMIStatus(bmi) {
+  if (bmi < 18.5) return { class: 'text-info', text: 'Abaixo do peso' };
+  if (bmi < 25) return { class: 'text-success', text: 'Peso normal' };
+  if (bmi < 30) return { class: 'text-warning', text: 'Sobrepeso' };
+  return { class: 'text-danger', text: 'Obesidade' };
+}
+
+function getBloodPressureStatus(systolic, diastolic) {
+  if (systolic < 120 && diastolic < 80) return { class: 'text-success', text: 'Normal' };
+  if (systolic < 130 && diastolic < 80) return { class: 'text-warning', text: 'Elevada' };
+  if (systolic < 140 || diastolic < 90) return { class: 'text-warning', text: 'Hipertensão Estágio 1' };
+  return { class: 'text-danger', text: 'Hipertensão Estágio 2' };
+}
+</script>
+
+<style>
+.editable-cell {
+  cursor: pointer;
+  position: relative;
+}
+
+.editable-cell:hover {
+  background-color: #f8f9fa;
+}
+
+.editable-cell.editing {
+  padding: 0;
+}
+
+.editable-cell input {
+  width: 100%;
+  border: none;
+  background: transparent;
+}
+
+.patient-alerts {
+  margin-top: 1rem;
+}
+
+.alert-section {
+  margin-bottom: 0.5rem;
+}
+
+.alert-section strong {
+  color: #495057;
+  font-weight: 600;
+}
+
+.stat-item {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.condition-item {
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #f8f9fa;
+}
+
+.condition-header {
+  display: flex;
+  justify-content: between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.condition-name {
+  color: #495057;
+  margin-bottom: 0;
+  flex-grow: 1;
+}
+
+.condition-details {
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+.condition-description {
+  margin-top: 0.5rem;
+  color: #495057;
+}
+
+.chart-container {
+  position: relative;
+  height: 300px;
+  margin-top: 1rem;
+}
+</style>

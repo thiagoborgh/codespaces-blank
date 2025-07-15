@@ -1,5 +1,5 @@
 // TODO: Implementar modal de escuta inicial na Fase 2
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { XMarkIcon, UserIcon, CalendarIcon, MicrophoneIcon, ScaleIcon, HeartIcon } from '@heroicons/react/24/outline';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -144,7 +144,6 @@ const InitialListeningModal: React.FC<InitialListeningModalProps> = ({
   
   // RN12: Estados para procedimentos
   const [procedureSearchTerm, setProcedureSearchTerm] = useState('');
-  const [availableProcedures, setAvailableProcedures] = useState<SigtapProcedure[]>([]);
   const [searchResults, setSearchResults] = useState<SigtapProcedure[]>([]);
   const [showProcedureSearch, setShowProcedureSearch] = useState(false);
   
@@ -296,7 +295,7 @@ const InitialListeningModal: React.FC<InitialListeningModalProps> = ({
   ];
 
   // RN12: Função para gerar procedimentos automáticos
-  const generateAutomaticProcedures = (): SigtapProcedure[] => {
+  const generateAutomaticProcedures = useCallback((): SigtapProcedure[] => {
     const automaticProcedures: SigtapProcedure[] = [];
     
     // Aferição de peso e altura
@@ -360,7 +359,9 @@ const InitialListeningModal: React.FC<InitialListeningModalProps> = ({
     }
     
     return automaticProcedures;
-  };
+  }, [formData.weight, formData.height, formData.systolicBP, formData.diastolicBP, 
+      formData.heartRate, formData.respiratoryRate, formData.temperature, 
+      formData.oxygenSaturation, formData.capillaryGlycemia]);
 
   // RN12: Atualizar procedimentos automáticos quando dados mudarem
   useEffect(() => {
@@ -370,27 +371,33 @@ const InitialListeningModal: React.FC<InitialListeningModalProps> = ({
     // Combinar procedimentos automáticos com manuais
     const updatedProcedures = [...automaticProcedures, ...manualProcedures];
     
-    setFormData(prev => ({
-      ...prev,
-      procedures: updatedProcedures
-    }));
+    // Só atualizar se houve mudança real nos procedimentos
+    const currentAutomaticProcedures = formData.procedures.filter(p => p.isAutomatic);
+    const hasChanged = JSON.stringify(currentAutomaticProcedures) !== JSON.stringify(automaticProcedures);
     
-    // Log de auditoria para procedimentos automáticos
-    if (automaticProcedures.length > 0) {
-      console.log('[ESCUTA_INICIAL] RN12 - Procedimentos automáticos gerados:', {
-        user: 'Usuario atual', // TODO: pegar do contexto
-        timestamp: new Date().toISOString(),
-        procedimentosGerados: automaticProcedures.map(p => ({ 
-          codigo: p.code, 
-          descricao: p.description, 
-          origem: p.originData 
-        })),
-        pacienteId: patient?.id
-      });
+    if (hasChanged) {
+      setFormData(prev => ({
+        ...prev,
+        procedures: updatedProcedures
+      }));
+      
+      // Log de auditoria para procedimentos automáticos
+      if (automaticProcedures.length > 0) {
+        console.log('[ESCUTA_INICIAL] RN12 - Procedimentos automáticos gerados:', {
+          user: 'Usuario atual', // TODO: pegar do contexto
+          timestamp: new Date().toISOString(),
+          procedimentosGerados: automaticProcedures.map(p => ({ 
+            codigo: p.code, 
+            descricao: p.description, 
+            origem: p.originData 
+          })),
+          pacienteId: patient?.id
+        });
+      }
     }
   }, [formData.weight, formData.height, formData.systolicBP, formData.diastolicBP, 
       formData.heartRate, formData.respiratoryRate, formData.temperature, 
-      formData.oxygenSaturation, formData.capillaryGlycemia]);
+      formData.oxygenSaturation, formData.capillaryGlycemia, patient?.id]); // Removido formData.procedures e generateAutomaticProcedures
 
   const calculateAge = (birthDate: string): string => {
     const birth = new Date(birthDate);

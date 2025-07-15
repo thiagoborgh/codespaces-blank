@@ -1,0 +1,466 @@
+<!-- Seção Objetivo -->
+<div class="soap-section">
+    <div class="soap-row" data-target="#objetivo-form" style="background-color: #e6f0fa;">
+        <h5 class="mb-0">Objetivo (O)</h5>
+        <i class="bi bi-chevron-down"></i>
+    </div>
+    
+    <div id="objetivo-form" class="soap-form collapse">
+        <%= form_with model: [@patient, @consultation], local: false, remote: true, 
+                      url: attendance_path(@patient, @consultation), 
+                      method: :patch, class: "soap-form-data" do |form| %>
+            
+            <!-- Tabs para Objetivo -->
+            <ul class="nav nav-tabs mb-3" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="exame-fisico-tab" data-bs-toggle="tab" href="#exame-fisico" role="tab">Exame Físico</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="antropometria-tab" data-bs-toggle="tab" href="#antropometria" role="tab">Antropometria</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="sinais-vitais-tab" data-bs-toggle="tab" href="#sinais-vitais" role="tab">Sinais Vitais</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="marcadores-alimentares-tab" data-bs-toggle="tab" href="#marcadores-alimentares" role="tab">Marcadores Alimentares</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="vacinacao-tab" data-bs-toggle="tab" href="#vacinacao" role="tab">Vacinação</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="exames-tab" data-bs-toggle="tab" href="#exames" role="tab">Resultados de Exames</a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <!-- Exame Físico -->
+                <div class="tab-pane fade show active" id="exame-fisico" role="tabpanel">
+                    <div class="mb-3">
+                        <label class="form-label">Estado Geral</label>
+                        <%= form.text_area :objective_content, 
+                                           placeholder: "Descreva o estado geral do paciente, aparência, nível de consciência...", 
+                                           class: "form-control", 
+                                           rows: 4,
+                                           value: @soap_records.find_by(soap_type: 'objective')&.content %>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Vacinação em dia</label>
+                        <div class="form-check">
+                            <%= form.radio_button :vaccination_status, 'sim', class: "form-check-input" %>
+                            <label class="form-check-label">Sim</label>
+                        </div>
+                        <div class="form-check">
+                            <%= form.radio_button :vaccination_status, 'nao', class: "form-check-input" %>
+                            <label class="form-check-label">Não</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">DUM (Data da Última Menstruação)</label>
+                        <%= form.date_field :dum, class: "form-control" %>
+                        <small class="form-text text-muted">Última DUM registrada: Não informada</small>
+                    </div>
+                </div>
+                
+                <!-- Antropometria -->
+                <div class="tab-pane fade" id="antropometria" role="tabpanel">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Peso (kg)</label>
+                            <%= form.number_field :weight, 
+                                                 step: 0.1, 
+                                                 class: "form-control", 
+                                                 placeholder: "Informe o peso",
+                                                 id: "weight" %>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Altura (cm)</label>
+                            <%= form.number_field :height, 
+                                                 step: 0.1, 
+                                                 class: "form-control", 
+                                                 placeholder: "Informe a altura",
+                                                 id: "height" %>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">IMC</label>
+                            <%= form.number_field :imc, 
+                                                 readonly: true, 
+                                                 class: "form-control", 
+                                                 id: "imc" %>
+                            <span id="imc-status" class="badge" style="display: none;"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Circunferência abdominal (cm)</label>
+                            <%= form.number_field :abdominal_circumference, 
+                                                 step: 0.1, 
+                                                 class: "form-control", 
+                                                 placeholder: "Informe a circunferência" %>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Perímetro cefálico (cm)</label>
+                            <%= form.number_field :cephalic_perimeter, 
+                                                 step: 0.1, 
+                                                 class: "form-control", 
+                                                 placeholder: "Informe o perímetro" %>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Perímetro da panturrilha (cm)</label>
+                            <%= form.number_field :calf_perimeter, 
+                                                 step: 0.1, 
+                                                 class: "form-control", 
+                                                 placeholder: "Informe o perímetro" %>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sinais Vitais -->
+                <div class="tab-pane fade" id="sinais-vitais" role="tabpanel">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Pressão arterial sistólica (mmHg)</label>
+                            <%= form.number_field :systolic_pressure, 
+                                                 class: "form-control", 
+                                                 placeholder: "Sistólica" %>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Pressão arterial diastólica (mmHg)</label>
+                            <%= form.number_field :diastolic_pressure, 
+                                                 class: "form-control", 
+                                                 placeholder: "Diastólica" %>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Frequência cardíaca (bpm)</label>
+                            <%= form.number_field :heart_rate, 
+                                                 class: "form-control", 
+                                                 placeholder: "Frequência cardíaca" %>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Frequência respiratória (mpm)</label>
+                            <%= form.number_field :respiratory_rate, 
+                                                 class: "form-control", 
+                                                 placeholder: "Frequência respiratória" %>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Temperatura (°C)</label>
+                            <%= form.number_field :temperature, 
+                                                 step: 0.1, 
+                                                 class: "form-control", 
+                                                 placeholder: "Temperatura" %>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Saturação de O₂ (%)</label>
+                            <%= form.number_field :oxygen_saturation, 
+                                                 min: 0, 
+                                                 max: 100, 
+                                                 class: "form-control", 
+                                                 placeholder: "Saturação" %>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Glicemia capilar (mg/dL)</label>
+                            <%= form.number_field :capillary_glucose, 
+                                                 class: "form-control", 
+                                                 placeholder: "Glicemia" %>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Momento da coleta da glicemia</label>
+                        <div class="form-check">
+                            <%= form.radio_button :glucose_moment, 'nao-especificado', class: "form-check-input", checked: true %>
+                            <label class="form-check-label">Não especificado</label>
+                        </div>
+                        <div class="form-check">
+                            <%= form.radio_button :glucose_moment, 'jejum', class: "form-check-input" %>
+                            <label class="form-check-label">Jejum</label>
+                        </div>
+                        <div class="form-check">
+                            <%= form.radio_button :glucose_moment, 'pre-prandial', class: "form-check-input" %>
+                            <label class="form-check-label">Pré-prandial</label>
+                        </div>
+                        <div class="form-check">
+                            <%= form.radio_button :glucose_moment, 'pos-prandial', class: "form-check-input" %>
+                            <label class="form-check-label">Pós-prandial</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Marcadores Alimentares -->
+                <div class="tab-pane fade" id="marcadores-alimentares" role="tabpanel">
+                    <div class="mb-3">
+                        <label class="form-label">Marcadores de consumo alimentar</label>
+                        <%= form.text_area :food_markers, 
+                                          rows: 4, 
+                                          class: "form-control", 
+                                          placeholder: "Descreva os marcadores de consumo alimentar..." %>
+                    </div>
+                </div>
+                
+                <!-- Vacinação -->
+                <div class="tab-pane fade" id="vacinacao" role="tabpanel">
+                    <div class="mb-3">
+                        <label class="form-label">Status da vacinação</label>
+                        <%= form.text_area :vaccination_notes, 
+                                          rows: 3, 
+                                          class: "form-control", 
+                                          placeholder: "Descreva o status da vacinação..." %>
+                    </div>
+                </div>
+                
+                <!-- Resultados de Exames -->
+                <div class="tab-pane fade" id="exames" role="tabpanel">
+                    <div class="mb-3">
+                        <label class="form-label">Resultados de exames</label>
+                        <%= form.text_area :exam_results, 
+                                          rows: 4, 
+                                          class: "form-control", 
+                                          placeholder: "Descreva os resultados de exames..." %>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> Salvar
+                </button>
+                <button type="button" class="btn btn-secondary cancel-btn">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+            </div>
+        <% end %>
+    </div>
+</div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="cabeca_pescoco" class="form-label">Cabeça e Pescoço</label>
+                        <textarea class="form-control mb-3" name="soap_data[cabeca_pescoco]" rows="3" placeholder="Exame de cabeça e pescoço..."></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="cardiovascular" class="form-label">Sistema Cardiovascular</label>
+                        <textarea class="form-control mb-3" name="soap_data[cardiovascular]" rows="3" placeholder="Ausculta cardíaca, pulsos..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="respiratorio" class="form-label">Sistema Respiratório</label>
+                        <textarea class="form-control mb-3" name="soap_data[respiratorio]" rows="3" placeholder="Ausculta pulmonar, padrão respiratório..."></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="abdome" class="form-label">Abdome</label>
+                        <textarea class="form-control mb-3" name="soap_data[abdome]" rows="3" placeholder="Inspeção, palpação, ausculta abdominal..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="extremidades" class="form-label">Extremidades</label>
+                        <textarea class="form-control mb-3" name="soap_data[extremidades]" rows="3" placeholder="Membros superiores e inferiores..."></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="neurologico" class="form-label">Sistema Neurológico</label>
+                        <textarea class="form-control mb-3" name="soap_data[neurologico]" rows="3" placeholder="Reflexos, força, sensibilidade..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Antropometria -->
+            <div class="tab-pane fade" id="antropometria" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="peso" class="form-label">Peso (kg)</label>
+                        <input type="number" class="form-control mb-3" name="soap_data[anthropometry][weight]" 
+                               id="peso" step="0.1" placeholder="Ex: 70.5">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="altura" class="form-label">Altura (cm)</label>
+                        <input type="number" class="form-control mb-3" name="soap_data[anthropometry][height]" 
+                               id="altura" step="0.1" placeholder="Ex: 175.0">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="imc" class="form-label">IMC (kg/m²)</label>
+                        <input type="number" class="form-control mb-3" name="soap_data[anthropometry][bmi]" 
+                               id="imc" step="0.1" readonly>
+                        <span id="imc-status" class="badge"></span>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="circ_abdominal" class="form-label">Circunferência Abdominal (cm)</label>
+                        <input type="number" class="form-control mb-3" name="soap_data[anthropometry][waist_circumference]" 
+                               id="circ_abdominal" step="0.1" placeholder="Ex: 85.0">
+                        <span id="circ-abdominal-status" class="badge"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="perimetro_cefalico" class="form-label">Perímetro Cefálico (cm)</label>
+                        <input type="number" class="form-control mb-3" name="soap_data[anthropometry][head_circumference]" 
+                               id="perimetro_cefalico" step="0.1" placeholder="Ex: 56.0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sinais Vitais -->
+            <div class="tab-pane fade" id="sinais-vitais" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="pressao_arterial" class="form-label">Pressão Arterial (mmHg)</label>
+                        <div class="input-group mb-3">
+                            <input type="number" class="form-control" name="soap_data[vital_signs][systolic_pressure]" placeholder="Sistólica">
+                            <span class="input-group-text">/</span>
+                            <input type="number" class="form-control" name="soap_data[vital_signs][diastolic_pressure]" placeholder="Diastólica">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="freq_cardiaca" class="form-label">Frequência Cardíaca (bpm)</label>
+                        <input type="number" class="form-control mb-3" name="soap_data[vital_signs][heart_rate]" placeholder="Ex: 80">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="temperatura" class="form-label">Temperatura (°C)</label>
+                        <input type="number" class="form-control mb-3" name="soap_data[vital_signs][temperature]" 
+                               step="0.1" placeholder="Ex: 36.5">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="freq_respiratoria" class="form-label">Freq. Respiratória (rpm)</label>
+                        <input type="number" class="form-control mb-3" name="soap_data[vital_signs][respiratory_rate]" placeholder="Ex: 16">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="saturacao" class="form-label">Saturação O₂ (%)</label>
+                        <input type="number" class="form-control mb-3" name="soap_data[vital_signs][oxygen_saturation]" placeholder="Ex: 98">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="glicemia" class="form-label">Glicemia (mg/dL)</label>
+                        <input type="number" class="form-control mb-3" name="soap_data[vital_signs][blood_glucose]" placeholder="Ex: 95">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="dor" class="form-label">Escala de Dor (0-10)</label>
+                        <input type="number" class="form-control mb-3" name="soap_data[vital_signs][pain_scale]" min="0" max="10" placeholder="0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Marcadores Alimentares -->
+            <div class="tab-pane fade" id="marcadores-alimentares" role="tabpanel">
+                <div class="mb-3">
+                    <label class="form-label">Faixa Etária</label>
+                    <select class="form-control" name="soap_data[food_markers][faixa_etaria]">
+                        <option value="6a23meses">6 a 23 meses</option>
+                        <option value="2anosOuMais" selected>2 anos ou mais</option>
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <h6>Consumo Alimentar</h6>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="soap_data[food_markers][frutas_verduras]" id="frutas_verduras">
+                        <label class="form-check-label" for="frutas_verduras">Frutas e verduras diariamente</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="soap_data[food_markers][bebidas_adocadas]" id="bebidas_adocadas">
+                        <label class="form-check-label" for="bebidas_adocadas">Bebidas adoçadas</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="soap_data[food_markers][alimentos_ultraprocessados]" id="alimentos_ultraprocessados">
+                        <label class="form-check-label" for="alimentos_ultraprocessados">Alimentos ultraprocessados</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vacinação -->
+            <div class="tab-pane fade" id="vacinacao" role="tabpanel">
+                <div class="mb-3">
+                    <label class="form-label">Status Vacinal</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="soap_data[vaccination][status]" value="em_dia" id="vacina_em_dia">
+                        <label class="form-check-label" for="vacina_em_dia">Em dia</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="soap_data[vaccination][status]" value="atrasado" id="vacina_atrasado">
+                        <label class="form-check-label" for="vacina_atrasado">Atrasado</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="soap_data[vaccination][status]" value="nao_informado" id="vacina_nao_informado">
+                        <label class="form-check-label" for="vacina_nao_informado">Não informado</label>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="vacinas_observacoes" class="form-label">Observações sobre Vacinação</label>
+                    <textarea class="form-control" name="soap_data[vaccination][observations]" rows="3" 
+                              placeholder="Vacinas em atraso, reações, contraindicações..."></textarea>
+                </div>
+            </div>
+
+            <!-- Resultados de Exames -->
+            <div class="tab-pane fade" id="exames" role="tabpanel">
+                <div class="mb-3">
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="add-exame-resultado">
+                        <i class="bi bi-plus"></i> Adicionar Resultado
+                    </button>
+                </div>
+                
+                <div id="exames-resultados-list">
+                    <!-- Lista de resultados de exames será populada via JavaScript -->
+                </div>
+                
+                <template id="exame-resultado-template">
+                    <div class="card mb-3 exame-resultado-item">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="form-label">Tipo de Exame</label>
+                                    <input type="text" class="form-control" name="soap_data[exam_results][][type]" placeholder="Ex: Hemograma">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Data do Exame</label>
+                                    <input type="date" class="form-control" name="soap_data[exam_results][][date]">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Resultado</label>
+                                    <select class="form-control" name="soap_data[exam_results][][result]">
+                                        <option value="normal">Normal</option>
+                                        <option value="alterado">Alterado</option>
+                                        <option value="pendente">Pendente</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-10">
+                                    <label class="form-label">Observações</label>
+                                    <textarea class="form-control" name="soap_data[exam_results][][observations]" rows="2" 
+                                              placeholder="Valores alterados, observações relevantes..."></textarea>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="button" class="btn btn-outline-danger btn-sm remove-exame-resultado">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+        
+        <div class="d-flex gap-2 mt-3">
+            <button type="submit" class="btn btn-success save-btn">
+                <i class="bi bi-check-circle"></i> Salvar
+            </button>
+            <button type="button" class="btn btn-secondary cancel-btn">
+                <i class="bi bi-x-circle"></i> Cancelar
+            </button>
+        </div>
+    <% end %>
+</div>

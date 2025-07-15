@@ -8,6 +8,8 @@ import EditPatientModal from '../components/queue/EditPatientModal';
 import MedicalRecordModal from '../components/queue/MedicalRecordModal';
 import DayAttendancesModal from '../components/queue/DayAttendancesModal';
 import InitialListeningModal from '../components/InitialListeningModal';
+import AttendanceButtons from '../components/AttendanceButtons';
+import VaccinationButton from '../components/VaccinationButton';
 import { useQueue } from '../hooks/useQueue';
 import type { QueuePatient } from '../hooks/useQueue';
 import { useAuth } from '../contexts/AuthContext';
@@ -1209,55 +1211,75 @@ const QueuePage: React.FC = () => {
                         </div>
 
                         {/* Action Buttons - À direita do card */}
-                        <div className="flex lg:flex-col flex-wrap gap-2 lg:min-w-[160px] xl:min-w-[180px]" style={{ overflow: 'visible' }}>
-                          {(() => {
-                            const mainButton = getMainButtonData(patient);
-                            const ButtonIcon = mainButton.icon;
-                            
-                            return (
+                        <div className="flex lg:flex-col flex-wrap gap-2 items-end" style={{ overflow: 'visible' }}>
+                          {/* Botão Principal de Atendimento com Layout Vertical */}
+                          <AttendanceButtons 
+                            patient={patient}
+                            onPause={(patientId) => {
+                              console.log('⏸️ Pausar atendimento:', patientId);
+                              // Implementar lógica de pausa
+                            }}
+                            onSave={(patientId) => {
+                              console.log('💾 Salvar atendimento:', patientId);
+                              // Implementar lógica de salvamento
+                            }}
+                            showSaveOptions={true}
+                          />
+
+                          {/* Visualizar Escuta Inicial - para agendamentos espontâneos */}
+                          {patient.appointmentType === 'spontaneous' && !isVaccineService(patient.serviceType) && (
+                            <div className="lg:w-[160px] xl:w-[180px] flex justify-end">
                               <button
-                                onClick={mainButton.action}
-                                disabled={mainButton.disabled}
-                                className={`px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center whitespace-nowrap shadow-sm hover:shadow-md hover:scale-105 ${mainButton.className}`}
-                                title={mainButton.tooltip}
+                                onClick={() => handleInitialListening(patient.id)}
+                                className="w-full px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center whitespace-nowrap bg-pink-50 text-pink-700 hover:bg-pink-100 border border-pink-200 shadow-sm hover:shadow-md hover:scale-105"
+                                title={patient.initialListeningCompleted ? 'Visualizar escuta inicial' : 'Realizar escuta inicial'}
                               >
-                                <ButtonIcon className="h-4 w-4 lg:mr-2" />
-                                <span className="hidden lg:inline">{mainButton.text}</span>
+                                {patient.initialListeningCompleted ? (
+                                  <EyeIcon className="h-4 w-4 lg:mr-2" />
+                                ) : (
+                                  <MicrophoneIcon className="h-4 w-4 lg:mr-2" />
+                                )}
+                                <span className="hidden lg:inline">
+                                  {patient.initialListeningCompleted ? 'Visualizar Escuta' : 'Escuta Inicial'}
+                                </span>
                               </button>
-                            );
-                          })()}
+                            </div>
+                          )}
 
                           {/* Chamar */}
-                          <button
-                            onClick={() => handleCallPatient(patient.id)}
-                            className="px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center whitespace-nowrap bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 shadow-sm hover:shadow-md hover:scale-105"
-                            title="Chamar paciente"
-                          >
-                            <SpeakerWaveIcon className="h-4 w-4 lg:mr-2" />
-                            <span className="hidden lg:inline">Chamar</span>
-                          </button>
+                          <div className="lg:w-[160px] xl:w-[180px] flex justify-end">
+                            <button
+                              onClick={() => handleCallPatient(patient.id)}
+                              className="w-full px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center whitespace-nowrap bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 shadow-sm hover:shadow-md hover:scale-105"
+                              title="Chamar paciente"
+                            >
+                              <SpeakerWaveIcon className="h-4 w-4 lg:mr-2" />
+                              <span className="hidden lg:inline">Chamar</span>
+                            </button>
+                          </div>
 
                           {/* Mais opções */}
-                          <div className="relative">
-                            <button
-                              onClick={(e) => {
-                                console.log('🔵 Dropdown toggle clicked for patient:', patient.id);
-                                e.stopPropagation();
-                                setOpenDropdown(openDropdown === patient.id ? null : patient.id);
-                              }}
-                              className="w-full px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center whitespace-nowrap bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 shadow-sm hover:shadow-md"
-                              title="Mais opções"
-                              data-dropdown-button="true"
-                            >
-                              <EllipsisHorizontalIcon className="h-4 w-4 lg:mr-2" />
-                              <span className="hidden lg:inline">Mais opções</span>
-                            </button>
+                          <div className="lg:w-[160px] xl:w-[180px] flex justify-end">
+                            <div className="relative w-full">
+                              <button
+                                onClick={(e) => {
+                                  console.log('🔵 Dropdown toggle clicked for patient:', patient.id);
+                                  e.stopPropagation();
+                                  setOpenDropdown(openDropdown === patient.id ? null : patient.id);
+                                }}
+                                className="w-full px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center whitespace-nowrap bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 shadow-sm hover:shadow-md hover:scale-105"
+                                title="Mais opções"
+                                data-dropdown-button="true"
+                              >
+                                <EllipsisHorizontalIcon className="h-4 w-4 lg:mr-2" />
+                                <span className="hidden lg:inline">Mais opções</span>
+                              </button>
 
                             {/* Dropdown Menu */}
                             {openDropdown === patient.id && (
                               <div 
-                                className="absolute right-0 lg:left-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-200 z-[9999] overflow-hidden"
-                                style={{ zIndex: 9999 }}
+                                className="absolute right-0 lg:left-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-200 z-[99999] overflow-hidden"
+                                style={{ zIndex: 99999, position: 'fixed' }}
                                 data-dropdown-menu="true"
                                 onClick={(e) => {
                                   console.log('🔵 Dropdown menu clicked, preventing propagation');
@@ -1429,7 +1451,15 @@ const QueuePage: React.FC = () => {
                                 </div>
                               </div>
                             )}
+                            </div>
                           </div>
+
+                          {/* Botão de Vacinação - para serviços de vacina */}
+                          {isVaccineService(patient.serviceType) && (
+                            <div className="lg:w-[160px] xl:w-[180px] flex justify-end">
+                              <VaccinationButton patient={patient} />
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

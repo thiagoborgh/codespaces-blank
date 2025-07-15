@@ -1,0 +1,258 @@
+<div class="history-tab">
+  <div class="row g-4">
+    <!-- Filtros -->
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <h6 class="mb-0">Filtrar Histórico</h6>
+            </div>
+            <div class="col-md-4">
+              <div class="d-flex gap-2">
+                <select class="form-select form-select-sm">
+                  <option value="">Todos os tipos</option>
+                  <option value="consultation">Consultas</option>
+                  <option value="medication">Medicamentos</option>
+                  <option value="exam">Exames</option>
+                  <option value="procedure">Procedimentos</option>
+                </select>
+                <input type="date" class="form-control form-control-sm" placeholder="Data">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline Detalhada -->
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="bi bi-clock-history"></i>
+            Histórico Completo do Paciente
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="timeline-detailed">
+            <% @timeline_events.each_with_index do |event, index| %>
+              <div class="timeline-event">
+                <div class="timeline-date-column">
+                  <div class="timeline-date-info">
+                    <div class="date-day"><%= event[:date].strftime('%d') %></div>
+                    <div class="date-month"><%= event[:date].strftime('%b') %></div>
+                    <div class="date-year"><%= event[:date].strftime('%Y') %></div>
+                    <div class="date-time"><%= event[:date].strftime('%H:%M') %></div>
+                  </div>
+                </div>
+                
+                <div class="timeline-connector">
+                  <div class="timeline-dot <%= event[:badge_class] %>">
+                    <i class="bi bi-<%= event[:icon] %>"></i>
+                  </div>
+                  <% unless index == @timeline_events.length - 1 %>
+                    <div class="timeline-line"></div>
+                  <% end %>
+                </div>
+                
+                <div class="timeline-content-column">
+                  <div class="event-card">
+                    <div class="event-header">
+                      <h6 class="event-title"><%= event[:title] %></h6>
+                      <span class="badge <%= event[:badge_class] %>">
+                        <%= event[:type].humanize %>
+                      </span>
+                    </div>
+                    
+                    <% if event[:description].present? %>
+                      <p class="event-description"><%= event[:description] %></p>
+                    <% end %>
+                    
+                    <% if event[:professional].present? %>
+                      <div class="event-professional">
+                        <i class="bi bi-person"></i>
+                        <%= event[:professional] %>
+                      </div>
+                    <% end %>
+                    
+                    <% if event[:consultation_id].present? %>
+                      <div class="event-actions mt-2">
+                        <button class="btn btn-sm btn-outline-primary" 
+                                onclick="window.open('<%= medical_record_path(@patient, tab: 'soap', consultation_id: event[:consultation_id]) %>', '_blank')">
+                          <i class="bi bi-eye"></i>
+                          Ver SOAP
+                        </button>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Estilos para a timeline detalhada */
+.timeline-detailed {
+  position: relative;
+}
+
+.timeline-event {
+  display: flex;
+  margin-bottom: 2rem;
+}
+
+.timeline-date-column {
+  width: 80px;
+  flex-shrink: 0;
+  text-align: center;
+  margin-right: 1rem;
+}
+
+.timeline-date-info {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.75rem 0.5rem;
+}
+
+.date-day {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2563eb;
+  line-height: 1;
+}
+
+.date-month {
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.date-year {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.date-time {
+  font-size: 0.7rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+}
+
+.timeline-connector {
+  width: 40px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 1.5rem;
+}
+
+.timeline-dot {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 3px solid white;
+}
+
+.timeline-line {
+  width: 2px;
+  flex: 1;
+  background: #e2e8f0;
+  margin-top: 0.5rem;
+  min-height: 2rem;
+}
+
+.timeline-content-column {
+  flex: 1;
+}
+
+.event-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.event-card:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.event-title {
+  margin: 0;
+  color: #334155;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.event-description {
+  color: #64748b;
+  font-size: 0.875rem;
+  margin: 0.5rem 0;
+  line-height: 1.5;
+}
+
+.event-professional {
+  color: #2563eb;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.event-actions {
+  border-top: 1px solid #f1f5f9;
+  padding-top: 0.75rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .timeline-event {
+    flex-direction: column;
+  }
+  
+  .timeline-date-column {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+  
+  .timeline-date-info {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+  
+  .timeline-connector {
+    display: none;
+  }
+  
+  .timeline-content-column {
+    margin-left: 0;
+  }
+}
+</style>

@@ -9,6 +9,9 @@ import DashboardPage from './pages/DashboardPage';
 import PatientsPage from './pages/PatientsPage';
 import QueuePage from './pages/QueuePage';
 import MedicalRecordPage from './pages/MedicalRecordPage';
+import ConsultationPage from './pages/ConsultationPage';
+import AttendancePage from './pages/AttendancePage';
+import VaccinationPage from './pages/VaccinationPage';
 import './App.css';
 
 // Componente para proteger rotas que requerem autenticação
@@ -96,6 +99,43 @@ const AppRoutes: React.FC = () => {
         element={
           <ProtectedRoute>
             <MedicalRecordPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/consultations/:patientId"
+        element={
+          <ProtectedRoute>
+            <ConsultationPage />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Rotas de atendimento */}
+      <Route
+        path="/attendance/:consultationId"
+        element={
+          <ProtectedRoute>
+            <AttendancePage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/attendance/consultation/:patientId"
+        element={
+          <ProtectedRoute>
+            <ConsultationPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/attendance/vaccination/:patientId"
+        element={
+          <ProtectedRoute>
+            <VaccinationPage />
           </ProtectedRoute>
         }
       />

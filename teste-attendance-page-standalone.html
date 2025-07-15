@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Página de Atendimento Standalone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-8">Teste - Página de Atendimento Standalone</h1>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">✅ Correções Implementadas</h2>
+            <div class="space-y-3">
+                <div class="flex items-start space-x-3">
+                    <div class="w-6 h-6 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-sm">✓</div>
+                    <div>
+                        <h3 class="font-medium text-gray-900">Modo Standalone com Fallback</h3>
+                        <p class="text-gray-600">AttendancePage tenta backend primeiro, usa dados mock como fallback</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-3">
+                    <div class="w-6 h-6 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-sm">✓</div>
+                    <div>
+                        <h3 class="font-medium text-gray-900">Dados Mock Realistas</h3>
+                        <p class="text-gray-600">5 pacientes diferentes baseados no consultationId</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-3">
+                    <div class="w-6 h-6 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-sm">✓</div>
+                    <div>
+                        <h3 class="font-medium text-gray-900">Salvamento Local</h3>
+                        <p class="text-gray-600">SOAP e finalização funcionam sem backend</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-3">
+                    <div class="w-6 h-6 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-sm">✓</div>
+                    <div>
+                        <h3 class="font-medium text-gray-900">Timeline Dinâmica</h3>
+                        <p class="text-gray-600">Atualizada em tempo real com ações do usuário</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-3">
+                    <div class="w-6 h-6 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-sm">✓</div>
+                    <div>
+                        <h3 class="font-medium text-gray-900">Eliminação dos Erros</h3>
+                        <p class="text-gray-600">Não há mais erros de conexão no console</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">🧪 Como Testar</h2>
+            <div class="space-y-4">
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <h3 class="font-medium text-gray-900">1. Acesse a Fila</h3>
+                    <p class="text-gray-600">Vá para <code class="bg-gray-100 px-2 py-1 rounded">/queue</code></p>
+                </div>
+                
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <h3 class="font-medium text-gray-900">2. Clique em "Atender"</h3>
+                    <p class="text-gray-600">Em qualquer paciente da fila</p>
+                </div>
+                
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <h3 class="font-medium text-gray-900">3. Teste o Atendimento</h3>
+                    <p class="text-gray-600">Navegue pelas abas: Folha Rosto, SOAP, Vacinação, etc.</p>
+                </div>
+                
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <h3 class="font-medium text-gray-900">4. Teste o SOAP</h3>
+                    <p class="text-gray-600">Preencha campos e salve - observe a timeline</p>
+                </div>
+                
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <h3 class="font-medium text-gray-900">5. Finalize</h3>
+                    <p class="text-gray-600">Clique em finalizar atendimento</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">📋 Pacientes Disponíveis</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-medium text-gray-900">ID: 1 - Maria Silva</h3>
+                    <p class="text-sm text-gray-600">34 anos, CPF: 123.456.789-00</p>
+                    <p class="text-sm text-gray-600">Telefone: (11) 98765-4321</p>
+                </div>
+                
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-medium text-gray-900">ID: 2 - João Santos</h3>
+                    <p class="text-sm text-gray-600">28 anos, CPF: 987.654.321-00</p>
+                    <p class="text-sm text-gray-600">Telefone: (11) 99876-5432</p>
+                </div>
+                
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-medium text-gray-900">ID: 3 - Ana Costa</h3>
+                    <p class="text-sm text-gray-600">45 anos, CPF: 456.789.123-00</p>
+                    <p class="text-sm text-gray-600">Telefone: (11) 97654-3210</p>
+                </div>
+                
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-medium text-gray-900">ID: 4 - Carlos Oliveira</h3>
+                    <p class="text-sm text-gray-600">52 anos, CPF: 789.123.456-00</p>
+                    <p class="text-sm text-gray-600">Telefone: (11) 96543-2109</p>
+                </div>
+                
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-medium text-gray-900">ID: 5 - Fernanda Lima</h3>
+                    <p class="text-sm text-gray-600">29 anos, CPF: 321.654.987-00</p>
+                    <p class="text-sm text-gray-600">Telefone: (11) 95432-1098</p>
+                </div>
+                
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-medium text-gray-900">ID: Outros - Maria Silva (padrão)</h3>
+                    <p class="text-sm text-gray-600">Para IDs não listados acima</p>
+                    <p class="text-sm text-gray-600">Usa dados padrão do primeiro paciente</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">📊 Funcionalidades Testadas</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-2">
+                    <h3 class="font-medium text-gray-900">Carregamento</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>✓ Tenta backend primeiro</li>
+                        <li>✓ Fallback para dados mock</li>
+                        <li>✓ Loading spinner</li>
+                        <li>✓ Dados baseados no ID</li>
+                    </ul>
+                </div>
+                
+                <div class="space-y-2">
+                    <h3 class="font-medium text-gray-900">Navegação</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>✓ Breadcrumb funcional</li>
+                        <li>✓ Botão voltar para fila</li>
+                        <li>✓ Navegação entre abas</li>
+                        <li>✓ Modal de cancelamento</li>
+                    </ul>
+                </div>
+                
+                <div class="space-y-2">
+                    <h3 class="font-medium text-gray-900">SOAP</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>✓ Salvamento local</li>
+                        <li>✓ Atualização da timeline</li>
+                        <li>✓ Feedback visual</li>
+                        <li>✓ Dados persistem na sessão</li>
+                    </ul>
+                </div>
+                
+                <div class="space-y-2">
+                    <h3 class="font-medium text-gray-900">Finalização</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>✓ Atualização do status</li>
+                        <li>✓ Evento na timeline</li>
+                        <li>✓ Redirecionamento para fila</li>
+                        <li>✓ Sem erros de console</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

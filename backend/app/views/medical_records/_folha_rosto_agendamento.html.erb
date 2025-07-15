@@ -1,0 +1,76 @@
+<div class="tab-pane fade" id="agendamento" role="tabpanel">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-body">
+          <h5>Agendar Consulta</h5>
+          <form id="scheduleForm">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Data</label>
+                  <input type="date" class="form-control" name="date" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Hora</label>
+                  <input type="time" class="form-control" name="time" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Tipo de Consulta</label>
+                  <select class="form-select" name="appointment_type" required>
+                    <option value="">Selecione...</option>
+                    <option value="Consulta">Consulta</option>
+                    <option value="Retorno">Retorno</option>
+                    <option value="Exame">Exame</option>
+                    <option value="Procedimento">Procedimento</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Profissional</label>
+                  <select class="form-select" name="doctor_id" required>
+                    <option value="">Selecione...</option>
+                    <option value="1">Dr. João Silva</option>
+                    <option value="2">Dra. Maria Santos</option>
+                    <option value="3">Dr. Pedro Costa</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Observações</label>
+              <textarea class="form-control" name="notes" rows="3" placeholder="Observações sobre o agendamento..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Agendar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h6>Próximos Agendamentos</h6>
+          <% if @patient.scheduled_appointments.any? %>
+            <% @patient.scheduled_appointments.upcoming.order(:date).each do |appointment| %>
+              <div class="border-bottom py-2">
+                <div class="d-flex justify-content-between">
+                  <strong><%= appointment.date.strftime('%d/%m/%Y') %></strong>
+                  <span class="badge bg-primary"><%= appointment.appointment_type %></span>
+                </div>
+                <small class="text-muted">
+                  <%= appointment.time.strftime('%H:%M') %> - <%= appointment.doctor_name %>
+                </small>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="text-center text-muted">
+              <i class="bi bi-calendar" style="font-size: 2rem;"></i>
+              <p>Nenhum agendamento</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

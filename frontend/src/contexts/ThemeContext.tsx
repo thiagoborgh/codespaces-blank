@@ -21,7 +21,7 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [theme, setTheme] = useState<'default' | 'hybrid'>('default');
+  const [theme, setTheme] = useState<'default' | 'hybrid'>('hybrid');
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'default' ? 'hybrid' : 'default');

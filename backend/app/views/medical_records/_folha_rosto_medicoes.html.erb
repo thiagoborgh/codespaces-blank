@@ -1,0 +1,236 @@
+<div class="tab-pane fade" id="medicoes" role="tabpanel">
+  <div class="card h-100">
+    <div class="card-header bg-primary text-white">
+      <h6 class="mb-0">
+        <i class="bi bi-graph-up"></i>
+        Medições e Gráficos
+      </h6>
+    </div>
+    <div class="card-body">
+      <!-- Antropometria -->
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h6 class="mb-0">
+            <i class="bi bi-person-lines-fill"></i>
+            Antropometria
+          </h6>
+          <select class="form-select w-auto" id="ageRange">
+            <option value="30a40">30 a 40 anos</option>
+            <option value="20a30">20 a 30 anos</option>
+            <option value="40a50">40 a 50 anos</option>
+            <option value="todos">Todos os registros</option>
+          </select>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Data da medição</th>
+                  <th>Peso (kg)</th>
+                  <th>Altura (cm)</th>
+                  <th>IMC (kg/m²)</th>
+                  <th>Perímetro cefálico (cm)</th>
+                  <th>Circ. abdominal (cm)</th>
+                  <th>Per. panturrilha (cm)</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if @measurements.any? %>
+                  <% @measurements.where.not(weight: nil).order(created_at: :desc).limit(10).each do |measurement| %>
+                    <tr>
+                      <td><%= format_datetime(measurement.created_at) %></td>
+                      <td class="editable-cell" data-field="weight" data-id="<%= measurement.id %>">
+                        <%= measurement.weight || '-' %>
+                      </td>
+                      <td class="editable-cell" data-field="height" data-id="<%= measurement.id %>">
+                        <%= measurement.height || '-' %>
+                      </td>
+                      <td>
+                        <% if measurement.weight && measurement.height %>
+                          <%= calculate_bmi(measurement.weight, measurement.height) %>
+                        <% else %>
+                          -
+                        <% end %>
+                      </td>
+                      <td class="editable-cell" data-field="cephalic_perimeter" data-id="<%= measurement.id %>">
+                        <%= measurement.cephalic_perimeter || '-' %>
+                      </td>
+                      <td class="editable-cell" data-field="abdominal_circumference" data-id="<%= measurement.id %>">
+                        <%= measurement.abdominal_circumference || '-' %>
+                      </td>
+                      <td class="editable-cell" data-field="calf_perimeter" data-id="<%= measurement.id %>">
+                        <%= measurement.calf_perimeter || '-' %>
+                      </td>
+                      <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="editMeasurement(<%= measurement.id %>)">
+                          <i class="bi bi-pencil"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  <% end %>
+                <% else %>
+                  <tr>
+                    <td colspan="8" class="text-center text-muted">Nenhuma medição antropométrica encontrada</td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-3">
+            <canvas id="anthropometryChart" width="400" height="200"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sinais vitais e Glicemia -->
+      <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <a class="nav-link active" id="sinais-vitais-tab" data-bs-toggle="tab" href="#sinais-vitais" role="tab">
+            <i class="bi bi-heart-pulse"></i>
+            Sinais vitais
+          </a>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" id="glicemia-tab" data-bs-toggle="tab" href="#glicemia" role="tab">
+            <i class="bi bi-droplet"></i>
+            Glicemia
+          </a>
+        </li>
+      </ul>
+
+      <div class="tab-content mt-3">
+        <!-- Sinais vitais -->
+        <div class="tab-pane fade show active" id="sinais-vitais" role="tabpanel">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h6 class="mb-0">
+                <i class="bi bi-activity"></i>
+                Sinais vitais
+              </h6>
+              <select class="form-select w-auto" id="competenceVital">
+                <option value="<%= Date.current.strftime('%b%Y') %>"><%= Date.current.strftime('%b %Y') %></option>
+                <option value="<%= 1.month.ago.strftime('%b%Y') %>"><%= 1.month.ago.strftime('%b %Y') %></option>
+                <option value="<%= 2.months.ago.strftime('%b%Y') %>"><%= 2.months.ago.strftime('%b %Y') %></option>
+                <option value="todos">Todos os registros</option>
+              </select>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Data da medição</th>
+                      <th>Pressão arterial (mmHg)</th>
+                      <th>Freq. respiratória (mpm)</th>
+                      <th>Freq. cardíaca (bpm)</th>
+                      <th>Saturação de O₂ (%)</th>
+                      <th>Temperatura (°C)</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if @vital_signs.any? %>
+                      <% @vital_signs.order(created_at: :desc).limit(10).each do |vital_sign| %>
+                        <tr>
+                          <td><%= format_datetime(vital_sign.created_at) %></td>
+                          <td class="editable-cell" data-field="blood_pressure" data-id="<%= vital_sign.id %>">
+                            <%= vital_sign.blood_pressure || '-' %>
+                          </td>
+                          <td class="editable-cell" data-field="respiratory_rate" data-id="<%= vital_sign.id %>">
+                            <%= vital_sign.respiratory_rate || '-' %>
+                          </td>
+                          <td class="editable-cell" data-field="heart_rate" data-id="<%= vital_sign.id %>">
+                            <%= vital_sign.heart_rate || '-' %>
+                          </td>
+                          <td class="editable-cell" data-field="oxygen_saturation" data-id="<%= vital_sign.id %>">
+                            <%= vital_sign.oxygen_saturation || '-' %>
+                          </td>
+                          <td class="editable-cell" data-field="temperature" data-id="<%= vital_sign.id %>">
+                            <%= vital_sign.temperature || '-' %>
+                          </td>
+                          <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="editVitalSign(<%= vital_sign.id %>)">
+                              <i class="bi bi-pencil"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      <% end %>
+                    <% else %>
+                      <tr>
+                        <td colspan="7" class="text-center text-muted">Nenhum sinal vital encontrado</td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+              <div class="mt-3">
+                <canvas id="vitalSignsChart" width="400" height="200"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Glicemia -->
+        <div class="tab-pane fade" id="glicemia" role="tabpanel">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h6 class="mb-0">
+                <i class="bi bi-droplet-half"></i>
+                Glicemia
+              </h6>
+              <select class="form-select w-auto" id="competenceGlycemia">
+                <option value="<%= Date.current.strftime('%b%Y') %>"><%= Date.current.strftime('%b %Y') %></option>
+                <option value="<%= 1.month.ago.strftime('%b%Y') %>"><%= 1.month.ago.strftime('%b %Y') %></option>
+                <option value="<%= 2.months.ago.strftime('%b%Y') %>"><%= 2.months.ago.strftime('%b %Y') %></option>
+                <option value="todos">Todos os registros</option>
+              </select>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Data da medição</th>
+                      <th>Glicemia capilar (mg/dL)</th>
+                      <th>Momento da coleta</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if @glycemia_measurements.any? %>
+                      <% @glycemia_measurements.order(created_at: :desc).limit(10).each do |glycemia| %>
+                        <tr>
+                          <td><%= format_datetime(glycemia.created_at) %></td>
+                          <td class="editable-cell" data-field="value" data-id="<%= glycemia.id %>">
+                            <%= glycemia.value || '-' %>
+                          </td>
+                          <td class="editable-cell" data-field="collection_moment" data-id="<%= glycemia.id %>">
+                            <%= glycemia.collection_moment || 'Não especificado' %>
+                          </td>
+                          <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="editGlycemia(<%= glycemia.id %>)">
+                              <i class="bi bi-pencil"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      <% end %>
+                    <% else %>
+                      <tr>
+                        <td colspan="4" class="text-center text-muted">Nenhuma medição de glicemia encontrada</td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+              <div class="mt-3">
+                <canvas id="glycemiaChart" width="400" height="200"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

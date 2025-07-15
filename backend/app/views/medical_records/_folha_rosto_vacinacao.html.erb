@@ -1,0 +1,50 @@
+<div class="tab-pane fade" id="vacinacao" role="tabpanel">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5>Cartão de Vacinação</h5>
+        <button class="btn btn-primary" onclick="addVaccination()">Adicionar Vacina</button>
+      </div>
+      
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Vacina</th>
+              <th>Data</th>
+              <th>Dose</th>
+              <th>Lote</th>
+              <th>Profissional</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="vaccinationTable">
+            <% if @patient.vaccinations.any? %>
+              <% @patient.vaccinations.order(date: :desc).each do |vaccination| %>
+                <tr>
+                  <td><%= vaccination.vaccine_name %></td>
+                  <td><%= vaccination.date.strftime('%d/%m/%Y') %></td>
+                  <td><%= vaccination.dose %></td>
+                  <td><%= vaccination.lot %></td>
+                  <td><%= vaccination.professional %></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="editVaccination(<%= vaccination.id %>)">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteVaccination(<%= vaccination.id %>)">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              <% end %>
+            <% else %>
+              <tr>
+                <td colspan="6" class="text-center text-muted">Nenhuma vacina registrada</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

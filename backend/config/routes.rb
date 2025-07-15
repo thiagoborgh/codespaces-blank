@@ -2,6 +2,27 @@ Rails.application.routes.draw do
   # Health check endpoint
   get "up" => "rails/health#show", as: :rails_health_check
 
+  # Rota de teste para folha rosto
+  get "test/folha_rosto", to: "test#folha_rosto_test"
+  post "test/folha_rosto/update_card", to: "test#update_card"
+
+  # Web routes for views
+  resources :patients do
+    resources :attendance, only: [:show, :update]
+  end
+  
+  # Medical records (prontuário unificado)
+  resources :medical_records, only: [:show] do
+    member do
+      get :folha_rosto
+      post :update_soap
+      post :create_consultation
+      post :finalize_consultation
+      post :update_card
+      post :update_measurement
+    end
+  end
+
   # API routes
   namespace :api do
     namespace :v1 do
@@ -46,6 +67,14 @@ Rails.application.routes.draw do
       resources :consultations, only: [:show, :update, :destroy] do
         resources :soap_records
         member do
+          post :finalize
+        end
+      end
+
+      # Attendance (specific for consultation workflow)
+      resources :attendance, only: [:show], param: :consultation_id do
+        member do
+          post :update_soap
           post :finalize
         end
       end

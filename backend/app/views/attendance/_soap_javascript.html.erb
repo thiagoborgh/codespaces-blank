@@ -1,0 +1,134 @@
+// Alternância de sidebar
+document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
+    sidebar?.classList.toggle('collapsed');
+});
+
+// Funcionalidade de tela cheia
+document.getElementById('fullscreenToggle')?.addEventListener('click', function() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+            alert(`Erro ao entrar em tela cheia: ${err.message}`);
+        });
+    } else if (document.exitFullscreen) {
+        document.exitFullscreen();
+    }
+});
+
+// Funcionalidade para expandir/colapsar os formulários SOAP
+document.querySelectorAll('.soap-row').forEach(row => {
+    row.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('data-target');
+        const targetForm = document.querySelector(targetId);
+        if (!targetForm) return;
+
+        const isCollapsed = targetForm.classList.contains('collapse') && !targetForm.classList.contains('show');
+
+        // Fecha todos os formulários abertos
+        document.querySelectorAll('.soap-form').forEach(form => {
+            form.classList.add('collapse');
+            form.classList.remove('show');
+        });
+
+        // Alterna o estado do formulário clicado
+        if (isCollapsed) {
+            targetForm.classList.remove('collapse');
+            targetForm.classList.add('show');
+        }
+
+        // Atualiza o ícone da seta
+        document.querySelectorAll('.soap-row .bi').forEach(icon => {
+            icon.classList.remove('bi-chevron-up');
+            icon.classList.add('bi-chevron-down');
+        });
+
+        const icon = this.querySelector('.bi');
+        if (!isCollapsed) {
+            icon.classList.remove('bi-chevron-down');
+            icon.classList.add('bi-chevron-up');
+        }
+    });
+});
+
+// Funcionalidade para cancelar formulários
+document.querySelectorAll('.cancel-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const form = this.closest('.soap-form');
+        if (form) {
+            form.classList.add('collapse');
+            form.classList.remove('show');
+            
+            // Reset form fields
+            const formElement = form.querySelector('form');
+            if (formElement) {
+                formElement.reset();
+            }
+        }
+    });
+});
+
+// Cálculo automático do IMC
+function calculateBMI() {
+    const weight = parseFloat(document.getElementById('weight')?.value);
+    const height = parseFloat(document.getElementById('height')?.value);
+    const bmiField = document.getElementById('bmi');
+    
+    if (weight && height && bmiField) {
+        const heightInMeters = height / 100;
+        const bmi = weight / (heightInMeters * heightInMeters);
+        bmiField.value = bmi.toFixed(2);
+    }
+}
+
+// Adicionar event listeners para cálculo do IMC
+document.getElementById('weight')?.addEventListener('input', calculateBMI);
+document.getElementById('height')?.addEventListener('input', calculateBMI);
+
+// Funcionalidade para alternar entre abas
+document.querySelectorAll('.nav-tabs .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const tabList = this.closest('.nav-tabs');
+        if (tabList) {
+            // Remove active class from all tabs in this tab list
+            tabList.querySelectorAll('.nav-link').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Add active class to clicked tab
+            this.classList.add('active');
+        }
+
+        const tabId = this.getAttribute('href').substring(1);
+        const tabPane = document.querySelector(`#${tabId}`);
+        if (tabPane) {
+            // Hide all tab panes in the same container
+            const tabContent = tabPane.closest('.tab-content');
+            if (tabContent) {
+                tabContent.querySelectorAll('.tab-pane').forEach(pane => {
+                    pane.classList.remove('show', 'active');
+                });
+            }
+            // Show selected tab pane
+            tabPane.classList.add('show', 'active');
+        }
+    });
+});
+
+// Auto-dismiss alerts after 5 seconds
+document.querySelectorAll('.alert').forEach(alert => {
+    setTimeout(() => {
+        const bsAlert = new bootstrap.Alert(alert);
+        bsAlert.close();
+    }, 5000);
+});
+
+// Confirmação antes de finalizar atendimento
+document.querySelector('form[action*="finalize"]')?.addEventListener('submit', function(e) {
+    const confirmed = confirm('Tem certeza que deseja finalizar este atendimento? Esta ação não pode ser desfeita.');
+    if (!confirmed) {
+        e.preventDefault();
+    }
+});

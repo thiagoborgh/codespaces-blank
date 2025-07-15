@@ -7,8 +7,10 @@ class SoapRecord < ApplicationRecord
   # Validations
   validates :soap_type, presence: true
   validates :content, presence: true
+  validates :soap_type, inclusion: { in: %w[subjective objective assessment plan] }
 
-  # Remove enum as it's not needed for SOAP records
+  # Constants for SOAP types
+  SOAP_TYPES = %w[subjective objective assessment plan].freeze
 
   # JSON fields
   serialize :vital_signs_data, JSON
@@ -29,14 +31,18 @@ class SoapRecord < ApplicationRecord
   end
 
   def formatted_content
-    case soap_type
-    when 'objetivo'
-      format_objective_content
-    when 'plano'
-      format_plan_content
-    else
-      content
-    end
+    return '' if content.blank?
+
+    # Simple formatting for display
+    content.gsub(/\n/, '<br/>').html_safe
+  end
+
+  def self.for_consultation(consultation)
+    where(consultation: consultation)
+  end
+
+  def self.for_patient(patient)
+    where(patient: patient)
   end
 
   def has_vital_signs?
@@ -63,7 +69,7 @@ class SoapRecord < ApplicationRecord
 
   def format_objective_content
     formatted = content.dup
-    
+
     if has_vital_signs?
       formatted += "\n\n--- Sinais Vitais ---\n"
       vital_signs_data.each do |key, value|

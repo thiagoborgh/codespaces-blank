@@ -508,7 +508,7 @@
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* Mudança: visible em vez de hidden para permitir dropdown */
 }
 
 .healthcare-theme .healthcare-card:hover {
@@ -636,13 +636,73 @@
   transform: none !important;
 }
 
-/* Garantir que o dropdown apareça acima de outros elementos */
+/* Garantir que o dropdown apareça acima de outros elementos - MÁXIMA PRIORIDADE */
 .healthcare-theme .healthcare-card .relative {
-  z-index: 10;
+  z-index: 100 !important;
 }
 
 .healthcare-theme .healthcare-card .relative > div[class*="absolute"] {
-  z-index: 1000 !important;
+  z-index: 99999 !important;
+  position: absolute !important;
+}
+
+/* Específico para dropdown menu no tema híbrido */
+.healthcare-theme .healthcare-card div[data-dropdown-menu="true"] {
+  z-index: 99999 !important;
+  position: absolute !important;
+  background: white !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Garantir z-index extremo para container relative */
+.healthcare-theme [class*="z-[100]"] {
+  z-index: 100 !important;
+}
+
+/* Garantir z-index máximo para elementos dropdown */
+.healthcare-theme [class*="z-[99999]"] {
+  z-index: 99999 !important;
+}
+
+/* Forçar sobreposição em todo dropdown aberto */
+.healthcare-theme .healthcare-card.z-50 {
+  z-index: 100 !important;
+  position: relative !important;
+}
+
+/* REGRA DE EMERGÊNCIA - Dropdown deve sempre aparecer por cima */
+div[data-dropdown-menu="true"] {
+  z-index: 99999 !important;
+  position: absolute !important;
+  background: white !important;
+}
+
+/* Garantir que o grid container não interfira */
+.healthcare-theme .grid {
+  isolation: auto !important;
+}
+
+.healthcare-theme .healthcare-card {
+  isolation: auto !important;
+}
+
+/* DROPDOWN PRIORIDADE MÁXIMA - Garantir visibilidade em tema híbrido */
+.healthcare-theme [data-dropdown-menu="true"] {
+  z-index: 999999 !important;
+}
+
+.healthcare-theme [data-dropdown-menu="true"]:before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: white;
+  border-radius: inherit;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 /* Impedir que hover de cards adjacentes feche dropdown aberto */

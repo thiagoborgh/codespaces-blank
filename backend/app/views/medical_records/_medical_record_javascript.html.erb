@@ -1,0 +1,378 @@
+// Prontuário Médico - JavaScript com Alpine.js
+
+function medicalRecord() {
+    return {
+        activeTab: new URLSearchParams(window.location.search).get('tab') || 'overview',
+        consultationId: new URLSearchParams(window.location.search).get('consultation_id'),
+        autoSaveTimeout: null,
+        lastSaved: null,
+        
+        init() {
+            console.log('🏥 Prontuário médico inicializado');
+            console.log('Aba ativa:', this.activeTab);
+            
+            // Auto-save para formulários SOAP
+            this.setupAutoSave();
+            
+            // Atualizar URL quando mudar de aba
+            this.$watch('activeTab', (newTab) => {
+                this.updateURL(newTab);
+            });
+        },
+        
+        updateURL(tab) {
+            const url = new URL(window.location);
+            url.searchParams.set('tab', tab);
+            if (this.consultationId) {
+                url.searchParams.set('consultation_id', this.consultationId);
+            }
+            window.history.replaceState({}, '', url);
+        },
+        
+        setupAutoSave() {
+            // Event listener para campos de formulário
+            document.addEventListener('input', (e) => {
+                if (e.target.matches('textarea, input[type="text"], input[type="number"], select')) {
+                    this.triggerAutoSave();
+                }
+            });
+            
+            document.addEventListener('change', (e) => {
+                if (e.target.matches('input[type="checkbox"], input[type="radio"], select')) {
+                    this.triggerAutoSave();
+                }
+            });
+        },
+        
+        triggerAutoSave() {
+            clearTimeout(this.autoSaveTimeout);
+            this.autoSaveTimeout = setTimeout(() => {
+                this.autoSave();
+            }, 2000); // Auto-save após 2 segundos de inatividade
+        },
+        
+        async autoSave() {
+            if (this.activeTab !== 'soap' || !this.consultationId) return;
+            
+            try {
+                console.log('💾 Salvando automaticamente...');
+                
+                const formData = this.collectSOAPData();
+                
+                const response = await fetch(`/medical_records/${window.patientId}/update_soap`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        consultation_id: this.consultationId,
+                        soap_records: formData
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    this.lastSaved = result.timestamp;
+                    this.showNotification('Salvo automaticamente', 'success');
+                } else {
+                    this.showNotification('Erro ao salvar', 'error');
+                }
+            } catch (error) {
+                console.error('Erro no auto-save:', error);
+                this.showNotification('Erro na conexão', 'error');
+            }
+        },
+        
+        collectSOAPData() {
+            const data = {};
+            
+            // Coletar dados do Subjetivo
+            data.subjective = {
+                content: document.querySelector('#subjective_content')?.value || '',
+                ciap2: document.querySelector('#subjective_ciap2')?.value || '',
+                pain_scale: document.querySelector('#pain_scale')?.value || ''
+            };
+            
+            // Coletar dados do Objetivo
+            data.objective = {
+                content: document.querySelector('#objective_content')?.value || '',
+                vital_signs: this.collectVitalSigns(),
+                measurements: this.collectMeasurements()
+            };
+            
+            // Coletar dados da Avaliação
+            data.assessment = {
+                content: document.querySelector('#assessment_content')?.value || '',
+                cid10: document.querySelector('#assessment_cid10')?.value || '',
+                problems: this.collectProblems()
+            };
+            
+            // Coletar dados do Plano
+            data.plan = {
+                content: document.querySelector('#plan_content')?.value || '',
+                medications: this.collectMedications(),
+                procedures: this.collectProcedures(),
+                exams: this.collectExams()
+            };
+            
+            return data;
+        },
+        
+        collectVitalSigns() {
+            return {
+                systolic_pressure: document.querySelector('#systolic_pressure')?.value || '',
+                diastolic_pressure: document.querySelector('#diastolic_pressure')?.value || '',
+                heart_rate: document.querySelector('#heart_rate')?.value || '',
+                temperature: document.querySelector('#temperature')?.value || '',
+                respiratory_rate: document.querySelector('#respiratory_rate')?.value || '',
+                oxygen_saturation: document.querySelector('#oxygen_saturation')?.value || ''
+            };
+        },
+        
+        collectMeasurements() {
+            return {
+                height: document.querySelector('#height')?.value || '',
+                weight: document.querySelector('#weight')?.value || '',
+                bmi: document.querySelector('#bmi')?.value || ''
+            };
+        },
+        
+        collectProblems() {
+            const problems = [];
+            document.querySelectorAll('.problem-item').forEach(item => {
+                const name = item.querySelector('.problem-name')?.value;
+                const ciap2 = item.querySelector('.problem-ciap2')?.value;
+                if (name || ciap2) {
+                    problems.push({ name, ciap2 });
+                }
+            });
+            return problems;
+        },
+        
+        collectMedications() {
+            const medications = [];
+            document.querySelectorAll('.medication-item').forEach(item => {
+                const name = item.querySelector('.medication-name')?.value;
+                const dosage = item.querySelector('.medication-dosage')?.value;
+                const frequency = item.querySelector('.medication-frequency')?.value;
+                if (name || dosage || frequency) {
+                    medications.push({ name, dosage, frequency });
+                }
+            });
+            return medications;
+        },
+        
+        collectProcedures() {
+            const procedures = [];
+            document.querySelectorAll('.procedure-item').forEach(item => {
+                const name = item.querySelector('.procedure-name')?.value;
+                const description = item.querySelector('.procedure-description')?.value;
+                if (name || description) {
+                    procedures.push({ name, description });
+                }
+            });
+            return procedures;
+        },
+        
+        collectExams() {
+            const exams = [];
+            document.querySelectorAll('.exam-item').forEach(item => {
+                const name = item.querySelector('.exam-name')?.value;
+                const urgency = item.querySelector('.exam-urgency')?.value;
+                if (name || urgency) {
+                    exams.push({ name, urgency });
+                }
+            });
+            return exams;
+        },
+        
+        showNotification(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <div class="toast-content">
+                    <i class="bi bi-${this.getToastIcon(type)}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Adicionar ao container de toasts
+            let container = document.querySelector('.toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+            }
+            
+            container.appendChild(toast);
+            
+            // Remover após 3 segundos
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        },
+        
+        getToastIcon(type) {
+            const icons = {
+                success: 'check-circle',
+                error: 'exclamation-circle',
+                warning: 'exclamation-triangle',
+                info: 'info-circle'
+            };
+            return icons[type] || 'info-circle';
+        },
+        
+        // Métodos para manipular listas dinâmicas
+        addListItem(listType) {
+            const container = document.querySelector(`#${listType}-list`);
+            if (!container) return;
+            
+            const template = container.querySelector('.list-item-template');
+            if (!template) return;
+            
+            const newItem = template.cloneNode(true);
+            newItem.classList.remove('list-item-template', 'd-none');
+            newItem.classList.add(`${listType}-item`);
+            
+            // Limpar valores
+            newItem.querySelectorAll('input, textarea, select').forEach(input => {
+                input.value = '';
+            });
+            
+            container.appendChild(newItem);
+            
+            // Focar no primeiro campo
+            const firstInput = newItem.querySelector('input, textarea, select');
+            if (firstInput) firstInput.focus();
+        },
+        
+        removeListItem(button) {
+            const item = button.closest('.list-item');
+            if (item) {
+                item.remove();
+                this.triggerAutoSave();
+            }
+        },
+        
+        // Cálculos automáticos
+        calculateBMI() {
+            const height = parseFloat(document.querySelector('#height')?.value || 0);
+            const weight = parseFloat(document.querySelector('#weight')?.value || 0);
+            
+            if (height > 0 && weight > 0) {
+                const heightInMeters = height / 100;
+                const bmi = weight / (heightInMeters * heightInMeters);
+                const bmiField = document.querySelector('#bmi');
+                
+                if (bmiField) {
+                    bmiField.value = bmi.toFixed(1);
+                    
+                    // Adicionar classificação
+                    const classification = this.getBMIClassification(bmi);
+                    const classificationElement = document.querySelector('#bmi-classification');
+                    if (classificationElement) {
+                        classificationElement.textContent = classification;
+                        classificationElement.className = `badge ${this.getBMIBadgeClass(bmi)}`;
+                    }
+                }
+            }
+        },
+        
+        getBMIClassification(bmi) {
+            if (bmi < 18.5) return 'Abaixo do peso';
+            if (bmi < 25) return 'Peso normal';
+            if (bmi < 30) return 'Sobrepeso';
+            if (bmi < 35) return 'Obesidade grau I';
+            if (bmi < 40) return 'Obesidade grau II';
+            return 'Obesidade grau III';
+        },
+        
+        getBMIBadgeClass(bmi) {
+            if (bmi < 18.5) return 'bg-warning';
+            if (bmi < 25) return 'bg-success';
+            if (bmi < 30) return 'bg-warning';
+            return 'bg-danger';
+        },
+        
+        // Navegação de emergência
+        emergencyActions: {
+            saveAndExit() {
+                if (confirm('Deseja salvar as alterações antes de sair?')) {
+                    // Implementar salvamento forçado
+                    window.location.href = '/queue';
+                }
+            },
+            
+            quickSave() {
+                // Salvamento manual imediato
+                this.autoSave();
+            }
+        }
+    };
+}
+
+// Inicialização adicional quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', function() {
+    // Adicionar estilos para toasts
+    const toastStyles = `
+        .toast-container {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 2000;
+        }
+        
+        .toast {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-bottom: 10px;
+            padding: 12px 16px;
+            min-width: 250px;
+            border-left: 4px solid;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .toast-success { border-left-color: #059669; }
+        .toast-error { border-left-color: #dc2626; }
+        .toast-warning { border-left-color: #d97706; }
+        .toast-info { border-left-color: #2563eb; }
+        
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .toast-content i {
+            font-size: 1.1rem;
+        }
+        
+        .toast-success i { color: #059669; }
+        .toast-error i { color: #dc2626; }
+        .toast-warning i { color: #d97706; }
+        .toast-info i { color: #2563eb; }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    `;
+    
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = toastStyles;
+    document.head.appendChild(styleSheet);
+    
+    // Adicionar variáveis globais para facilitar o acesso
+    window.patientId = document.querySelector('[data-patient-id]')?.dataset.patientId;
+    
+    console.log('🎯 Prontuário médico configurado e pronto para uso');
+});

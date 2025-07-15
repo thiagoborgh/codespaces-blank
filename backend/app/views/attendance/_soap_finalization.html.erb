@@ -1,0 +1,422 @@
+<!-- Seção Finalização -->
+<div class="soap-section">
+    <div class="soap-row" data-target="#finalizacao-form" style="background-color: #f7d7c4;">
+        <h5 class="mb-0">Finalização</h5>
+        <i class="bi bi-chevron-down"></i>
+    </div>
+    
+    <div id="finalizacao-form" class="soap-form collapse">
+        <%= form_with model: [@patient, @consultation], local: false, remote: true, 
+                      url: attendance_path(@patient, @consultation), 
+                      method: :patch, class: "soap-form-data" do |form| %>
+            
+            <div class="mb-3">
+                <div class="form-check">
+                    <%= form.check_box :municipality_participation, class: "form-check-input" %>
+                    <label class="form-check-label">Município participou do atendimento</label>
+                </div>
+                
+                <%= form.select :participation_form, 
+                               options_for_select([
+                                   ['Forma de participação', ''],
+                                   ['Presencial', 'presencial'],
+                                   ['Telemedicina', 'telemedicina'],
+                                   ['Telefônica', 'telefonica']
+                               ]),
+                               { include_blank: false }, 
+                               { class: "form-select mt-2" } %>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Tipo de atendimento</label>
+                <div class="form-check">
+                    <%= form.radio_button :service_type, 'consulta', class: "form-check-input" %>
+                    <label class="form-check-label">Consulta no dia</label>
+                </div>
+                <div class="form-check">
+                    <%= form.radio_button :service_type, 'urgencia', class: "form-check-input" %>
+                    <label class="form-check-label">Urgência</label>
+                </div>
+                
+                <%= form.select :conduct, 
+                               options_for_select([
+                                   ['Conduta', ''],
+                                   ['Alta médica', 'alta'],
+                                   ['Retorno agendado', 'retorno'],
+                                   ['Encaminhamento', 'encaminhamento'],
+                                   ['Internação', 'internacao']
+                               ]),
+                               { include_blank: false }, 
+                               { class: "form-select mt-2" } %>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Observações</label>
+                <%= form.text_area :finalization_notes, 
+                                  rows: 4, 
+                                  class: "form-control", 
+                                  placeholder: "Informe as impressões subjetivas do profissional e as expressadas pelo paciente." %>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Atendimento compartilhado</label>
+                <%= form.select :shared_care_professional, 
+                               options_for_select([
+                                   ['Selecione o profissional', ''],
+                                   ['Dr. João Silva - Cardiologista', 'joao_silva'],
+                                   ['Dra. Maria Santos - Endocrinologista', 'maria_santos']
+                               ]),
+                               { include_blank: false }, 
+                               { class: "form-select" } %>
+                
+                <%= form.select :shared_care_form, 
+                               options_for_select([
+                                   ['Selecione a forma de participação', ''],
+                                   ['Interconsulta', 'interconsulta'],
+                                   ['Discussão de caso', 'discussao_caso'],
+                                   ['Compartilhamento de cuidado', 'compartilhamento']
+                               ]),
+                               { include_blank: false }, 
+                               { class: "form-select mt-2" } %>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Ficha de notificação de caso suspeito</label>
+                <div class="input-group">
+                    <%= form.select :notification_form, 
+                                   options_for_select([
+                                       ['Pesquise ou selecione pela ficha', ''],
+                                       ['Acidente de trabalho grave', 'acidente_trabalho'],
+                                       ['Acidente por animais peçonhentos', 'acidente_animais'],
+                                       ['Dengue', 'dengue'],
+                                       ['COVID-19', 'covid19'],
+                                       ['Tuberculose', 'tuberculose']
+                                   ]),
+                                   { include_blank: false }, 
+                                   { class: "form-select" } %>
+                    <button type="button" class="btn btn-primary" id="incluir-ficha">
+                        Incluir ficha
+                    </button>
+                </div>
+                
+                <table class="table table-striped mt-3">
+                    <thead>
+                        <tr>
+                            <th>Ficha</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Acidente de trabalho grave</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary">
+                                    <i class="bi bi-file-earmark"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Racionalidade em saúde (Exceção alopática/convencional)</label>
+                <%= form.select :health_rationality, 
+                               options_for_select([
+                                   ['Selecione a racionalidade', ''],
+                                   ['Medicina Tradicional Chinesa', 'medicina_chinesa'],
+                                   ['Homeopatia', 'homeopatia'],
+                                   ['Fitoterapia', 'fitoterapia'],
+                                   ['Acupuntura', 'acupuntura']
+                               ]),
+                               { include_blank: false }, 
+                               { class: "form-select" } %>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Desfecho do atendimento</label>
+                <div class="form-check">
+                    <%= form.radio_button :outcome, 'liberar', class: "form-check-input" %>
+                    <label class="form-check-label">Liberar Paciente</label>
+                </div>
+                <div class="form-check">
+                    <%= form.radio_button :outcome, 'manter', class: "form-check-input" %>
+                    <label class="form-check-label">Manter Paciente na lista de atendimento</label>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <button type="button" class="btn btn-primary" id="agendar-consulta">
+                    <i class="bi bi-calendar-plus"></i> Agendar consulta
+                </button>
+                
+                <div class="form-check form-switch mt-3">
+                    <%= form.check_box :print_on_finish, class: "form-check-input" %>
+                    <label class="form-check-label">Imprimir atendimento ao finalizar</label>
+                </div>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> Finalizar Atendimento
+                </button>
+                <button type="button" class="btn btn-secondary cancel-btn">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-info" id="save-draft">
+                    <i class="bi bi-save"></i> Salvar Rascunho
+                </button>
+            </div>
+        <% end %>
+    </div>
+</div>
+<div class="soap-section">
+    <div class="soap-row" data-target="#finalizacao-form" style="background-color: #f7d7c4; padding: 10px; border-radius: 4px;">
+        <h5 class="mb-0">Finalização do Atendimento</h5>
+        <span class="bi bi-chevron-down"></span>
+    </div>
+    
+    <%= form_with model: @consultation, 
+                  url: finalize_attendance_path(@consultation), 
+                  method: :post, 
+                  local: false, 
+                  class: "soap-form collapse", 
+                  id: "finalizacao-form" do |form| %>
+        
+        <!-- Participação do Município -->
+        <div class="mb-3">
+            <div class="form-check">
+                <%= form.check_box :municipality_participation, class: "form-check-input", id: "municipio-participacao" %>
+                <label class="form-check-label" for="municipio-participacao">Município participou do atendimento</label>
+            </div>
+            <%= form.select :participation_form, 
+                           options_for_select([
+                             ['Selecione', ''],
+                             ['Apoio Matricial', 'apoio_matricial'],
+                             ['Teleconsulta', 'teleconsulta'],
+                             ['Regulação', 'regulacao'],
+                             ['Outros', 'outros']
+                           ]), 
+                           {}, 
+                           { class: "form-control mt-2", id: "forma-participacao" } %>
+        </div>
+        
+        <!-- Tipo de Atendimento -->
+        <div class="mb-3">
+            <label class="form-label">Tipo de Atendimento</label>
+            <div class="form-check">
+                <%= form.radio_button :attendance_type, 'individual', class: "form-check-input", id: "individual" %>
+                <label class="form-check-label" for="individual">Individual</label>
+            </div>
+            <div class="form-check">
+                <%= form.radio_button :attendance_type, 'coletivo', class: "form-check-input", id: "coletivo" %>
+                <label class="form-check-label" for="coletivo">Coletivo</label>
+            </div>
+            <div class="form-check">
+                <%= form.radio_button :attendance_type, 'domiciliar', class: "form-check-input", id: "domiciliar" %>
+                <label class="form-check-label" for="domiciliar">Domiciliar</label>
+            </div>
+            <div class="form-check">
+                <%= form.radio_button :attendance_type, 'urgencia', class: "form-check-input", id: "urgencia" %>
+                <label class="form-check-label" for="urgencia">Urgência</label>
+            </div>
+        </div>
+        
+        <!-- Conduta -->
+        <div class="mb-3">
+            <label for="conduta" class="form-label">Conduta</label>
+            <%= form.select :conduct, 
+                           options_for_select([
+                             ['Selecione', ''],
+                             ['Alta', 'alta'],
+                             ['Retorno', 'retorno'],
+                             ['Encaminhamento', 'encaminhamento'],
+                             ['Observação', 'observacao'],
+                             ['Internação', 'internacao']
+                           ]), 
+                           {}, 
+                           { class: "form-control", id: "conduta" } %>
+        </div>
+        
+        <!-- Observações -->
+        <div class="mb-3">
+            <label for="observacoes-finalizacao" class="form-label">Observações</label>
+            <%= form.text_area :observations, 
+                              class: "form-control", 
+                              id: "observacoes-finalizacao", 
+                              rows: 4, 
+                              placeholder: "Informe as impressões subjetivas do profissional e as expressadas pelo Municipe." %>
+        </div>
+        
+        <!-- Cuidado Compartilhado -->
+        <div class="mb-3">
+            <label class="form-label">Cuidado Compartilhado</label>
+            <div class="row">
+                <div class="col-md-6">
+                    <select class="form-control" name="finalization_data[shared_care][professional]" id="atendimento-compartilhado-profissional">
+                        <option value="">Selecione o profissional</option>
+                        <option value="enfermeiro">Enfermeiro</option>
+                        <option value="dentista">Dentista</option>
+                        <option value="nutricionista">Nutricionista</option>
+                        <option value="psicologo">Psicólogo</option>
+                        <option value="fisioterapeuta">Fisioterapeuta</option>
+                        <option value="assistente_social">Assistente Social</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <select class="form-control" name="finalization_data[shared_care][form]" id="atendimento-compartilhado-forma">
+                        <option value="">Selecione a forma de participação</option>
+                        <option value="presencial">Presencial</option>
+                        <option value="teleconsulta">Teleconsulta</option>
+                        <option value="matriciamento">Apoio Matricial</option>
+                        <option value="discussao_caso">Discussão de Caso</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fichas de Notificação -->
+        <div class="mb-3">
+            <label for="ficha-notificacao" class="form-label">Fichas de notificação de caso suspeito</label>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="finalization_data[notification_forms][violence]" id="violencia">
+                        <label class="form-check-label" for="violencia">Violência Interpessoal/Autoprovocada</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="finalization_data[notification_forms][accident]" id="acidente">
+                        <label class="form-check-label" for="acidente">Acidente de Trabalho</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="finalization_data[notification_forms][intoxication]" id="intoxicacao">
+                        <label class="form-check-label" for="intoxicacao">Intoxicação Exógena</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="finalization_data[notification_forms][antimicrobial]" id="antimicrobiano">
+                        <label class="form-check-label" for="antimicrobiano">Uso de Antimicrobiano</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="finalization_data[notification_forms][death]" id="obito">
+                        <label class="form-check-label" for="obito">Óbito</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="finalization_data[notification_forms][other]" id="outras_notificacoes">
+                        <label class="form-check-label" for="outras_notificacoes">Outras notificações</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Racionalidade em Saúde -->
+        <div class="mb-3">
+            <label for="racionalidade" class="form-label">Racionalidade em saúde (Exceção alopática/convencional)</label>
+            <%= form.select :health_rationality, 
+                           options_for_select([
+                             ['Selecione a racionalidade', ''],
+                             ['Medicina Tradicional Chinesa', 'medicina_tradicional_chinesa'],
+                             ['Homeopatia', 'homeopatia'],
+                             ['Fitoterapia', 'fitoterapia'],
+                             ['Acupuntura', 'acupuntura'],
+                             ['Terapia Floral', 'terapia_floral'],
+                             ['Antroposofia', 'antroposofia'],
+                             ['Ayurveda', 'ayurveda'],
+                             ['Outras', 'outras']
+                           ]), 
+                           {}, 
+                           { class: "form-control", id: "racionalidade" } %>
+        </div>
+        
+        <!-- Desfecho -->
+        <div class="mb-3">
+            <label class="form-label">Desfecho do Atendimento</label>
+            <div class="form-check">
+                <%= form.radio_button :outcome, 'problema_resolvido', class: "form-check-input", id: "problema_resolvido" %>
+                <label class="form-check-label" for="problema_resolvido">Problema Resolvido</label>
+            </div>
+            <div class="form-check">
+                <%= form.radio_button :outcome, 'melhorado', class: "form-check-input", id: "melhorado" %>
+                <label class="form-check-label" for="melhorado">Melhorado</label>
+            </div>
+            <div class="form-check">
+                <%= form.radio_button :outcome, 'inalterado', class: "form-check-input", id: "inalterado" %>
+                <label class="form-check-label" for="inalterado">Inalterado</label>
+            </div>
+            <div class="form-check">
+                <%= form.radio_button :outcome, 'piorado', class: "form-check-input", id: "piorado" %>
+                <label class="form-check-label" for="piorado">Piorado</label>
+            </div>
+        </div>
+        
+        <!-- Agendamento -->
+        <div class="mb-3">
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" name="finalization_data[scheduled_appointment][has_scheduled]" id="agendar-consulta-check">
+                <label class="form-check-label" for="agendar-consulta-check">Agendar nova consulta</label>
+            </div>
+            
+            <div id="agendamento-details" style="display: none;">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="agendamento-data" class="form-label">Data</label>
+                        <input type="date" class="form-control" name="finalization_data[scheduled_appointment][date]" id="agendamento-data">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="agendamento-hora" class="form-label">Horário</label>
+                        <input type="time" class="form-control" name="finalization_data[scheduled_appointment][time]" id="agendamento-hora">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="agendamento-tipo" class="form-label">Tipo</label>
+                        <select class="form-control" name="finalization_data[scheduled_appointment][type]" id="agendamento-tipo">
+                            <option value="">Selecione o tipo</option>
+                            <option value="consulta">Consulta</option>
+                            <option value="retorno">Retorno</option>
+                            <option value="procedimento">Procedimento</option>
+                            <option value="exame">Exame</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Opções de Impressão -->
+        <div class="mb-3">
+            <div class="form-check form-switch">
+                <%= form.check_box :print_on_finish, class: "form-check-input", id: "imprimir-atendimento" %>
+                <label class="form-check-label" for="imprimir-atendimento">
+                    <i class="bi bi-printer"></i> Imprimir atendimento ao finalizar
+                </label>
+            </div>
+        </div>
+        
+        <!-- Botões de Ação -->
+        <div class="d-flex gap-2 mt-4">
+            <button type="submit" class="btn btn-success btn-lg save-btn">
+                <i class="bi bi-check-circle"></i> Finalizar Atendimento
+            </button>
+            <button type="button" class="btn btn-secondary cancel-btn">
+                <i class="bi bi-x-circle"></i> Cancelar
+            </button>
+        </div>
+        
+        <div class="alert alert-warning mt-3">
+            <i class="bi bi-exclamation-triangle"></i>
+            <strong>Atenção:</strong> Ao finalizar o atendimento, ele será marcado como concluído e não poderá ser mais editado.
+        </div>
+    <% end %>
+</div>

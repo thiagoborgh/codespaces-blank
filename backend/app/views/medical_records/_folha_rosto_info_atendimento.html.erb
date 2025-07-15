@@ -1,0 +1,179 @@
+<div class="tab-pane fade show active" id="atendimento" role="tabpanel">
+  <!-- Informações Iniciais -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-title">Data de Nascimento</h6>
+          <p class="card-text text-primary fw-bold">
+            <%= @patient.birth_date.strftime('%d/%m/%Y') rescue 'Não informado' %>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-title">Idade</h6>
+          <p class="card-text text-primary fw-bold">
+            <%= @patient.age rescue 'Não informado' %> anos
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-title">Gênero</h6>
+          <p class="card-text text-primary fw-bold">
+            <%= @patient.gender rescue 'Não informado' %>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-title">Telefone</h6>
+          <p class="card-text text-primary fw-bold">
+            <%= @patient.phone rescue 'Não informado' %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-title">Endereço</h6>
+          <p class="card-text">
+            <%= @patient.address rescue 'Não informado' %>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-title">Responsável</h6>
+          <p class="card-text">
+            <%= @patient.responsible_name rescue 'Não informado' %>
+          </p>
+          <% if @patient.responsible_phone.present? %>
+            <small class="text-muted">Tel: <%= @patient.responsible_phone %></small>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Últimas Consultas -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h6 class="mb-0">
+            <i class="bi bi-clipboard-check"></i>
+            Últimas Consultas
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>CIAP 2</th>
+                  <th>CID 10</th>
+                  <th>Intervenções e/ou procedimentos</th>
+                  <th>Idade</th>
+                  <th>Tipo</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if @consultations.any? %>
+                  <% @consultations.order(created_at: :desc).limit(10).each do |consultation| %>
+                    <tr>
+                      <td><%= format_datetime(consultation.created_at) %></td>
+                      <td><%= consultation.ciap2 || '-' %></td>
+                      <td><%= consultation.cid10 || '-' %></td>
+                      <td><%= consultation.interventions || '-' %></td>
+                      <td><%= calculate_age_at_date(@patient.birth_date, consultation.created_at) %></td>
+                      <td>
+                        <span class="badge bg-<%= consultation.consultation_type == 'inicial' ? 'info' : consultation.consultation_type == 'consulta' ? 'primary' : 'warning' %>">
+                          <%= consultation.consultation_type&.humanize || 'Consulta' %>
+                        </span>
+                      </td>
+                      <td>
+                        <button class="btn btn-sm btn-primary" onclick="viewConsultation(<%= consultation.id %>)">
+                          <i class="bi bi-eye"></i> Visualizar
+                        </button>
+                      </td>
+                    </tr>
+                  <% end %>
+                <% else %>
+                  <tr>
+                    <td colspan="7" class="text-center text-muted">Nenhuma consulta encontrada</td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Encaminhamentos -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-secondary text-white">
+          <h6 class="mb-0">
+            <i class="bi bi-arrow-right-circle"></i>
+            Encaminhamentos
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Profissional</th>
+                  <th>Especialidade</th>
+                  <th>Hipótese/Diagnóstico</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if @referrals.any? %>
+                  <% @referrals.order(created_at: :desc).limit(10).each do |referral| %>
+                    <tr>
+                      <td><%= format_datetime(referral.created_at) %></td>
+                      <td><%= referral.professional_name || referral.user&.name || '-' %></td>
+                      <td><%= referral.specialty || '-' %></td>
+                      <td><%= referral.hypothesis || '-' %></td>
+                      <td>
+                        <button class="btn btn-sm btn-primary" onclick="viewReferral(<%= referral.id %>)">
+                          <i class="bi bi-eye"></i> Visualizar
+                        </button>
+                      </td>
+                    </tr>
+                  <% end %>
+                <% else %>
+                  <tr>
+                    <td colspan="5" class="text-center text-muted">Nenhum encaminhamento encontrado</td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

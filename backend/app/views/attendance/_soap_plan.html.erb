@@ -1,0 +1,710 @@
+<!-- Seção Plano -->
+<div class="soap-section">
+    <div class="soap-row" data-target="#plano-form" style="background-color: #f7d7c4;">
+        <h5 class="mb-0">Plano (P)</h5>
+        <i class="bi bi-chevron-down"></i>
+    </div>
+    
+    <div id="plano-form" class="soap-form collapse">
+        <%= form_with model: [@patient, @consultation], local: false, remote: true, 
+                      url: attendance_path(@patient, @consultation), 
+                      method: :patch, class: "soap-form-data" do |form| %>
+            
+            <!-- Tabs para Plano -->
+            <ul class="nav nav-tabs mb-3" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="intervencoes-tab" data-bs-toggle="tab" href="#intervencoes" role="tab">Intervenções/Procedimentos</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="medicamentos-tab" data-bs-toggle="tab" href="#medicamentos" role="tab">Medicamentos</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="exames-solicitados-tab" data-bs-toggle="tab" href="#exames-solicitados" role="tab">Exames</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="atestados-tab" data-bs-toggle="tab" href="#atestados" role="tab">Atestados</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="orientacoes-tab" data-bs-toggle="tab" href="#orientacoes" role="tab">Orientações</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="encaminhamentos-tab" data-bs-toggle="tab" href="#encaminhamentos" role="tab">Encaminhamentos</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="compartilhamento-tab" data-bs-toggle="tab" href="#compartilhamento" role="tab">Compartilhamento</a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <!-- Intervenções e/ou procedimentos -->
+                <div class="tab-pane fade show active" id="intervencoes" role="tabpanel">
+                    <div class="mb-3">
+                        <label class="form-label">Intervenções e procedimentos</label>
+                        <%= form.text_area :plan_content, 
+                                           placeholder: "Descreva as intervenções e procedimentos realizados...", 
+                                           class: "form-control", 
+                                           rows: 4,
+                                           value: @soap_records.find_by(soap_type: 'plan')&.content %>
+                    </div>
+                    
+                    <div class="input-group mb-3">
+                        <%= form.select :procedure_ciap2, 
+                                       options_for_select([
+                                           ['Pesquise e selecione o CIAP 2', ''],
+                                           ['30 - Exame médico completo', '30'],
+                                           ['31 - Exame médico parcial', '31'],
+                                           ['32 - Exame de sensibilidade', '32'],
+                                           ['33 - Microbiologia/imunologia', '33']
+                                       ]),
+                                       { include_blank: false }, 
+                                       { class: "form-select" } %>
+                        <button type="button" class="btn btn-primary" id="add-intervencao-btn">
+                            + Incluir intervenção
+                        </button>
+                    </div>
+                    
+                    <div id="intervencoes-list" class="mb-3">
+                        <!-- Lista de intervenções adicionadas -->
+                    </div>
+                </div>
+
+                <!-- Prescrição de medicamentos -->
+                <div class="tab-pane fade" id="medicamentos" role="tabpanel">
+                    <div class="input-group mb-3">
+                        <%= form.text_field :medication_search, 
+                                           class: "form-control", 
+                                           placeholder: "Pesquise por medicamento" %>
+                        <button type="button" class="btn btn-primary" id="add-medicamento-btn">
+                            + Nova prescrição
+                        </button>
+                    </div>
+                    
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Medicamento</th>
+                                <th>Posologia</th>
+                                <th>Tipo</th>
+                                <th>Período</th>
+                                <th>Profissional</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="medicamentos-list">
+                            <% @patient_medications.each do |medication| %>
+                                <tr>
+                                    <td><%= medication.name %></td>
+                                    <td><%= medication.dosage %></td>
+                                    <td>
+                                        <span class="badge bg-<%= medication.controlled? ? 'warning' : 'info' %>">
+                                            <%= medication.controlled? ? 'Controlado' : 'Comum' %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <%= medication.start_date.strftime('%d/%m/%Y') if medication.start_date %> - 
+                                        <%= medication.end_date.strftime('%d/%m/%Y') if medication.end_date %>
+                                    </td>
+                                    <td><%= medication.prescriber_name %></td>
+                                    <td>
+                                        <button class="btn btn-link text-primary btn-sm">Editar</button>
+                                        <button class="btn btn-link text-danger btn-sm">Remover</button>
+                                    </td>
+                                </tr>
+                            <% end %>
+                        </tbody>
+                    </table>
+                    
+                    <button type="button" class="btn btn-primary">
+                        Selecionar e imprimir prescrições
+                    </button>
+                </div>
+
+                <!-- Solicitação de exames -->
+                <div class="tab-pane fade" id="exames-solicitados" role="tabpanel">
+                    <div class="input-group mb-3">
+                        <%= form.text_field :exam_search, 
+                                           class: "form-control", 
+                                           placeholder: "Pesquise por exame" %>
+                        <button type="button" class="btn btn-primary" id="add-exame-btn">
+                            + Novo exame
+                        </button>
+                    </div>
+                    
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Exame solicitado</th>
+                                <th>Prioridade</th>
+                                <th>Tipo</th>
+                                <th>Data da solicitação</th>
+                                <th>Profissional</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="exames-list">
+                            <!-- Exames solicitados serão listados aqui -->
+                        </tbody>
+                    </table>
+                    
+                    <button type="button" class="btn btn-primary">
+                        Selecionar e imprimir solicitações
+                    </button>
+                </div>
+
+                <!-- Atestados/Declarações -->
+                <div class="tab-pane fade" id="atestados" role="tabpanel">
+                    <div class="input-group mb-3">
+                        <%= form.text_field :certificate_search, 
+                                           class: "form-control", 
+                                           placeholder: "Pesquise por profissional ou unidade de saúde" %>
+                        <button type="button" class="btn btn-primary" id="add-atestado-btn">
+                            + Novo atestado
+                        </button>
+                        <button type="button" class="btn btn-primary" id="add-declaracao-btn">
+                            + Nova declaração
+                        </button>
+                    </div>
+                    
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Profissional</th>
+                                <th>Unidade de saúde</th>
+                                <th>Tipo</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="atestados-list">
+                            <!-- Atestados serão listados aqui -->
+                        </tbody>
+                    </table>
+                    
+                    <button type="button" class="btn btn-primary">
+                        Selecionar e imprimir
+                    </button>
+                </div>
+
+                <!-- Orientações -->
+                <div class="tab-pane fade" id="orientacoes" role="tabpanel">
+                    <div class="mb-3">
+                        <label class="form-label">Orientações ao paciente</label>
+                        <%= form.text_area :guidance_content, 
+                                          rows: 4, 
+                                          class: "form-control", 
+                                          placeholder: "Informe as orientações ao paciente..." %>
+                    </div>
+                    
+                    <div class="input-group mb-3">
+                        <%= form.text_field :guidance_search, 
+                                           class: "form-control", 
+                                           placeholder: "Pesquise por profissional, especialidade ou orientação" %>
+                        <div class="form-check form-switch ms-3">
+                            <%= form.check_box :my_guidance_only, class: "form-check-input" %>
+                            <label class="form-check-label">Ver somente minhas orientações</label>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="add-orientacao-btn">
+                            + Incluir orientação
+                        </button>
+                    </div>
+                    
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Profissional</th>
+                                <th>Orientação</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orientacoes-list">
+                            <!-- Orientações serão listadas aqui -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Encaminhamentos -->
+                <div class="tab-pane fade" id="encaminhamentos" role="tabpanel">
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de encaminhamento</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <%= form.check_box :caps, class: "form-check-input" %>
+                                    <label class="form-check-label">CAPS</label>
+                                </div>
+                                <div class="form-check">
+                                    <%= form.check_box :emergency, class: "form-check-input" %>
+                                    <label class="form-check-label">Urgência</label>
+                                </div>
+                                <div class="form-check">
+                                    <%= form.check_box :hospitalization, class: "form-check-input" %>
+                                    <label class="form-check-label">Internação hospitalar</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <%= form.check_box :intersectoral, class: "form-check-input" %>
+                                    <label class="form-check-label">Intersetorial</label>
+                                </div>
+                                <div class="form-check">
+                                    <%= form.check_box :home_care, class: "form-check-input" %>
+                                    <label class="form-check-label">Serviço de Atenção Domiciliar</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group mb-3">
+                        <%= form.text_field :referral_type_search, 
+                                           class: "form-control", 
+                                           placeholder: "Pesquise por tipo de encaminhamento" %>
+                        <%= form.text_field :specialty_search, 
+                                           class: "form-control", 
+                                           placeholder: "Pesquise por especialidade" %>
+                        <button type="button" class="btn btn-primary" id="add-encaminhamento-btn">
+                            + Novo encaminhamento
+                        </button>
+                    </div>
+                    
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Classificação de risco</th>
+                                <th>Tipo de encaminhamento</th>
+                                <th>Especialidade</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="encaminhamentos-list">
+                            <!-- Encaminhamentos serão listados aqui -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Compartilhamento de cuidado -->
+                <div class="tab-pane fade" id="compartilhamento" role="tabpanel">
+                    <div class="input-group mb-3">
+                        <%= form.text_field :care_sharing_search, 
+                                           class: "form-control", 
+                                           placeholder: "Pesquise por profissional ou unidade de saúde" %>
+                        <button type="button" class="btn btn-primary" id="add-compartilhamento-btn">
+                            + Novo compartilhamento
+                        </button>
+                    </div>
+                    
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Prioridade</th>
+                                <th>Compartilhado para</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="compartilhamentos-list">
+                            <!-- Compartilhamentos serão listados aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> Salvar
+                </button>
+                <button type="button" class="btn btn-secondary cancel-btn">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+            </div>
+        <% end %>
+    </div>
+</div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="input-group mb-2">
+                        <select class="form-control" id="ciap2-select">
+                            <option value="">Selecione procedimento CIAP2</option>
+                            <!-- Options será populado via JavaScript -->
+                        </select>
+                        <button type="button" class="btn btn-outline-primary" id="add-intervencao-btn">
+                            <i class="bi bi-plus"></i> Adicionar
+                        </button>
+                    </div>
+                    <div id="intervencoes-list">
+                        <!-- Lista de intervenções será populada via JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prescrição de medicamentos -->
+            <div class="tab-pane fade" id="medicamentos" role="tabpanel">
+                <div class="mb-3">
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="add-medicamento-btn">
+                        <i class="bi bi-plus"></i> Prescrever Medicamento
+                    </button>
+                </div>
+                
+                <div id="medicamentos-list">
+                    <!-- Lista de medicamentos será populada via JavaScript -->
+                </div>
+                
+                <template id="medicamento-template">
+                    <div class="card mb-3 medicamento-item">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Medicamento</label>
+                                    <input type="text" class="form-control" name="soap_data[medications][][name]" 
+                                           placeholder="Digite o nome do medicamento...">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Concentração</label>
+                                    <input type="text" class="form-control" name="soap_data[medications][][dosage]" 
+                                           placeholder="Ex: 500mg">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Forma Farmacêutica</label>
+                                    <select class="form-control" name="soap_data[medications][][form]">
+                                        <option value="comprimido">Comprimido</option>
+                                        <option value="capsula">Cápsula</option>
+                                        <option value="solucao">Solução</option>
+                                        <option value="suspenso">Suspensão</option>
+                                        <option value="creme">Creme</option>
+                                        <option value="pomada">Pomada</option>
+                                        <option value="gotas">Gotas</option>
+                                        <option value="spray">Spray</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-3">
+                                    <label class="form-label">Posologia</label>
+                                    <input type="text" class="form-control" name="soap_data[medications][][frequency]" 
+                                           placeholder="Ex: 1 cp 12/12h">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Duração</label>
+                                    <input type="text" class="form-control" name="soap_data[medications][][duration]" 
+                                           placeholder="Ex: 7 dias">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Via de Administração</label>
+                                    <select class="form-control" name="soap_data[medications][][route]">
+                                        <option value="oral">Oral</option>
+                                        <option value="topica">Tópica</option>
+                                        <option value="nasal">Nasal</option>
+                                        <option value="ocular">Ocular</option>
+                                        <option value="auricular">Auricular</option>
+                                        <option value="intramuscular">Intramuscular</option>
+                                        <option value="endovenosa">Endovenosa</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="button" class="btn btn-outline-danger btn-sm remove-medicamento">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <label class="form-label">Instruções Especiais</label>
+                                    <textarea class="form-control" name="soap_data[medications][][instructions]" rows="2" 
+                                              placeholder="Tomar com alimentos, em jejum, etc..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Solicitação de exames -->
+            <div class="tab-pane fade" id="exames-solicitados" role="tabpanel">
+                <div class="mb-3">
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="add-exame-btn">
+                        <i class="bi bi-plus"></i> Solicitar Exame
+                    </button>
+                </div>
+                
+                <div id="exames-list">
+                    <!-- Lista de exames será populada via JavaScript -->
+                </div>
+                
+                <template id="exame-template">
+                    <div class="card mb-3 exame-item">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <label class="form-label">Exame</label>
+                                    <input type="text" class="form-control" name="soap_data[exams][][name]" 
+                                           placeholder="Digite o nome do exame...">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Prioridade</label>
+                                    <select class="form-control" name="soap_data[exams][][priority]">
+                                        <option value="rotina">Rotina</option>
+                                        <option value="urgente">Urgente</option>
+                                        <option value="eletivo">Eletivo</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">CID</label>
+                                    <input type="text" class="form-control" name="soap_data[exams][][cid]" 
+                                           placeholder="CID-10">
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="button" class="btn btn-outline-danger btn-sm remove-exame">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <label class="form-label">Justificativa</label>
+                                    <textarea class="form-control" name="soap_data[exams][][justification]" rows="2" 
+                                              placeholder="Justificativa clínica para o exame..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Atestados/Declarações -->
+            <div class="tab-pane fade" id="atestados" role="tabpanel">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-outline-success btn-sm" id="add-atestado-btn">
+                            <i class="bi bi-file-earmark-medical"></i> Gerar Atestado
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-outline-info btn-sm" id="add-declaracao-btn">
+                            <i class="bi bi-file-earmark-text"></i> Gerar Declaração
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="atestados-list">
+                    <!-- Lista de atestados será populada via JavaScript -->
+                </div>
+                
+                <template id="atestado-template">
+                    <div class="card mb-3 atestado-item">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="form-label">Tipo</label>
+                                    <select class="form-control document-type" name="soap_data[documents][][type]">
+                                        <option value="atestado_medico">Atestado Médico</option>
+                                        <option value="declaracao_comparecimento">Declaração de Comparecimento</option>
+                                        <option value="declaracao_acompanhante">Declaração de Acompanhante</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Dias</label>
+                                    <input type="number" class="form-control" name="soap_data[documents][][days]" 
+                                           placeholder="Nº de dias" min="1">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">CID-10</label>
+                                    <input type="text" class="form-control" name="soap_data[documents][][cid]" 
+                                           placeholder="Código CID-10">
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="button" class="btn btn-outline-danger btn-sm remove-atestado">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <label class="form-label">Observações</label>
+                                    <textarea class="form-control" name="soap_data[documents][][observations]" rows="2" 
+                                              placeholder="Observações adicionais..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Orientações -->
+            <div class="tab-pane fade" id="orientacoes" role="tabpanel">
+                <div class="mb-3">
+                    <label for="orientacoes-text" class="form-label">Orientações ao Paciente</label>
+                    <textarea class="form-control" name="soap_data[guidance][text]" id="orientacoes-text" rows="5" 
+                              placeholder="Digite as orientações gerais ao paciente..."></textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="add-orientacao-btn">
+                        <i class="bi bi-plus"></i> Adicionar Orientação Específica
+                    </button>
+                </div>
+                
+                <div id="orientacoes-list">
+                    <!-- Lista de orientações específicas será populada via JavaScript -->
+                </div>
+                
+                <template id="orientacao-template">
+                    <div class="card mb-3 orientacao-item">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="form-label">Categoria</label>
+                                    <select class="form-control" name="soap_data[guidance][specific][][category]">
+                                        <option value="dieta">Dieta</option>
+                                        <option value="atividade_fisica">Atividade Física</option>
+                                        <option value="medicacao">Medicação</option>
+                                        <option value="higiene">Higiene</option>
+                                        <option value="cuidados_gerais">Cuidados Gerais</option>
+                                        <option value="seguimento">Seguimento</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-7">
+                                    <label class="form-label">Orientação</label>
+                                    <textarea class="form-control" name="soap_data[guidance][specific][][text]" rows="2" 
+                                              placeholder="Descreva a orientação específica..."></textarea>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="button" class="btn btn-outline-danger btn-sm remove-orientacao">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Encaminhamentos -->
+            <div class="tab-pane fade" id="encaminhamentos" role="tabpanel">
+                <div class="mb-3">
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="add-encaminhamento-btn">
+                        <i class="bi bi-arrow-up-right-circle"></i> Adicionar Encaminhamento
+                    </button>
+                </div>
+                
+                <div id="encaminhamentos-list">
+                    <!-- Lista de encaminhamentos será populada via JavaScript -->
+                </div>
+                
+                <template id="encaminhamento-template">
+                    <div class="card mb-3 encaminhamento-item">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="form-label">Especialidade</label>
+                                    <select class="form-control" name="soap_data[referrals][][specialty]">
+                                        <option value="">Selecione a especialidade</option>
+                                        <option value="cardiologia">Cardiologia</option>
+                                        <option value="dermatologia">Dermatologia</option>
+                                        <option value="endocrinologia">Endocrinologia</option>
+                                        <option value="gastroenterologia">Gastroenterologia</option>
+                                        <option value="ginecologia">Ginecologia</option>
+                                        <option value="neurologia">Neurologia</option>
+                                        <option value="oftalmologia">Oftalmologia</option>
+                                        <option value="ortopedia">Ortopedia</option>
+                                        <option value="psiquiatria">Psiquiatria</option>
+                                        <option value="urologia">Urologia</option>
+                                        <option value="outras">Outras</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Prioridade</label>
+                                    <select class="form-control" name="soap_data[referrals][][priority]">
+                                        <option value="rotina">Rotina</option>
+                                        <option value="urgente">Urgente</option>
+                                        <option value="eletivo">Eletivo</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">CID-10</label>
+                                    <input type="text" class="form-control" name="soap_data[referrals][][cid]" 
+                                           placeholder="Código CID-10">
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="button" class="btn btn-outline-danger btn-sm remove-encaminhamento">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <label class="form-label">Motivo do Encaminhamento</label>
+                                    <textarea class="form-control" name="soap_data[referrals][][reason]" rows="2" 
+                                              placeholder="Descreva o motivo do encaminhamento..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Compartilhamento de cuidado -->
+            <div class="tab-pane fade" id="compartilhamento" role="tabpanel">
+                <div class="mb-3">
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="add-compartilhamento-btn">
+                        <i class="bi bi-people"></i> Adicionar Compartilhamento
+                    </button>
+                </div>
+                
+                <div id="compartilhamentos-list">
+                    <!-- Lista de compartilhamentos será populada via JavaScript -->
+                </div>
+                
+                <template id="compartilhamento-template">
+                    <div class="card mb-3 compartilhamento-item">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="form-label">Tipo de Compartilhamento</label>
+                                    <select class="form-control" name="soap_data[shared_care][][type]">
+                                        <option value="matriciamento">Apoio Matricial</option>
+                                        <option value="teleconsulta">Teleconsulta</option>
+                                        <option value="regulacao">Regulação</option>
+                                        <option value="nasf">NASF</option>
+                                        <option value="outros">Outros</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Profissional/Serviço</label>
+                                    <input type="text" class="form-control" name="soap_data[shared_care][][professional]" 
+                                           placeholder="Nome do profissional ou serviço">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Data</label>
+                                    <input type="date" class="form-control" name="soap_data[shared_care][][date]">
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="button" class="btn btn-outline-danger btn-sm remove-compartilhamento">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <label class="form-label">Descrição do Compartilhamento</label>
+                                    <textarea class="form-control" name="soap_data[shared_care][][description]" rows="2" 
+                                              placeholder="Descreva como foi o compartilhamento de cuidado..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+        
+        <div class="d-flex gap-2 mt-3">
+            <button type="submit" class="btn btn-success save-btn">
+                <i class="bi bi-check-circle"></i> Salvar
+            </button>
+            <button type="button" class="btn btn-secondary cancel-btn">
+                <i class="bi bi-x-circle"></i> Cancelar
+            </button>
+        </div>
+    <% end %>
+</div>

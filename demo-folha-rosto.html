@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Folha Rosto - Prontuário Eletrônico</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .patient-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            border-radius: 0.5rem 0.5rem 0 0;
+            background: #e9ecef;
+            color: #495057;
+            font-weight: 500;
+            margin-right: 0.25rem;
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: #007bff;
+            color: white;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border-radius: 0.75rem;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            border-radius: 0.75rem 0.75rem 0 0 !important;
+            font-weight: 600;
+        }
+        
+        .table th {
+            background-color: #f8f9fa;
+            border-top: none;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .editable-cell {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .editable-cell:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .badge {
+            font-size: 0.75rem;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header do Paciente -->
+    <div class="patient-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-2 text-center">
+                    <img src="https://via.placeholder.com/120" alt="Foto do Paciente" class="rounded-circle" width="120" height="120">
+                </div>
+                <div class="col-md-10">
+                    <h2 class="mb-1">Maria Antonieta Albuquerque Soares</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-1"><i class="bi bi-person-badge"></i> CPF: 094.556.799-80</p>
+                            <p class="mb-1"><i class="bi bi-calendar"></i> Nascimento: 10/02/2004 (21 anos)</p>
+                            <p class="mb-0"><i class="bi bi-gender-female"></i> Sexo: Feminino</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1"><i class="bi bi-telephone"></i> Telefone: (11) 99999-9999</p>
+                            <p class="mb-1"><i class="bi bi-geo-alt"></i> Endereço: Rua das Flores, 123</p>
+                            <div class="mt-2">
+                                <span class="badge bg-success me-2">Hipertensão</span>
+                                <span class="badge bg-warning me-2">Diabetes</span>
+                                <span class="badge bg-danger">Alergia: Dipirona</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <!-- Navegação entre sub-abas -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="info-atendimento-tab" data-bs-toggle="tab" href="#info-atendimento" role="tab">
+                    <i class="bi bi-clipboard-data"></i> Informações do atendimento
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="medicoes-tab" data-bs-toggle="tab" href="#medicoes" role="tab">
+                    <i class="bi bi-graph-up"></i> Medições
+                </a>
+            </li>
+        </ul>
+
+        <div class="tab-content mt-4">
+            <!-- Informações do atendimento -->
+            <div class="tab-pane fade show active" id="info-atendimento" role="tabpanel">
+                <!-- Informações Iniciais -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h6 class="card-title">Data de Nascimento</h6>
+                                <p class="card-text text-primary fw-bold fs-5">10/02/2004</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h6 class="card-title">Idade</h6>
+                                <p class="card-text text-primary fw-bold fs-5">21 anos</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h6 class="card-title">Gênero</h6>
+                                <p class="card-text text-primary fw-bold fs-5">Feminino</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h6 class="card-title">Telefone</h6>
+                                <p class="card-text text-primary fw-bold fs-5">(11) 99999-9999</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Últimas Consultas -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="bi bi-clipboard-check"></i>
+                                    Últimas Consultas
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Data</th>
+                                                <th>CIAP 2</th>
+                                                <th>CID 10</th>
+                                                <th>Intervenções e/ou procedimentos</th>
+                                                <th>Idade</th>
+                                                <th>Tipo</th>
+                                                <th>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>18/09/2024 às 12:00</td>
+                                                <td>Dores musculares - L18</td>
+                                                <td>M79.3 - Dor muscular</td>
+                                                <td>Prescrição de analgésico</td>
+                                                <td>21 anos 4 meses</td>
+                                                <td><span class="badge bg-info">Escuta</span></td>
+                                                <td><button class="btn btn-sm btn-primary"><i class="bi bi-eye"></i> Visualizar</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>18/08/2024 às 12:00</td>
+                                                <td>Dores musculares - L18</td>
+                                                <td>M79.3 - Dor muscular</td>
+                                                <td>Fisioterapia recomendada</td>
+                                                <td>21 anos 3 meses</td>
+                                                <td><span class="badge bg-primary">Consulta</span></td>
+                                                <td><button class="btn btn-sm btn-primary"><i class="bi bi-eye"></i> Visualizar</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>18/07/2024 às 12:00</td>
+                                                <td>Dores musculares - L18</td>
+                                                <td>M79.3 - Dor muscular</td>
+                                                <td>Exame radiológico</td>
+                                                <td>21 anos 2 meses</td>
+                                                <td><span class="badge bg-warning text-dark">Procedimento</span></td>
+                                                <td><button class="btn btn-sm btn-primary"><i class="bi bi-eye"></i> Visualizar</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Encaminhamentos -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-secondary">
+                                <h6 class="mb-0">
+                                    <i class="bi bi-arrow-right-circle"></i>
+                                    Encaminhamentos
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Data</th>
+                                                <th>Profissional</th>
+                                                <th>Especialidade</th>
+                                                <th>Hipótese/Diagnóstico</th>
+                                                <th>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>18/09/2024 às 12:00</td>
+                                                <td>Dr. Chelsea Elizabeth Manning</td>
+                                                <td>Médico Clínico</td>
+                                                <td>Investigação dor muscular</td>
+                                                <td><button class="btn btn-sm btn-primary"><i class="bi bi-eye"></i> Visualizar</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>18/08/2024 às 12:00</td>
+                                                <td>Dr. Chelsea Elizabeth Manning</td>
+                                                <td>Fisioterapeuta</td>
+                                                <td>Reabilitação muscular</td>
+                                                <td><button class="btn btn-sm btn-primary"><i class="bi bi-eye"></i> Visualizar</button></td>
+                                            </tr>
+                                            <tr>
+                                                <td>18/07/2024 às 12:00</td>
+                                                <td>Dr. Chelsea Elizabeth Manning</td>
+                                                <td>Radiologista</td>
+                                                <td>Avaliação por imagem</td>
+                                                <td><button class="btn btn-sm btn-primary"><i class="bi bi-eye"></i> Visualizar</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medições -->
+            <div class="tab-pane fade" id="medicoes" role="tabpanel">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="bi bi-graph-up"></i>
+                            Medições e Gráficos
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <!-- Antropometria -->
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">
+                                    <i class="bi bi-person-lines-fill"></i>
+                                    Antropometria
+                                </h6>
+                                <select class="form-select w-auto" id="ageRange">
+                                    <option value="30a40">30 a 40 anos</option>
+                                    <option value="20a30" selected>20 a 30 anos</option>
+                                    <option value="40a50">40 a 50 anos</option>
+                                    <option value="todos">Todos os registros</option>
+                                </select>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Data da medição</th>
+                                                <th>Peso (kg)</th>
+                                                <th>Altura (cm)</th>
+                                                <th>IMC (kg/m²)</th>
+                                                <th>Perímetro cefálico (cm)</th>
+                                                <th>Circ. abdominal (cm)</th>
+                                                <th>Per. panturrilha (cm)</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>18/09/2024 às 12:00</td>
+                                                <td class="editable-cell">65.2</td>
+                                                <td class="editable-cell">165</td>
+                                                <td>23.9</td>
+                                                <td class="editable-cell">-</td>
+                                                <td class="editable-cell">72</td>
+                                                <td class="editable-cell">-</td>
+                                                <td><span class="badge bg-success">Normal</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>18/08/2024 às 12:00</td>
+                                                <td class="editable-cell">64.8</td>
+                                                <td class="editable-cell">165</td>
+                                                <td>23.8</td>
+                                                <td class="editable-cell">-</td>
+                                                <td class="editable-cell">73</td>
+                                                <td class="editable-cell">-</td>
+                                                <td><span class="badge bg-success">Normal</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>18/07/2024 às 12:00</td>
+                                                <td class="editable-cell">65.0</td>
+                                                <td class="editable-cell">165</td>
+                                                <td>23.9</td>
+                                                <td class="editable-cell">-</td>
+                                                <td class="editable-cell">71</td>
+                                                <td class="editable-cell">-</td>
+                                                <td><span class="badge bg-success">Normal</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="anthropometryChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sinais vitais e Glicemia -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active" id="sinais-vitais-tab" data-bs-toggle="tab" href="#sinais-vitais" role="tab">
+                                    <i class="bi bi-heart-pulse"></i>
+                                    Sinais vitais
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="glicemia-tab" data-bs-toggle="tab" href="#glicemia" role="tab">
+                                    <i class="bi bi-droplet"></i>
+                                    Glicemia
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content mt-3">
+                            <!-- Sinais vitais -->
+                            <div class="tab-pane fade show active" id="sinais-vitais" role="tabpanel">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0">
+                                            <i class="bi bi-activity"></i>
+                                            Sinais vitais
+                                        </h6>
+                                        <select class="form-select w-auto" id="competenceVital">
+                                            <option value="Jul2024" selected>Jul 2024</option>
+                                            <option value="Jun2024">Jun 2024</option>
+                                            <option value="Mai2024">Mai 2024</option>
+                                            <option value="todos">Todos os registros</option>
+                                        </select>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Data da medição</th>
+                                                        <th>Pressão arterial (mmHg)</th>
+                                                        <th>Freq. respiratória (mpm)</th>
+                                                        <th>Freq. cardíaca (bpm)</th>
+                                                        <th>Saturação de O₂ (%)</th>
+                                                        <th>Temperatura (°C)</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>18/09/2024 às 12:00</td>
+                                                        <td class="editable-cell">120/80</td>
+                                                        <td class="editable-cell">16</td>
+                                                        <td class="editable-cell">72</td>
+                                                        <td class="editable-cell">98</td>
+                                                        <td class="editable-cell">36.5</td>
+                                                        <td><span class="badge bg-success">Normal</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>18/08/2024 às 12:00</td>
+                                                        <td class="editable-cell">118/78</td>
+                                                        <td class="editable-cell">15</td>
+                                                        <td class="editable-cell">70</td>
+                                                        <td class="editable-cell">97</td>
+                                                        <td class="editable-cell">36.2</td>
+                                                        <td><span class="badge bg-success">Normal</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>18/07/2024 às 12:00</td>
+                                                        <td class="editable-cell">122/82</td>
+                                                        <td class="editable-cell">16</td>
+                                                        <td class="editable-cell">74</td>
+                                                        <td class="editable-cell">98</td>
+                                                        <td class="editable-cell">36.8</td>
+                                                        <td><span class="badge bg-success">Normal</span></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="chart-container">
+                                            <canvas id="vitalSignsChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Glicemia -->
+                            <div class="tab-pane fade" id="glicemia" role="tabpanel">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0">
+                                            <i class="bi bi-droplet-half"></i>
+                                            Glicemia
+                                        </h6>
+                                        <select class="form-select w-auto" id="competenceGlycemia">
+                                            <option value="Jul2024" selected>Jul 2024</option>
+                                            <option value="Jun2024">Jun 2024</option>
+                                            <option value="Mai2024">Mai 2024</option>
+                                            <option value="todos">Todos os registros</option>
+                                        </select>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Data da medição</th>
+                                                        <th>Glicemia capilar (mg/dL)</th>
+                                                        <th>Momento da coleta</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>18/09/2024 às 12:00</td>
+                                                        <td class="editable-cell">95</td>
+                                                        <td class="editable-cell">Jejum</td>
+                                                        <td><span class="badge bg-success">Normal</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>18/08/2024 às 12:00</td>
+                                                        <td class="editable-cell">92</td>
+                                                        <td class="editable-cell">Jejum</td>
+                                                        <td><span class="badge bg-success">Normal</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>18/07/2024 às 12:00</td>
+                                                        <td class="editable-cell">98</td>
+                                                        <td class="editable-cell">Jejum</td>
+                                                        <td><span class="badge bg-success">Normal</span></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="chart-container">
+                                            <canvas id="glycemiaChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Dados para os gráficos
+        const anthropometryData = {
+            labels: ['Jul', 'Ago', 'Set'],
+            datasets: [{
+                label: 'Peso (kg)',
+                data: [65.0, 64.8, 65.2],
+                borderColor: 'rgb(75, 192, 192)',
+                backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                tension: 0.1
+            }, {
+                label: 'IMC',
+                data: [23.9, 23.8, 23.9],
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                tension: 0.1,
+                yAxisID: 'y1'
+            }]
+        };
+
+        const vitalSignsData = {
+            labels: ['Jul', 'Ago', 'Set'],
+            datasets: [{
+                label: 'Pressão Sistólica',
+                data: [122, 118, 120],
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                tension: 0.1
+            }, {
+                label: 'Pressão Diastólica',
+                data: [82, 78, 80],
+                borderColor: 'rgb(54, 162, 235)',
+                backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                tension: 0.1
+            }, {
+                label: 'Frequência Cardíaca',
+                data: [74, 70, 72],
+                borderColor: 'rgb(255, 206, 86)',
+                backgroundColor: 'rgba(255, 206, 86, 0.1)',
+                tension: 0.1
+            }]
+        };
+
+        const glycemiaData = {
+            labels: ['Jul', 'Ago', 'Set'],
+            datasets: [{
+                label: 'Glicemia (mg/dL)',
+                data: [98, 92, 95],
+                borderColor: 'rgb(153, 102, 255)',
+                backgroundColor: 'rgba(153, 102, 255, 0.1)',
+                tension: 0.1,
+                fill: true
+            }]
+        };
+
+        // Inicialização dos gráficos
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gráfico de Antropometria
+            const anthropometryCtx = document.getElementById('anthropometryChart');
+            new Chart(anthropometryCtx, {
+                type: 'line',
+                data: anthropometryData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Peso (kg)'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'IMC'
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Evolução do Peso e IMC'
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de Sinais Vitais
+            const vitalSignsCtx = document.getElementById('vitalSignsChart');
+            new Chart(vitalSignsCtx, {
+                type: 'line',
+                data: vitalSignsData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Evolução dos Sinais Vitais'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Valores'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de Glicemia
+            const glycemiaCtx = document.getElementById('glycemiaChart');
+            new Chart(glycemiaCtx, {
+                type: 'line',
+                data: glycemiaData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Evolução da Glicemia'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Glicemia (mg/dL)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Células editáveis
+            setupEditableCells();
+        });
+
+        function setupEditableCells() {
+            const editableCells = document.querySelectorAll('.editable-cell');
+            editableCells.forEach(cell => {
+                cell.addEventListener('click', function() {
+                    if (this.classList.contains('editing')) return;
+                    
+                    const originalValue = this.textContent.trim();
+                    this.classList.add('editing');
+                    this.innerHTML = `<input type="text" class="form-control form-control-sm" value="${originalValue}" onblur="saveCell(this, '${originalValue}')" onkeypress="if(event.key==='Enter') this.blur()">`;
+                    this.querySelector('input').focus();
+                });
+            });
+        }
+
+        function saveCell(input, originalValue) {
+            const cell = input.parentElement;
+            const newValue = input.value.trim();
+            
+            cell.textContent = newValue || originalValue;
+            cell.classList.remove('editing');
+            
+            if (newValue !== originalValue) {
+                cell.classList.add('text-success');
+                setTimeout(() => cell.classList.remove('text-success'), 2000);
+            }
+        }
+    </script>
+</body>
+</html>

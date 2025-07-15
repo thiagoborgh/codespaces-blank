@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protótipo Prontuário</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/protótipo antigo/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Menu Superior -->
+            <header class="col-12 p-3 bg-light border-bottom d-flex justify-content-between align-items-center">
+                <div>
+                    <button class="navbar-toggler me-2" type="button" id="sidebarToggle">
+                        <span class="bi bi-list"></span>
+                    </button>
+                    <button class="btn btn-outline-secondary" id="fullscreenToggle">
+                        <span class="bi bi-arrows-fullscreen"></span>
+                    </button>
+                </div>
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-outline-secondary me-2">
+                        <span class="bi bi-bell"></span><span class="badge bg-danger">9</span>
+                    </button>
+                    <span class="me-2">Lorem Ipsum</span>
+                    <img src="https://via.placeholder.com/30" alt="Usuário" class="rounded-circle">
+                </div>
+            </header>
+
+            <!-- Menu Lateral -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar" id="sidebar">
+                <ul class="nav flex-column">
+                    <br>
+                    <li class="nav-item"><a class="nav-link active" href="#"><i class="bi bi-house"></i><span> Histórico médico</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-info-circle"></i><span> Informações do atendimento</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-thermometer"></i><span> Medições</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-bell"></i><span> Lembretes</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-people"></i><span> Histórico familiar</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-clipboard-check"></i><span> Quadro de Acompanhamentos</span></a></li>
+                </ul>
+            </nav>
+
+            <!-- Conteúdo Principal -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 p-4" id="mainContent">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">Breadcrumb1</li>
+                        <li class="breadcrumb-item active" aria-current="page">Breadcrumb2</li>
+                    </ol>
+                </nav>
+                <br>
+                <h2 class="mb-3">Atendimento</h2>
+
+                <!-- Dados do Paciente -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <img src="https://via.placeholder.com/100" alt="Foto do Paciente" class="rounded-circle">
+                            </div>
+                            <div class="col-md-5">
+                                <p><strong>Maria Antoinieta Albuquerque Soares</strong></p>
+                                <p>(Mário Henrique da Silva Oliveira Gomes dos Santos Albuquerque Soares)</p>
+                                <p>CPF: 094556799-80</p>
+                                <p>Data de nascimento: 10/02/2004 - 21a 4m e 8d</p>
+                                <p>Sexo: Feminino</p>
+                            </div>
+                            <div class="col-md-5">
+                                <p><strong>Condições e situações de saúde</strong></p>
+                                <span class="badge bg-success me-2">Hipertenso</span>
+                                <span class="badge bg-success me-2">Diabético</span>
+                                <p><strong>Alergias/Reações adversas</strong></p>
+                                <span class="badge bg-warning me-2">Dipirona</span>
+                                <span class="badge bg-danger me-2">Leite</span>
+                                <span class="badge bg-danger">Mofo</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="tabs mb-4">
+                    <ul class="nav nav-tabs flex-wrap" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active" id="folha-rosto-tab" data-bs-toggle="tab" href="#folha-rosto" role="tab">Folha rosto</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="soap-tab" data-bs-toggle="tab" href="#soap" role="tab">SOAP</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="vacinacao-tab" data-bs-toggle="tab" href="#vacinacao" role="tab">Vacinação</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="historico-tab" data-bs-toggle="tab" href="#historico" role="tab">Histórico</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="agendamentos-tab" data-bs-toggle="tab" href="#agendamentos" role="tab">Agendamentos</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <!-- Folha Rosto -->
+                        <div class="tab-pane fade show active" id="folha-rosto" role="tabpanel">
+                            <!-- Cards em três colunas -->
+                            <div class="row">
+                                <div class="col-md-4 mb-4">
+                                    <div class="card editable-card" data-content="Vacinação">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            Vacinação
+                                            <button class="edit-btn"><span class="bi bi-pencil"></span></button>
+                                        </div>
+                                        <div class="card-body">
+                                            <p><span class="bi bi-syringe"></span> Dupla adulto - 2ª dose 00/00/0000</p>
+                                            <p><span class="bi bi-syringe"></span> Dupla adulto - 2ª dose 00/00/0000</p>
+                                            <p><span class="bi bi-syringe"></span> Dupla adulto - 2ª dose 00/00/0000</p>
+                                            <p><span class="bi bi-syringe"></span> Dupla adulto - 2ª dose 00/00/0000</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card editable-card" data-content="Lista de problemas/condições">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            Lista de problemas/condições
+                                            <button class="edit-btn"><span class="bi bi-pencil"></span></button>
+                                        </div>
+                                        <div class="card-body">
+                                            <span class="badge bg-success">Hipertenso sem complicações (K87)</span>
+                                            <p>Início: 10/10/2010 | Há mais de 10 anos</p>
+                                            <p>Última atualização: 10/10/2020</p>
+                                            <span class="badge bg-success">Diabético não insulino-dependente (D-19)</span>
+                                            <p>Início: 10/10/2010 | Há mais de 10 anos</p>
+                                            <p>Última atualização: 10/10/2020</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card editable-card" data-content="Resultado de exames">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            Resultado de exames
+                                            <button class="edit-btn"><span class="bi bi-pencil"></span></button>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>Hemoglobina glicada</p>
+                                            <p>Realizado em 10/10/2022</p>
+                                            <p>5.6%</p>
+                                            <p>HDL</p>
+                                            <p>Realizado em 10/10/2022</p>
+                                            <p>50 mg/dL</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card editable-card" data-content="Alergias/Reações adversas">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            Alergias/Reações adversas
+                                            <button class="edit-btn"><span class="bi bi-pencil"></span></button>
+                                        </div>
+                                        <div class="card-body">
+                                            <span class="badge bg-warning">Dipirona</span>
+                                            <span class="badge bg-danger">Leite</span>
+                                            <span class="badge bg-danger">Mofo</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card editable-card" data-content="Lembretes">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            Lembretes
+                                            <button class="edit-btn"><span class="bi bi-pencil"></span></button>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>Sem lembretes</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card editable-card" data-content="Medicamentos">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            Medicamentos
+                                            <button class="edit-btn"><span class="bi bi-pencil"></span></button>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>Prednisolona 3mg/mL</p>
+                                            <p>7 ampolas, dose única</p>
+                                            <p>Gatifloxacino 10 mg/mL</p>
+                                            <p>7 ampolas, dose única</p>
+                                            <p>Sulfato ferroso (40g de ferro elementar) 109 mg</p>
+                                            <p>7 ampolas, dose única</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card editable-card" data-content="Antecedentes">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            Antecedentes
+                                            <button class="edit-btn"><span class="bi bi-pencil"></span></button>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>Remoção do apêndice</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card editable-card" data-content="Escuta inicial">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            Escuta inicial
+                                            <button class="edit-btn"><span class="bi bi-pencil"></span></button>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>Não foi realizada Escuta inicial.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card editable-card" data-content="Pré-natal">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            Pré-natal
+                                            <button class="edit-btn"><span class="bi bi-pencil"></span></button>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>IG Cronológica: 25 semanas e 1 dia</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Timeline e Abas -->
+                            <div class="row mt-4">
+                                <!-- Timeline -->
+                                <div class="col-md-3">
+                                    <div class="card h-100 mb-4 sticky-timeline">
+                                        <div class="card-header">Timeline</div>
+                                        <div class="card-body timeline-container">
+                                            <ul class="timeline">
+                                                <li>
+                                                    <span class="timeline-date">2 dias atrás</span>
+                                                    <strong>Consulta especialidade Oftalmologia</strong>
+                                                </li>
+                                                <li>
+                                                    <span class="timeline-date">2 dias atrás</span>
+                                                    <strong>Vacina campanha COVID-19</strong>
+                                                </li>
+                                                <li>
+                                                    <span class="timeline-date">6h atrás</span>
+                                                    <strong>Procedimento</strong> <span class="badge bg-warning text-dark">Procedimento</span>
+                                                    <span class="badge bg-primary">Consulta</span>
+                                                </li>
+                                                <li>
+                                                    <span class="timeline-date">4 dias atrás</span>
+                                                    <strong>Escuta inicial</strong> <span class="badge bg-info text-white">Escuta</span>
+                                                    <span class="badge bg-primary">Consulta</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Abas (Informações do atendimento e Medições) -->
+                                <div class="col-md-9">
+                                    <ul class="nav nav-tabs" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link" id="info-atendimento-tab" data-bs-toggle="tab" href="#info-atendimento" role="tab">Informações do atendimento</a>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link active" id="medicoes-tab" data-bs-toggle="tab" href="#medicoes" role="tab">Medições</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <!-- Informações do atendimento -->
+                                        <div class="tab-pane fade" id="info-atendimento" role="tabpanel">
+                                            <div class="card h-100">
+                                                <div class="card-header">Informações do atendimento</div>
+                                                <div class="card-body">
+                                                    <p>Informações iniciais e de consultas do município.</p>
+                                                    <p>Últimas consultas.</p>
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Data</th>
+                                                                <th>CIAP 2</th>
+                                                                <th>CID 10</th>
+                                                                <th>Intervenções e/ou procedimentos</th>
+                                                                <th>Idade</th>
+                                                                <th>Tipo</th>
+                                                                <th>Ações</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>18/09/2024 às 12:00</td>
+                                                                <td>Dores musculares - L18</td>
+                                                                <td>Dores musculares - L18</td>
+                                                                <td>-</td>
+                                                                <td>21 anos 4 meses</td>
+                                                                <td><span class="badge bg-info text-white">Escuta</span></td>
+                                                                <td><span class="badge bg-primary">Visualizar</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>18/08/2024 às 12:00</td>
+                                                                <td>Dores musculares - L18</td>
+                                                                <td>Dores musculares - L18</td>
+                                                                <td>-</td>
+                                                                <td>21 anos 3 meses</td>
+                                                                <td><span class="badge bg-primary">Consulta</span></td>
+                                                                <td><span class="badge bg-primary">Visualizar</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>18/07/2024 às 12:00</td>
+                                                                <td>Dores musculares - L18</td>
+                                                                <td>Dores musculares - L18</td>
+                                                                <td>-</td>
+                                                                <td>21 anos 2 meses</td>
+                                                                <td><span class="badge bg-warning text-dark">Procedimento</span></td>
+                                                                <td><span class="badge bg-primary">Visualizar</span></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <!-- Encaminhamentos -->
+<div class="card mt-4">
+    <div class="card-header">Encaminhamentos</div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Profissional</th>
+                    <th>Especialidade</th>
+                    <th>Hipótese/ Diagnóstico</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>18/09/2024 às 12:00</td>
+                    <td>Chelsea Elizabeth Manning</td>
+                    <td>Médico clínico</td>
+                    <td>-</td>
+                    <td><span class="badge bg-primary">Visualizar</span></td>
+                </tr>
+                <tr>
+                    <td>18/08/2024 às 12:00</td>
+                    <td>Chelsea Elizabeth Manning</td>
+                    <td>Médico clínico</td>
+                    <td>-</td>
+                    <td><span class="badge bg-primary">Visualizar</span></td>
+                </tr>
+                <tr>
+                    <td>18/07/2024 às 12:00</td>
+                    <td>Chelsea Elizabeth Manning</td>
+                    <td>Médico clínico</td>
+                    <td>-</td>
+                    <td><span class="badge bg-primary">Visualizar</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+                                            </div>
+                                        </div>
+                                        <!-- Medições -->
+                                        <div class="tab-pane fade show active" id="medicoes" role="tabpanel">
+                                            <div class="card h-100">
+                                                <div class="card-header">Medições</div>
+                                                <div class="card-body">
+                                                    <!-- Antropometria -->
+                                                    <div class="card mb-4">
+                                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                                            Antropometria
+                                                            <select class="form-select w-auto" id="ageRange">
+                                                                <option value="30a40">30 a 40 anos</option>
+                                                                <option value="20a30">20 a 30 anos</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <table class="table">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Data da medição</th>
+                                                                        <th>Peso (kg)</th>
+                                                                        <th>Altura (cm)</th>
+                                                                        <th>IMC (kg/m²)</th>
+                                                                        <th>Perímetro cefálico (cm)</th>
+                                                                        <th>Circ. abdominal (cm)</th>
+                                                                        <th>Per. panturrilha (cm)</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td>18/09/2025 às 12:00</td>
+                                                                        <td contenteditable="true" class="editable">80</td>
+                                                                        <td contenteditable="true" class="editable">150</td>
+                                                                        <td>-</td>
+                                                                        <td contenteditable="true" class="editable">26 anos 2 meses</td>
+                                                                        <td>-</td>
+                                                                        <td>-</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>18/08/2025 às 12:00</td>
+                                                                        <td contenteditable="true" class="editable">85</td>
+                                                                        <td contenteditable="true" class="editable">160</td>
+                                                                        <td>-</td>
+                                                                        <td contenteditable="true" class="editable">26 anos 1 mês</td>
+                                                                        <td>-</td>
+                                                                        <td>-</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>18/07/2025 às 12:00</td>
+                                                                        <td contenteditable="true" class="editable">90</td>
+                                                                        <td contenteditable="true" class="editable">170</td>
+                                                                        <td>-</td>
+                                                                        <td contenteditable="true" class="editable">26 anos</td>
+                                                                        <td>-</td>
+                                                                        <td>-</td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                            <canvas id="measurementChart"></canvas>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Sinais vitais e Glicemia -->
+                                                    <ul class="nav nav-tabs" role="tablist">
+                                                        <li class="nav-item" role="presentation">
+                                                            <a class="nav-link active" id="sinais-vitais-tab" data-bs-toggle="tab" href="#sinais-vitais" role="tab">Sinais vitais</a>
+                                                        </li>
+                                                        <li class="nav-item" role="presentation">
+                                                            <a class="nav-link" id="glicemia-tab" data-bs-toggle="tab" href="#glicemia" role="tab">Glicemia</a>
+                                                        </li>
+                                                    </ul>
+                                                    <div class="tab-content">
+                                                        <!-- Sinais vitais -->
+                                                        <div class="tab-pane fade show active" id="sinais-vitais" role="tabpanel">
+                                                            <div class="card mt-3">
+                                                                <div class="card-header d-flex justify-content-between align-items-center">
+                                                                    Sinais vitais
+                                                                    <select class="form-select w-auto" id="competenceVital">
+                                                                        <option value="Jan2025">Jan 2025</option>
+                                                                        <option value="Feb2025">Feb 2025</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <table class="table">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>Data da medição</th>
+                                                                                <th>Pressão arterial (mmHg)</th>
+                                                                                <th>Freq. respiratória (mpm)</th>
+                                                                                <th>Freq. cardíaca (bpm)</th>
+                                                                                <th>Saturação de O₂ (%)</th>
+                                                                                <th>Temperatura (°C)</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td>18/09/2025 às 12:00</td>
+                                                                                <td contenteditable="true" class="editable">120/80</td>
+                                                                                <td contenteditable="true" class="editable">16</td>
+                                                                                <td contenteditable="true" class="editable">70</td>
+                                                                                <td contenteditable="true" class="editable">95</td>
+                                                                                <td contenteditable="true" class="editable">36.5</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                    <canvas id="vitalSignsChart"></canvas>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Glicemia -->
+                                                        <div class="tab-pane fade" id="glicemia" role="tabpanel">
+                                                            <div class="card mt-3">
+                                                                <div class="card-header d-flex justify-content-between align-items-center">
+                                                                    Glicemia
+                                                                    <select class="form-select w-auto" id="competenceGlycemia">
+                                                                        <option value="Jan2025">Jan 2025</option>
+                                                                        <option value="Feb2025">Feb 2025</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <table class="table">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>Data da medição</th>
+                                                                                <th>Glicemia capilar (mg/dL)</th>
+                                                                                <th>Momento da coleta</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td>18/09/2025 às 12:00</td>
+                                                                                <td contenteditable="true" class="editable">2</td>
+                                                                                <td contenteditable="true" class="editable">Não especificado</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>18/08/2025 às 12:00</td>
+                                                                                <td contenteditable="true" class="editable">2</td>
+                                                                                <td contenteditable="true" class="editable">Não especificado</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>18/07/2025 às 12:00</td>
+                                                                                <td contenteditable="true" class="editable">2</td>
+                                                                                <td contenteditable="true" class="editable">Não especificado</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                    <canvas id="glycemiaChart"></canvas>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SOAP -->
+<div class="tab-pane fade" id="soap" role="tabpanel">
+    <div class="row">
+        <!-- Formulários SOAP (esquerda) -->
+        <div class="col-md-9">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="soap-section">
+                        <!-- Antecedentes -->
+                        <div class="soap-row" data-target="#antecedentes-form" style="background-color: #ffffff; padding: 10px; border-radius: 4px;">
+                            <h5>Antecedentes</h5>
+                            <span class="bi bi-chevron-down"></span>
+                        </div>
+                        <div id="antecedentes-form" class="soap-form collapse">
+                            <p class="mb-2" style="color: #718096;">Informe as informações relacionadas aos antecedentes do municipe.</p>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label>Gestas prévias</label>
+                                    <input type="text" class="form-control" placeholder="Informe">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Abortos</label>
+                                    <input type="text" class="form-control" placeholder="Informe">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label>Partos realizados</label>
+                                    <input type="text" class="form-control" placeholder="Informe">
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Vaginais</label>
+                                    <input type="text" class="form-control" placeholder="Informe">
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Cesáreas</label>
+                                    <input type="text" class="form-control" placeholder="Informe">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label>Partos domiciliares</label>
+                                    <input type="text" class="form-control" placeholder="Informe">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label>Nascidos</label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>Vivos</label>
+                                            <input type="text" class="form-control" placeholder="Informe">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Mortos</label>
+                                            <input type="text" class="form-control" placeholder="Informe">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Recém-nascidos com</label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>Menos de 250g</label>
+                                            <input type="text" class="form-control" placeholder="Informe">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Mais de 450g</label>
+                                            <input type="text" class="form-control" placeholder="Informe">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-success save-btn">Salvar</button>
+                            <button class="btn btn-secondary cancel-btn">Cancelar</button>
+                        </div>
+
+                        <!-- Subjetivo -->
+                        <div class="soap-row" data-target="#subjetivo-form" style="background-color: #c6f6d5; padding: 10px; border-radius: 4px;">
+                            <h5>Subjetivo</h5>
+                            <span class="bi bi-chevron-down"></span>
+                        </div>
+                        <div id="subjetivo-form" class="soap-form collapse">
+                            <p class="mb-2" style="color: #718096;">Informe as impressões subjetivas expressadas pelo municipe</p>
+                            <textarea class="form-control mb-2" rows="4" placeholder="Descreva as impressões subjetivas..." id="subjetivo-text"></textarea>
+                            <div class="mb-3">
+                                <label>Motivo da consulta - CIAP 2</label>
+                                <select class="form-control mb-2" id="ciap2-select">
+                                    <option value="">Selecione o CIAP 2</option>
+                                    <option value="remocao-apendice">Remoção do apêndice</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label>CIAP 2</label>
+                                <input type="text" class="form-control mb-2" id="ciap2-input" placeholder="Informe o CIAP 2">
+                            </div>
+                            <button class="btn btn-success save-btn">Salvar</button>
+                            <button class="btn btn-secondary cancel-btn">Cancelar</button>
+                        </div>
+
+                        <!-- Objetivo -->
+                        <div class="soap-row" data-target="#objetivo-form" style="background-color: #e6f0fa; padding: 10px; border-radius: 4px;">
+                            <h5>Objetivo</h5>
+                            <span class="bi bi-chevron-down"></span>
+                        </div>
+                        <div id="objetivo-form" class="soap-form collapse">
+                            <ul class="nav nav-tabs mb-3" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link active" id="info-gerais-tab" data-bs-toggle="tab" href="#info-gerais" role="tab">Informações gerais</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="antropometria-tab" data-bs-toggle="tab" href="#antropometria" role="tab">Antropometria, sinais vitais e glicemia capilar</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="marcadores-tab" data-bs-toggle="tab" href="#marcadores" role="tab">Marcadores de consumo alimentar</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="resultados-tab" data-bs-toggle="tab" href="#resultados" role="tab">Resultados de exames</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="info-gerais" role="tabpanel">
+                                    <div class="mb-3">
+                                        <label>Vacinação em dia</label><br>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="vacina" id="vacina-sim" value="sim">
+                                            <label class="form-check-label" for="vacina-sim">Sim</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="vacina" id="vacina-nao" value="nao">
+                                            <label class="form-check-label" for="vacina-nao">Não</label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>DUM</label>
+                                        <input type="date" class="form-control" id="dum-input" placeholder="dd/mm/aaaa">
+                                        <small id="dum-help" class="form-text text-muted">Última DUM: Não registrada</small>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="antropometria" role="tabpanel">
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label>Peso (kg)</label>
+                                            <input type="number" class="form-control mb-2" id="peso-input" placeholder="Informe" step="0.1">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>Altura (cm)</label>
+                                            <input type="number" class="form-control mb-2" id="altura-input" placeholder="Informe" step="0.1">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>IMC</label>
+                                            <input type="number" class="form-control mb-2" id="imc-input" placeholder="Informe" readonly>
+                                            <span id="imc-status" class="badge" style="display: none;"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label>Circunferência abdominal (cm)</label>
+                                            <input type="number" class="form-control mb-2" id="circ-abdominal-input" placeholder="Informe" step="0.1">
+                                            <span id="circ-abdominal-status" class="badge" style="display: none;"></span>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label>Perímetro cefálico (cm)</label>
+                                            <input type="number" class="form-control mb-2" id="perim-cefalico-input" placeholder="Informe" step="0.1">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label>Perímetro da panturrilha (cm)</label>
+                                            <input type="number" class="form-control mb-2" id="perim-panturrilha-input" placeholder="Informe" step="0.1">
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-3">
+                                            <label>Pressão arterial (mmHg)</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="pressao-sist-input" placeholder="Informe" step="1">
+                                                <span class="input-group-text">/</span>
+                                                <input type="number" class="form-control" id="pressao-diast-input" placeholder="Informe" step="1">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label>Frequência respiratória (mpm)</label>
+                                            <input type="number" class="form-control mb-2" id="freq-resp-input" placeholder="Informe" step="1">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label>Frequência cardíaca (bpm)</label>
+                                            <input type="number" class="form-control mb-2" id="freq-card-input" placeholder="Informe" step="1">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label>Temperatura (°C)</label>
+                                            <input type="number" class="form-control mb-2" id="temp-input" placeholder="Informe" step="0.1">
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label>Saturação de O₂ (%)</label>
+                                            <input type="number" class="form-control mb-2" id="sat-o2-input" placeholder="Informe" step="1" min="0" max="100">
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label>Glicemia capilar (mg/dL)</label>
+                                            <input type="number" class="form-control mb-2" id="glicemia-input" placeholder="Informe" step="1">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Momento da coleta</label><br>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="momento-coleta" id="momento-nao-especificado" value="nao-especificado" checked>
+                                                <label class="form-check-label" for="momento-nao-especificado">Momento da coleta não especificado</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="momento-coleta" id="jejum" value="jejum">
+                                                <label class="form-check-label" for="jejum">Jejum</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="momento-coleta" id="pre-prandial" value="pre-prandial">
+                                                <label class="form-check-label" for="pre-prandial">Pré-prandial</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="momento-coleta" id="pos-prandial" value="pos-prandial">
+                                                <label class="form-check-label" for="pos-prandial">Pós-prandial</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="marcadores" role="tabpanel">
+                                    <textarea class="form-control mb-2" rows="4" id="marcadores-text" placeholder="Descreva marcadores de consumo alimentar..."></textarea>
+                                </div>
+                                <div class="tab-pane fade" id="resultados" role="tabpanel">
+                                    <textarea class="form-control mb-2" rows="4" id="resultados-text" placeholder="Descreva resultados de exames..."></textarea>
+                                </div>
+                            </div>
+                            <button class="btn btn-success save-btn">Salvar</button>
+                            <button class="btn btn-secondary cancel-btn">Cancelar</button>
+                        </div>
+
+                        <!-- Avaliação -->
+                        <div class="soap-row" data-target="#avaliacao-form" style="background-color: #fefcbf; padding: 10px; border-radius: 4px;">
+                            <h5>Avaliação</h5>
+                            <span class="bi bi-chevron-down"></span>
+                        </div>
+                        <div id="avaliacao-form" class="soap-form collapse">
+                            <ul class="nav nav-tabs mb-3" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link active" id="problemas-tab" data-bs-toggle="tab" href="#problemas" role="tab">Problemas e/ou condições</a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="alergias-tab" data-bs-toggle="tab" href="#alergias" role="tab">Alergias e reações adversas</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="problemas" role="tabpanel">
+                                    <div class="mb-3">
+                                        <label>Problemas/condições ativos ou latentes</label>
+                                        <select class="form-control mb-2" id="problema-select">
+                                            <option value="">Selecione</option>
+                                            <option value="remocao-apendice">Remoção do apêndice</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>CIAP 2</label>
+                                        <select class="form-control mb-2" id="ciap2-select">
+                                            <option value="">Selecione o CIAP 2</option>
+                                            <option value="remocao-apendice">Remoção do apêndice</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>CID 10</label>
+                                        <select class="form-control mb-2" id="cid10-select">
+                                            <option value="">Selecione o CID 10</option>
+                                            <option value="chelsea-manning">Chelsea Elizabeth Manning</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="incluir-lista">
+                                        <label class="form-check-label" for="incluir-lista">Incluir na lista de problema/condição</label>
+                                    </div>
+                                    <button class="btn btn-primary mb-3" id="incluir-problema-btn">Incluir problema e/ou condição</button>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>CIAP 2</th>
+                                                <th>CID 10</th>
+                                                <th>Lista de problema/condição</th>
+                                                <th>Situação</th>
+                                                <th>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="problemas-table">
+                                            <tr>
+                                                <td>Remoção do apêndice</td>
+                                                <td>Chelsea Elizabeth Manning</td>
+                                                <td>Não incluído</td>
+                                                <td><span class="badge bg-danger">Ativo</span></td>
+                                                <td>
+                                                    <button class="btn btn-link">Editar</button>
+                                                    <button class="btn btn-link text-danger">X</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <textarea class="form-control mb-2" rows="4" id="problemas-text" placeholder="Informe as impressões subjetivas do profissional e as expressadas pelo Municipe..."></textarea>
+                                </div>
+                                <div class="tab-pane fade" id="alergias" role="tabpanel">
+                                    <div class="mb-3">
+                                        <label>Alergias e reações adversas contidas</label>
+                                        <select class="form-control mb-2" id="alergia-select">
+                                            <option value="">Selecione</option>
+                                            <option value="alimento">Alimento</option>
+                                        </select>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label>Categoria do agente causador</label>
+                                            <input type="text" class="form-control mb-2" id="categoria-input" placeholder="Informe" readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Agente ou substância específica</label>
+                                            <input type="text" class="form-control mb-2" id="agente-input" placeholder="Informe" readonly>
+                                        </div>
+                                    </div>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Categoria do agente causador</th>
+                                                <th>Agente ou substância específica</th>
+                                                <th>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="alergias-table">
+                                            <tr>
+                                                <td>Alimento</td>
+                                                <td>Camarão</td>
+                                                <td>
+                                                    <button class="btn btn-link">Editar</button>
+                                                    <button class="btn btn-link text-danger">X</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <button class="btn btn-primary mb-3" id="nova-alergia-btn">+ Nova alergia</button>
+                                </div>
+                            </div>
+                            <button class="btn btn-success save-btn">Salvar</button>
+                            <button class="btn btn-secondary cancel-btn">Cancelar</button>
+                        </div>
+
+                        <!-- Plano -->
+<div class="soap-row" data-target="#plano-form" style="background-color: #f7d7c4; padding: 10px; border-radius: 4px;">
+    <h5>Plano</h5>
+    <span class="bi bi-chevron-down"></span>
+</div>
+<div id="plano-form" class="soap-form collapse">
+    <div class="card-body">
+        <ul class="nav nav-tabs mb-3" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="intervencoes-tab" data-bs-toggle="tab" href="#intervencoes" role="tab">Intervenções e/ou procedimentos</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="medicamentos-tab" data-bs-toggle="tab" href="#medicamentos" role="tab">Prescrição de medicamentos</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="exames-tab" data-bs-toggle="tab" href="#exames" role="tab">Solicitação de exames</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="atestados-tab" data-bs-toggle="tab" href="#atestados" role="tab">Atestados/Declarações</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="orientacoes-tab" data-bs-toggle="tab" href="#orientacoes" role="tab">Orientações</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="encaminhamentos-tab" data-bs-toggle="tab" href="#encaminhamentos" role="tab">Encaminhamentos</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="compartilhamento-tab" data-bs-toggle="tab" href="#compartilhamento" role="tab">Compartilhamento de cuidado</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- Intervenções e/ou procedimentos -->
+            <div class="tab-pane fade show active" id="intervencoes" role="tabpanel">
+                <div class="mb-3">
+                    <div class="input-group mb-2">
+                        <select class="form-control" id="ciap2-select">
+                            <option value="">Pesquise e selecione o CIAP 2</option>
+                            <option value="remocao-apendice">Remoção do apêndice</option>
+                        </select>
+                        <button class="btn btn-primary" id="add-intervencao-btn">+ Incluir intervenção e/ou procedimento</button>
+                    </div>
+                    <div id="intervencoes-list" class="mt-2"></div>
+                </div>
+            </div>
+
+            <!-- Prescrição de medicamentos -->
+            <div class="tab-pane fade" id="medicamentos" role="tabpanel">
+                <div class="mb-3">
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control" id="medicamento-search" placeholder="Pesquise por medicamento">
+                        <button class="btn btn-primary" id="add-medicamento-btn">+ Nova prescrição</button>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Medicamento</th>
+                                <th>Posologia</th>
+                                <th>Tipo</th>
+                                <th>Período</th>
+                                <th>Solicitado em</th>
+                                <th>Profissional</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="medicamentos-list">
+                            <tr>
+                                <td>Prednisolona</td>
+                                <td>1 cápsula de 50 mg a cada 8h</td>
+                                <td>Controlado</td>
+                                <td>De 18/06/2025 a 18/06/2025</td>
+                                <td>18/06/2025</td>
+                                <td>Maria Assunção - Médica clínica</td>
+                                <td>
+                                    <button class="btn btn-link text-primary btn-sm">Editar</button>
+                                    <button class="btn btn-link text-danger btn-sm">X</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="mt-2">
+                        <button class="btn btn-primary" id="selecionar-imprimir-medicamentos">Selecionar e imprimir</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Solicitação de exames -->
+            <div class="tab-pane fade" id="exames" role="tabpanel">
+                <div class="mb-3">
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control" id="exame-search" placeholder="Pesquise por exame">
+                        <button class="btn btn-primary" id="add-exame-btn">+ Novo exame</button>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Exame solicitado</th>
+                                <th>Prioridade</th>
+                                <th>Tipo</th>
+                                <th>Solicitado em</th>
+                                <th>Profissional</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="exames-list">
+                            <tr>
+                                <td>Ultrassonografia</td>
+                                <td>Alta</td>
+                                <td>Comum</td>
+                                <td>18/06/2025</td>
+                                <td>Maria Assunção - Médica clínica</td>
+                                <td>
+                                    <button class="btn btn-link text-primary btn-sm">Editar</button>
+                                    <button class="btn btn-link text-danger btn-sm">X</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="mt-2">
+                        <button class="btn btn-primary" id="selecionar-imprimir-exames">Selecionar e imprimir</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Atestados/Declarações -->
+            <div class="tab-pane fade" id="atestados" role="tabpanel">
+                <div class="mb-3">
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control" id="atestado-search" placeholder="Pesquise por profissional ou unidade de saúde">
+                        <button class="btn btn-primary" id="add-atestado-btn">+ Novo atestado</button>
+                        <button class="btn btn-primary" id="add-declaracao-btn">+ Nova declaração</button>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Profissional</th>
+                                <th>Unidade de saúde</th>
+                                <th>Tipo</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="atestados-list">
+                            <tr>
+                                <td>18/06/2025</td>
+                                <td>Maria Assunção - Médica clínica</td>
+                                <td>Lorem ipsum</td>
+                                <td>Atestado</td>
+                                <td>
+                                    <button class="btn btn-link text-primary btn-sm">Editar</button>
+                                    <button class="btn btn-link text-danger btn-sm">X</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="mt-2">
+                        <button class="btn btn-primary" id="selecionar-imprimir-atestados">Selecionar e imprimir</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orientações -->
+            <div class="tab-pane fade" id="orientacoes" role="tabpanel">
+                <div class="mb-3">
+                    <textarea class="form-control mb-2" rows="4" id="orientacoes-text" placeholder="Informe as orientações ao municipe"></textarea>
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control" id="orientacao-search" placeholder="Pesquise por profissional, especialidade ou orientação">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="ver-minhas-orientacoes">
+                            <label class="form-check-label" for="ver-minhas-orientacoes">Ver somente as minhas orientações</label>
+                        </div>
+                        <button class="btn btn-primary" id="add-orientacao-btn">+ Incluir orientação</button>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Profissional</th>
+                                <th>Orientação</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orientacoes-list">
+                            <tr>
+                                <td>18/06/2025 às 15:50</td>
+                                <td>Maria Assunção - Médica clínica</td>
+                                <td>Lorem ipsum dolor sit amet...</td>
+                                <td>
+                                    <button class="btn btn-link text-primary btn-sm">Editar</button>
+                                    <button class="btn btn-link text-danger btn-sm">X</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Encaminhamentos -->
+            <div class="tab-pane fade" id="encaminhamentos" role="tabpanel">
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="caps">
+                        <label class="form-check-label" for="caps">CAPS</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="urgencia">
+                        <label class="form-check-label" for="urgencia">Urgência</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="internacao">
+                        <label class="form-check-label" for="internacao">Internação hospitalar</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="intersetorial">
+                        <label class="form-check-label" for="intersetorial">Intersetorial</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="atencao-domiciliar">
+                        <label class="form-check-label" for="atencao-domiciliar">Serviço de Atenção Domiciliar</label>
+                    </div>
+                    <button class="btn btn-primary mb-2" id="servico-especializado-btn">Serviço especializado</button>
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control" id="encaminhamento-search" placeholder="Pesquise por tipo de encaminhamento">
+                        <input type="text" class="form-control" id="especialidade-search" placeholder="Pesquise por especialidade">
+                        <button class="btn btn-primary" id="add-encaminhamento-btn">+ Novo encaminhamento</button>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Data do encaminhamento</th>
+                                <th>Classificação de risco</th>
+                                <th>Tipo de encaminhamento</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="encaminhamentos-list">
+                            <tr>
+                                <td>18/06/2025</td>
+                                <td>Emergência</td>
+                                <td>Serviço especializado</td>
+                                <td>
+                                    <button class="btn btn-link text-primary btn-sm">Editar</button>
+                                    <button class="btn btn-link text-danger btn-sm">X</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="mt-2">
+                        <button class="btn btn-secondary" id="cancelar-encaminhamento">Cancelar</button>
+                        <button class="btn btn-primary" id="salvar-encaminhamento">Salvar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compartilhamento de cuidado -->
+            <div class="tab-pane fade" id="compartilhamento" role="tabpanel">
+                <div class="mb-3">
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control" id="compartilhamento-search" placeholder="Pesquise por profissional ou unidade de saúde">
+                        <button class="btn btn-primary" id="add-compartilhamento-btn">+ Novo compartilhamento</button>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Prioridade</th>
+                                <th>Compartilhado para</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="compartilhamentos-list">
+                            <tr>
+                                <td>18/06/2025</td>
+                                <td>Alta</td>
+                                <td>Igor Gomes - Psicoterapeuta geral</td>
+                                <td>
+                                    <button class="btn btn-link text-primary btn-sm">Visualizar</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="mt-2">
+                        <button class="btn btn-secondary" id="cancelar-compartilhamento">Cancelar</button>
+                        <button class="btn btn-primary" id="add-novo-compartilhamento">+ Novo compartilhamento</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-success save-btn">Salvar</button>
+        <button class="btn btn-secondary cancel-btn">Cancelar</button>
+    </div>
+</div>
+ <!-- Finalização -->
+<div class="soap-row" data-target="#finalizacao-form" style="background-color: #f7d7c4; padding: 10px; border-radius: 4px;">
+    <h5>Finalização</h5>
+    <span class="bi bi-chevron-down"></span>
+</div>
+<div id="finalizacao-form" class="soap-form collapse">
+    <div class="card-body">
+        <div class="mb-3">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="municipio-participacao">
+                <label class="form-check-label" for="municipio-participacao">Municipio participou do atendimento</label>
+            </div>
+            <select class="form-control mt-2" id="forma-participacao">
+                <option value="">Forma de participação</option>
+                <option value="selecionar">Selecione</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="tipo-atendimento" id="consulta-no-dia" value="consulta">
+                <label class="form-check-label" for="consulta-no-dia">Consulta no dia</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="tipo-atendimento" id="urgencia" value="urgencia">
+                <label class="form-check-label" for="urgencia">Urgência</label>
+            </div>
+            <select class="form-control mt-2" id="conduta">
+                <option value="">Conduta</option>
+                <option value="selecionar">Selecione</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="observacoes" class="form-label">Observações</label>
+            <textarea class="form-control" id="observacoes" rows="4" placeholder="Informe as impressões subjetivas do profissional e as expressadas pelo Municipe."></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="atendimento-compartilhado-profissional" class="form-label">Atendimento compartilhado</label>
+            <select class="form-control" id="atendimento-compartilhado-profissional">
+                <option value="">Selecione o profissional</option>
+            </select>
+            <select class="form-control mt-2" id="atendimento-compartilhado-forma">
+                <option value="">Selecione a forma de participação</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="ficha-notificacao" class="form-label">Ficha de notificação de caso suspeito</label>
+            <div class="input-group">
+                <select class="form-control" id="ficha-notificacao">
+                    <option value="">Pesquise ou selecione pela ficha</option>
+                </select>
+                <button class="btn btn-primary" id="incluir-ficha">Incluir ficha</button>
+            </div>
+            <table class="table mt-2">
+                <thead>
+                    <tr>
+                        <th>Ficha</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Acidente de trabalho grave</td>
+                        <td><span class="badge bg-primary">📄</span> <span class="badge bg-danger">✖</span></td>
+                    </tr>
+                    <tr>
+                        <td>Acidente por animais peçonhentos</td>
+                        <td><span class="badge bg-primary">📄</span> <span class="badge bg-danger">✖</span></td>
+                    </tr>
+                    <tr>
+                        <td>Acidente por animais peçonhentos</td>
+                        <td><span class="badge bg-primary">📄</span> <span class="badge bg-danger">✖</span></td>
+                    </tr>
+                    <tr>
+                        <td>Raiva humana</td>
+                        <td><span class="badge bg-primary">📄</span> <span class="badge bg-danger">✖</span></td>
+                    </tr>
+                    <tr>
+                        <td>Exceção alopática/convencional</td>
+                        <td><span class="badge bg-primary">📄</span> <span class="badge bg-danger">✖</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="mb-3">
+            <label for="racionalidade" class="form-label">Racionalidade em saúde (Exceção alopática/convencional)</label>
+            <select class="form-control" id="racionalidade">
+                <option value="">Selecione a racionalidade</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="desfecho" id="liberar-municipe" value="liberar">
+                <label class="form-check-label" for="liberar-municipe">Liberar Municipe</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="desfecho" id="manter-lista" value="manter">
+                <label class="form-check-label" for="manter-lista">Manter Municipe na lista de atendimento</label>
+            </div>
+        </div>
+        <div class="mb-3">
+            <button class="btn btn-primary" id="agendar-consulta">Agendar consulta</button>
+            <div class="form-check form-switch mt-2">
+                <input class="form-check-input" type="checkbox" id="imprimir-atendimento">
+                <label class="form-check-label" for="imprimir-atendimento">Imprimir atendimento ao finalizar</label>
+            </div>
+        </div>
+        <div class="mt-3">
+            <button class="btn btn-success save-btn">Salvar</button>
+            <button class="btn btn-secondary cancel-btn">Cancelar</button>
+        </div>
+    </div>
+</div>
+        <!-- Timeline e Cards (direita) -->
+        <div class="col-md-3">
+            <!-- Timeline -->
+            <div class="card h-100 mb-4">
+                <div class="card-header">Timeline</div>
+                <div class="card-body timeline-container">
+                    <ul class="timeline">
+                        <li>
+                            <span class="timeline-date">2 dias atrás</span>
+                            <strong>Consulta especialidade Oftalmologia</strong>
+                        </li>
+                        <li>
+                            <span class="timeline-date">2 dias atrás</span>
+                            <strong>Vacina campanha COVID-19</strong>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+                        <!-- Vacinação -->
+                        <div class="tab-pane fade" id="vacinacao" role="tabpanel">
+                            <p>Conteúdo da aba Vacinação.</p>
+                        </div>
+                        <!-- Histórico -->
+                        <div class="tab-pane fade" id="historico" role="tabpanel">
+                            <p>Conteúdo da aba Histórico.</p>
+                        </div>
+                        <!-- Agendamentos -->
+                        <div class="tab-pane fade" id="agendamentos" role="tabpanel">
+                            <p>Conteúdo da aba Agendamentos.</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

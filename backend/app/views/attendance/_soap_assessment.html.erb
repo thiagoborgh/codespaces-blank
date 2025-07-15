@@ -1,0 +1,474 @@
+<!-- Seção Avaliação -->
+<div class="soap-section">
+    <div class="soap-row" data-target="#avaliacao-form" style="background-color: #fefcbf;">
+        <h5 class="mb-0">Avaliação (A)</h5>
+        <i class="bi bi-chevron-down"></i>
+    </div>
+    
+    <div id="avaliacao-form" class="soap-form collapse">
+        <%= form_with model: [@patient, @consultation], local: false, remote: true, 
+                      url: attendance_path(@patient, @consultation), 
+                      method: :patch, class: "soap-form-data" do |form| %>
+            
+            <!-- Tabs para Avaliação -->
+            <ul class="nav nav-tabs mb-3" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="problemas-tab" data-bs-toggle="tab" href="#problemas" role="tab">Problemas e/ou Condições</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="antecedentes-tab" data-bs-toggle="tab" href="#antecedentes" role="tab">Antecedentes</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="alergias-tab" data-bs-toggle="tab" href="#alergias" role="tab">Alergias e Reações Adversas</a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <!-- Problemas e Condições -->
+                <div class="tab-pane fade show active" id="problemas" role="tabpanel">
+                    <div class="mb-3">
+                        <label class="form-label">Problemas/condições ativos ou latentes</label>
+                        <%= form.select :problem_condition, 
+                                       options_for_select([
+                                           ['Selecione', ''],
+                                           ['Hipertensão arterial', 'hipertensao'],
+                                           ['Diabetes mellitus', 'diabetes'],
+                                           ['Obesidade', 'obesidade'],
+                                           ['Depressão', 'depressao'],
+                                           ['Ansiedade', 'ansiedade']
+                                       ]),
+                                       { include_blank: false }, 
+                                       { class: "form-select" } %>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">CIAP 2</label>
+                        <%= form.select :assessment_ciap2, 
+                                       options_for_select([
+                                           ['Selecione o CIAP 2', ''],
+                                           ['K86 - Hipertensão sem complicações', 'K86'],
+                                           ['K87 - Hipertensão com complicações', 'K87'],
+                                           ['T90 - Diabetes não insulino-dependente', 'T90'],
+                                           ['T89 - Diabetes insulino-dependente', 'T89']
+                                       ]),
+                                       { include_blank: false }, 
+                                       { class: "form-select" } %>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">CID 10</label>
+                        <%= form.select :assessment_cid10, 
+                                       options_for_select([
+                                           ['Selecione o CID 10', ''],
+                                           ['I10 - Hipertensão essencial', 'I10'],
+                                           ['E11 - Diabetes mellitus tipo 2', 'E11'],
+                                           ['E10 - Diabetes mellitus tipo 1', 'E10']
+                                       ]),
+                                       { include_blank: false }, 
+                                       { class: "form-select" } %>
+                    </div>
+                    
+                    <div class="form-check form-switch mb-3">
+                        <%= form.check_box :include_problem_list, class: "form-check-input" %>
+                        <label class="form-check-label">Incluir na lista de problema/condição</label>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary mb-3" id="incluir-problema-btn">
+                        Incluir problema e/ou condição
+                    </button>
+                    
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>CIAP 2</th>
+                                <th>CID 10</th>
+                                <th>Lista de problema/condição</th>
+                                <th>Situação</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="problemas-table">
+                            <!-- Problemas existentes serão carregados aqui -->
+                            <% @patient_problems.each do |problem| %>
+                                <tr>
+                                    <td><%= problem.ciap2_code %></td>
+                                    <td><%= problem.cid10_code %></td>
+                                    <td><%= problem.in_list ? 'Incluído' : 'Não incluído' %></td>
+                                    <td>
+                                        <span class="badge bg-<%= problem.active? ? 'success' : 'danger' %>">
+                                            <%= problem.active? ? 'Ativo' : 'Inativo' %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-link btn-sm">Editar</button>
+                                        <button class="btn btn-link text-danger btn-sm">Remover</button>
+                                    </td>
+                                </tr>
+                            <% end %>
+                        </tbody>
+                    </table>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Impressões diagnósticas</label>
+                        <%= form.text_area :assessment_content, 
+                                          rows: 4, 
+                                          class: "form-control", 
+                                          placeholder: "Informe as impressões diagnósticas e avaliação clínica...",
+                                          value: @soap_records.find_by(soap_type: 'assessment')&.content %>
+                    </div>
+                </div>
+                
+                <!-- Antecedentes -->
+                <div class="tab-pane fade" id="antecedentes" role="tabpanel">
+                    <p class="text-muted mb-3">Informe as informações relacionadas aos antecedentes do paciente.</p>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Gestas prévias</label>
+                            <%= form.number_field :previous_pregnancies, 
+                                                 class: "form-control", 
+                                                 placeholder: "Número de gestações" %>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Abortos</label>
+                            <%= form.number_field :abortions, 
+                                                 class: "form-control", 
+                                                 placeholder: "Número de abortos" %>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Partos realizados</label>
+                            <%= form.number_field :total_births, 
+                                                 class: "form-control", 
+                                                 placeholder: "Total de partos" %>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Vaginais</label>
+                            <%= form.number_field :vaginal_births, 
+                                                 class: "form-control", 
+                                                 placeholder: "Partos vaginais" %>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Cesáreas</label>
+                            <%= form.number_field :cesarean_births, 
+                                                 class: "form-control", 
+                                                 placeholder: "Partos cesáreos" %>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Antecedentes patológicos</label>
+                        <%= form.text_area :pathological_history, 
+                                          rows: 3, 
+                                          class: "form-control", 
+                                          placeholder: "Descreva antecedentes patológicos relevantes..." %>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Antecedentes cirúrgicos</label>
+                        <%= form.text_area :surgical_history, 
+                                          rows: 3, 
+                                          class: "form-control", 
+                                          placeholder: "Descreva cirurgias anteriores..." %>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Antecedentes familiares</label>
+                        <%= form.text_area :family_history, 
+                                          rows: 3, 
+                                          class: "form-control", 
+                                          placeholder: "Descreva antecedentes familiares relevantes..." %>
+                    </div>
+                </div>
+                
+                <!-- Alergias e Reações Adversas -->
+                <div class="tab-pane fade" id="alergias" role="tabpanel">
+                    <div class="mb-3">
+                        <label class="form-label">Categoria do agente causador</label>
+                        <%= form.select :allergy_category, 
+                                       options_for_select([
+                                           ['Selecione', ''],
+                                           ['Medicamento', 'medicamento'],
+                                           ['Alimento', 'alimento'],
+                                           ['Substância química', 'substancia_quimica'],
+                                           ['Ambiente/Inalantes', 'ambiente'],
+                                           ['Outros', 'outros']
+                                       ]),
+                                       { include_blank: false }, 
+                                       { class: "form-select" } %>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Agente ou substância específica</label>
+                        <%= form.text_field :allergy_agent, 
+                                           class: "form-control", 
+                                           placeholder: "Informe o agente causador" %>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de reação</label>
+                        <%= form.text_field :reaction_type, 
+                                           class: "form-control", 
+                                           placeholder: "Descreva o tipo de reação" %>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary mb-3" id="nova-alergia-btn">
+                        + Nova alergia
+                    </button>
+                    
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Categoria</th>
+                                <th>Agente/Substância</th>
+                                <th>Tipo de Reação</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="alergias-table">
+                            <% @patient_allergies.each do |allergy| %>
+                                <tr>
+                                    <td><%= allergy.category %></td>
+                                    <td><%= allergy.substance %></td>
+                                    <td><%= allergy.reaction_type %></td>
+                                    <td>
+                                        <button class="btn btn-link btn-sm">Editar</button>
+                                        <button class="btn btn-link text-danger btn-sm">Remover</button>
+                                    </td>
+                                </tr>
+                            <% end %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> Salvar
+                </button>
+                <button type="button" class="btn btn-secondary cancel-btn">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+            </div>
+        <% end %>
+    </div>
+</div>
+<div class="soap-section">
+    <div class="soap-row" data-target="#avaliacao-form" style="background-color: #fefcbf; padding: 10px; border-radius: 4px;">
+        <h5 class="mb-0">Avaliação (A)</h5>
+        <span class="bi bi-chevron-down"></span>
+    </div>
+    
+    <%= form_with model: [@consultation, @soap_records.find { |r| r.soap_type == 'assessment' } || SoapRecord.new], 
+                  url: update_soap_attendance_path(@consultation), 
+                  method: :post, 
+                  local: false, 
+                  class: "soap-form collapse", 
+                  id: "avaliacao-form" do |form| %>
+        
+        <%= hidden_field_tag :soap_section, 'assessment' %>
+        
+        <!-- Tabs para Avaliação -->
+        <ul class="nav nav-tabs mb-3" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="problemas-tab" data-bs-toggle="tab" href="#problemas" role="tab">Problemas/Diagnósticos</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="antecedentes-tab" data-bs-toggle="tab" href="#antecedentes" role="tab">Antecedentes</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="alergias-tab" data-bs-toggle="tab" href="#alergias" role="tab">Alergias</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- Problemas/Diagnósticos -->
+            <div class="tab-pane fade show active" id="problemas" role="tabpanel">
+                <div class="mb-3">
+                    <label for="impressao_diagnostica" class="form-label">Impressão Diagnóstica</label>
+                    <%= form.text_area :content, 
+                                       placeholder: "Descreva a impressão diagnóstica e problemas identificados...", 
+                                       class: "form-control", 
+                                       rows: 4,
+                                       value: @soap_records.find { |r| r.soap_type == 'assessment' }&.content %>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Códigos CIAP2</label>
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control" id="ciap2-search" placeholder="Digite para buscar código CIAP2...">
+                        <button type="button" class="btn btn-outline-primary" id="add-ciap2">
+                            <i class="bi bi-plus"></i> Adicionar
+                        </button>
+                    </div>
+                    <div id="ciap2-list" class="mb-3">
+                        <!-- Lista de códigos CIAP2 será populada via JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Códigos CID-10</label>
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control" id="cid10-search" placeholder="Digite para buscar código CID-10...">
+                        <button type="button" class="btn btn-outline-primary" id="add-cid10">
+                            <i class="bi bi-plus"></i> Adicionar
+                        </button>
+                    </div>
+                    <div id="cid10-list" class="mb-3">
+                        <!-- Lista de códigos CID-10 será populada via JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="diagnostico_diferencial" class="form-label">Diagnóstico Diferencial</label>
+                    <textarea class="form-control" name="soap_data[problems][differential_diagnosis]" rows="3" 
+                              placeholder="Liste possíveis diagnósticos diferenciais..."></textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="prognostico" class="form-label">Prognóstico</label>
+                    <select class="form-control" name="soap_data[problems][prognosis]">
+                        <option value="">Selecione o prognóstico</option>
+                        <option value="excelente">Excelente</option>
+                        <option value="bom">Bom</option>
+                        <option value="reservado">Reservado</option>
+                        <option value="ruim">Ruim</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Antecedentes -->
+            <div class="tab-pane fade" id="antecedentes" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Antecedentes Pessoais</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="soap_data[antecedents][diabetes]" id="diabetes">
+                            <label class="form-check-label" for="diabetes">Diabetes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="soap_data[antecedents][hipertensao]" id="hipertensao">
+                            <label class="form-check-label" for="hipertensao">Hipertensão</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="soap_data[antecedents][cardiopatia]" id="cardiopatia">
+                            <label class="form-check-label" for="cardiopatia">Cardiopatia</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="soap_data[antecedents][cancer]" id="cancer">
+                            <label class="form-check-label" for="cancer">Câncer</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="soap_data[antecedents][cirurgias]" id="cirurgias">
+                            <label class="form-check-label" for="cirurgias">Cirurgias Prévias</label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h6>Antecedentes Familiares</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="soap_data[family_history][diabetes]" id="fam_diabetes">
+                            <label class="form-check-label" for="fam_diabetes">Diabetes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="soap_data[family_history][hipertensao]" id="fam_hipertensao">
+                            <label class="form-check-label" for="fam_hipertensao">Hipertensão</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="soap_data[family_history][cardiopatia]" id="fam_cardiopatia">
+                            <label class="form-check-label" for="fam_cardiopatia">Cardiopatia</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="soap_data[family_history][cancer]" id="fam_cancer">
+                            <label class="form-check-label" for="fam_cancer">Câncer</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="soap_data[family_history][outras]" id="fam_outras">
+                            <label class="form-check-label" for="fam_outras">Outras doenças genéticas</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <label for="observacoes_antecedentes" class="form-label">Observações sobre Antecedentes</label>
+                    <textarea class="form-control" name="soap_data[antecedents][observations]" rows="3" 
+                              placeholder="Detalhes sobre antecedentes pessoais e familiares..."></textarea>
+                </div>
+            </div>
+
+            <!-- Alergias -->
+            <div class="tab-pane fade" id="alergias" role="tabpanel">
+                <div class="mb-3">
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="add-alergia">
+                        <i class="bi bi-plus"></i> Adicionar Alergia
+                    </button>
+                </div>
+                
+                <div id="alergias-list">
+                    <!-- Lista de alergias será populada via JavaScript -->
+                </div>
+                
+                <template id="alergia-template">
+                    <div class="card mb-3 alergia-item">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="form-label">Alérgeno</label>
+                                    <input type="text" class="form-control" name="soap_data[allergies][][allergen]" 
+                                           placeholder="Ex: Penicilina, Poeira...">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Tipo</label>
+                                    <select class="form-control" name="soap_data[allergies][][type]">
+                                        <option value="medicamento">Medicamento</option>
+                                        <option value="alimento">Alimento</option>
+                                        <option value="respiratoria">Respiratória</option>
+                                        <option value="contato">Contato</option>
+                                        <option value="outras">Outras</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Gravidade</label>
+                                    <select class="form-control" name="soap_data[allergies][][severity]">
+                                        <option value="leve">Leve</option>
+                                        <option value="moderada">Moderada</option>
+                                        <option value="grave">Grave</option>
+                                        <option value="anafilaxia">Anafilaxia</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="button" class="btn btn-outline-danger btn-sm remove-alergia">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <label class="form-label">Reação</label>
+                                    <textarea class="form-control" name="soap_data[allergies][][reaction]" rows="2" 
+                                              placeholder="Descreva a reação alérgica..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Importante:</strong> Registre todas as alergias conhecidas do paciente para evitar prescrições inadequadas.
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-flex gap-2 mt-3">
+            <button type="submit" class="btn btn-success save-btn">
+                <i class="bi bi-check-circle"></i> Salvar
+            </button>
+            <button type="button" class="btn btn-secondary cancel-btn">
+                <i class="bi bi-x-circle"></i> Cancelar
+            </button>
+        </div>
+    <% end %>
+</div>

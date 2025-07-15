@@ -1,27 +1,46 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
+import SOAPTab from '../components/SOAPTab';
+import FolhaRosto from '../components/FolhaRosto';
 import { Patient, Consultation, Appointment } from '../types/types';
 import { 
   UserIcon, 
   DocumentTextIcon, 
   ClockIcon, 
-  HeartIcon,
   ArrowLeftIcon,
   CalendarIcon,
   PhoneIcon,
-  IdentificationIcon
+  IdentificationIcon,
+  ClipboardDocumentListIcon,
+  BeakerIcon,
+  PresentationChartLineIcon,
+  ChartBarIcon
 } from '@heroicons/react/24/outline';
+
+// Ícones para medicamentos e documentos (fallback)
+const MedicationIcon = DocumentTextIcon;
+const DocumentIcon = DocumentTextIcon;
 
 const MedicalRecordPage: React.FC = () => {
   const { patientId } = useParams<{ patientId: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [patient, setPatient] = useState<Patient | null>(null);
   const [consultations, setConsultations] = useState<Consultation[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'info' | 'consultations' | 'appointments'>('info');
+  const [activeTab, setActiveTab] = useState<'folha-rosto' | 'overview' | 'soap' | 'history' | 'prescriptions' | 'exams' | 'appointments' | 'documents'>('folha-rosto');
+  const [activeConsultation, setActiveConsultation] = useState<Consultation | null>(null);
+
+  useEffect(() => {
+    // Verificar se foi passado um tab específico via URL
+    const tabFromUrl = searchParams.get('tab');
+    if (tabFromUrl && ['folha-rosto', 'overview', 'soap', 'history', 'prescriptions', 'exams', 'appointments', 'documents'].includes(tabFromUrl)) {
+      setActiveTab(tabFromUrl as any);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (patientId) {
@@ -58,95 +77,48 @@ const MedicalRecordPage: React.FC = () => {
         updated_at: '2024-12-01T15:30:00Z'
       };
 
-      const mockConsultations: Consultation[] = [
-        {
-          id: 1,
+      setPatient(mockPatient);
+      
+      // Se o tab é SOAP, criar uma nova consulta ativa
+      if (activeTab === 'soap') {
+        const newConsultation: Consultation = {
+          id: Date.now(),
           appointment_id: 1,
           patient_id: parseInt(patientId!),
           user_id: 1,
-          chief_complaint: 'Dor de cabeça há 3 dias',
-          present_illness: 'Paciente relata cefaleia frontal, de intensidade moderada, que piora com exposição à luz. Nega febre, náuseas ou vômitos.',
-          physical_examination: 'PA: 120/80 mmHg, FC: 72 bpm, Tax: 36.5°C. Paciente em bom estado geral, orientada, cooperativa. Ausculta cardiopulmonar normal.',
-          diagnosis: 'Cefaleia tensional',
-          treatment_plan: 'Dipirona 500mg, 1 comprimido de 8/8h por 5 dias. Repouso relativo.',
-          follow_up: 'Retorno em 1 semana se persistir sintomas',
-          notes: 'Orientado sobre sinais de alarme',
-          created_at: '2024-12-01T10:00:00Z',
-          updated_at: '2024-12-01T10:00:00Z'
-        },
-        {
-          id: 2,
-          appointment_id: 2,
-          patient_id: parseInt(patientId!),
-          user_id: 2,
-          chief_complaint: 'Consulta de rotina',
-          present_illness: 'Paciente assintomática, comparece para consulta de rotina e renovação de receitas.',
-          physical_examination: 'PA: 118/78 mmHg, FC: 70 bpm, Peso: 65kg, Altura: 1.65m, IMC: 23.9. Exame físico sem alterações.',
-          diagnosis: 'Paciente hígida',
-          treatment_plan: 'Manutenção das medicações em uso',
-          follow_up: 'Retorno em 6 meses',
-          notes: 'Solicitados exames de rotina',
-          created_at: '2024-11-01T14:30:00Z',
-          updated_at: '2024-11-01T14:30:00Z'
-        }
-      ];
-
-      const mockAppointments: Appointment[] = [
-        {
-          id: 1,
-          patient_id: parseInt(patientId!),
-          user_id: 1,
-          appointment_date: '2024-12-01',
-          appointment_time: '10:00',
-          status: 'completed',
-          priority: 'normal',
-          notes: 'Consulta médica',
-          created_at: '2024-11-25T09:00:00Z',
-          updated_at: '2024-12-01T11:00:00Z'
-        },
-        {
-          id: 2,
-          patient_id: parseInt(patientId!),
-          user_id: 2,
-          appointment_date: '2024-11-01',
-          appointment_time: '14:30',
-          status: 'completed',
-          priority: 'normal',
-          notes: 'Consulta de rotina',
-          created_at: '2024-10-25T10:00:00Z',
-          updated_at: '2024-11-01T15:30:00Z'
-        },
-        {
-          id: 3,
-          patient_id: parseInt(patientId!),
-          user_id: 1,
-          appointment_date: '2025-01-15',
-          appointment_time: '09:00',
-          status: 'scheduled',
-          priority: 'normal',
-          notes: 'Retorno',
-          created_at: '2024-12-01T11:00:00Z',
-          updated_at: '2024-12-01T11:00:00Z'
-        }
-      ];
-
-      setPatient(mockPatient);
-      setConsultations(mockConsultations);
-      setAppointments(mockAppointments);
+          chief_complaint: '',
+          present_illness: '',
+          physical_examination: '',
+          diagnosis: '',
+          treatment_plan: '',
+          follow_up: '',
+          notes: '',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        setActiveConsultation(newConsultation);
+      }
+      
     } catch (err) {
-      setError('Erro ao carregar dados do prontuário');
-      console.error('Erro:', err);
+      setError('Erro ao carregar dados do paciente');
+      console.error('Erro ao carregar dados:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
+  const handleSOAPSave = async (soapData: any) => {
+    try {
+      console.log('Salvando dados SOAP:', soapData);
+      // Aqui você faria a chamada para a API para salvar os dados
+      // await api.saveSOAPData(patientId, soapData);
+    } catch (error) {
+      console.error('Erro ao salvar dados SOAP:', error);
+    }
   };
 
-  const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleString('pt-BR');
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('pt-BR');
   };
 
   const formatCPF = (cpf: string) => {
@@ -160,50 +132,35 @@ const MedicalRecordPage: React.FC = () => {
     return phone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
   };
 
-  const getStatusBadge = (status: string) => {
-    const statusMap = {
-      'scheduled': { label: 'Agendado', color: 'bg-blue-100 text-blue-800' },
-      'confirmed': { label: 'Confirmado', color: 'bg-green-100 text-green-800' },
-      'in_progress': { label: 'Em Andamento', color: 'bg-yellow-100 text-yellow-800' },
-      'completed': { label: 'Concluído', color: 'bg-gray-100 text-gray-800' },
-      'cancelled': { label: 'Cancelado', color: 'bg-red-100 text-red-800' },
-      'no_show': { label: 'Não Compareceu', color: 'bg-orange-100 text-orange-800' }
-    };
-
-    const statusInfo = statusMap[status as keyof typeof statusMap] || statusMap.scheduled;
+  const calculateAge = (birthDate: string) => {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
     
-    return (
-      <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusInfo.color}`}>
-        {statusInfo.label}
-      </span>
-    );
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    
+    return age;
   };
 
-  const getPriorityBadge = (priority: string) => {
-    const priorityMap = {
-      'low': { label: 'Baixa', color: 'bg-gray-100 text-gray-800' },
-      'normal': { label: 'Normal', color: 'bg-blue-100 text-blue-800' },
-      'high': { label: 'Alta', color: 'bg-orange-100 text-orange-800' },
-      'urgent': { label: 'Urgente', color: 'bg-red-100 text-red-800' }
-    };
-
-    const priorityInfo = priorityMap[priority as keyof typeof priorityMap] || priorityMap.normal;
-    
-    return (
-      <span className={`px-2 py-1 text-xs font-medium rounded-full ${priorityInfo.color}`}>
-        {priorityInfo.label}
-      </span>
-    );
-  };
+  const tabs = [
+    { id: 'folha-rosto', label: 'Folha Rosto', icon: ChartBarIcon },
+    { id: 'overview', label: 'Informações Gerais', icon: UserIcon },
+    { id: 'soap', label: 'Atendimento SOAP', icon: ClipboardDocumentListIcon },
+    { id: 'history', label: 'Histórico', icon: ClockIcon },
+    { id: 'prescriptions', label: 'Prescrições', icon: MedicationIcon },
+    { id: 'exams', label: 'Exames', icon: BeakerIcon },
+    { id: 'appointments', label: 'Agendamentos', icon: CalendarIcon },
+    { id: 'documents', label: 'Documentos', icon: DocumentIcon }
+  ];
 
   if (loading) {
     return (
       <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Carregando prontuário...</p>
-          </div>
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
       </Layout>
     );
@@ -212,15 +169,17 @@ const MedicalRecordPage: React.FC = () => {
   if (error || !patient) {
     return (
       <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-red-600 mb-4">{error || 'Paciente não encontrado'}</p>
-            <button
-              onClick={() => navigate('/queue')}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Voltar à Fila
-            </button>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-red-800">Erro ao carregar dados</h3>
+              <p className="text-sm text-red-700 mt-1">{error}</p>
+            </div>
           </div>
         </div>
       </Layout>
@@ -229,48 +188,55 @@ const MedicalRecordPage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="space-y-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/queue')}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <ArrowLeftIcon className="h-5 w-5 text-gray-600" />
-            </button>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                <DocumentTextIcon className="h-8 w-8 text-blue-600" />
-                Prontuário do Cidadão
-              </h1>
-              <p className="text-gray-600">Visualização completa do histórico médico</p>
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <button
+                onClick={() => navigate('/queue')}
+                className="flex items-center text-gray-500 hover:text-gray-700 mr-4"
+              >
+                <ArrowLeftIcon className="h-5 w-5 mr-2" />
+                Voltar para Fila
+              </button>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Prontuário Eletrônico</h1>
+                <p className="text-gray-600">Pasta completa do paciente</p>
+              </div>
             </div>
+            {activeTab === 'soap' && (
+              <div className="flex items-center space-x-2">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                  <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                  Atendimento em Andamento
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Patient Summary Card */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-          <div className="flex items-start gap-6">
-            <div className="flex-shrink-0">
-              <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center">
-                <UserIcon className="h-10 w-10 text-blue-600" />
+        {/* Patient Header */}
+        <div className="bg-white shadow-sm rounded-lg border border-gray-200 mb-6">
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="h-16 w-16 bg-gray-300 rounded-full flex items-center justify-center">
+                  <UserIcon className="h-8 w-8 text-gray-600" />
+                </div>
+                <div className="ml-4">
+                  <h2 className="text-xl font-semibold text-gray-900">{patient.name}</h2>
+                  <div className="flex items-center space-x-4 text-sm text-gray-600">
+                    <span>📋 {formatCPF(patient.cpf)}</span>
+                    <span>🎂 {calculateAge(patient.birth_date)} anos</span>
+                    <span>📱 {patient.phone ? formatPhone(patient.phone) : 'Não informado'}</span>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="flex-1">
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">{patient.name}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
-                <div className="flex items-center gap-2">
-                  <IdentificationIcon className="h-4 w-4" />
-                  <span>CPF: {formatCPF(patient.cpf)}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CalendarIcon className="h-4 w-4" />
-                  <span>Nascimento: {formatDate(patient.birth_date)}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <PhoneIcon className="h-4 w-4" />
-                  <span>{patient.phone ? formatPhone(patient.phone) : 'Não informado'}</span>
+              <div className="text-right">
+                <div className="text-sm text-gray-500">Última atualização</div>
+                <div className="text-sm font-medium text-gray-900">
+                  {formatDate(patient.updated_at)}
                 </div>
               </div>
             </div>
@@ -278,14 +244,10 @@ const MedicalRecordPage: React.FC = () => {
         </div>
 
         {/* Tabs */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200">
+        <div className="bg-white shadow-sm rounded-lg border border-gray-200">
           <div className="border-b border-gray-200">
-            <nav className="flex space-x-8 px-6">
-              {[
-                { id: 'info', label: 'Informações Pessoais', icon: UserIcon },
-                { id: 'consultations', label: 'Consultas', icon: DocumentTextIcon },
-                { id: 'appointments', label: 'Agendamentos', icon: CalendarIcon }
-              ].map(tab => (
+            <nav className="flex space-x-8 px-6" aria-label="Tabs">
+              {tabs.map(tab => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
@@ -303,8 +265,13 @@ const MedicalRecordPage: React.FC = () => {
           </div>
 
           <div className="p-6">
-            {/* Informações Pessoais */}
-            {activeTab === 'info' && (
+            {/* Folha Rosto Tab */}
+            {activeTab === 'folha-rosto' && (
+              <FolhaRosto patient={patient} />
+            )}
+
+            {/* Overview Tab */}
+            {activeTab === 'overview' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -344,165 +311,132 @@ const MedicalRecordPage: React.FC = () => {
                         <label className="block text-sm font-medium text-gray-500">Telefone</label>
                         <p className="text-gray-900">{patient.phone ? formatPhone(patient.phone) : 'Não informado'}</p>
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-500">Email</label>
-                        <p className="text-gray-900">{patient.email || 'Não informado'}</p>
-                      </div>
+                      {patient.email && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-500">Email</label>
+                          <p className="text-gray-900">{patient.email}</p>
+                        </div>
+                      )}
                       <div>
                         <label className="block text-sm font-medium text-gray-500">Endereço</label>
-                        <p className="text-gray-900">{patient.address || 'Não informado'}</p>
+                        <p className="text-gray-900">{patient.address}</p>
+                        <p className="text-gray-900">{patient.city}, {patient.state} - {patient.zip_code}</p>
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-500">Cidade/Estado</label>
-                        <p className="text-gray-900">
-                          {patient.city && patient.state ? `${patient.city}/${patient.state}` : 'Não informado'}
-                        </p>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-500">CEP</label>
-                        <p className="text-gray-900">{patient.zip_code || 'Não informado'}</p>
-                      </div>
+                      {patient.emergency_contact && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-500">Contato de Emergência</label>
+                          <p className="text-gray-900">{patient.emergency_contact}</p>
+                          <p className="text-gray-900">{patient.emergency_phone ? formatPhone(patient.emergency_phone) : 'Não informado'}</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
 
-                {(patient.emergency_contact || patient.emergency_phone) && (
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Contato de Emergência</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-500">Nome</label>
-                        <p className="text-gray-900">{patient.emergency_contact || 'Não informado'}</p>
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">Resumo Clínico</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-blue-50 p-4 rounded-lg">
+                      <div className="flex items-center">
+                        <DocumentTextIcon className="h-5 w-5 text-blue-600 mr-2" />
+                        <span className="text-sm font-medium text-blue-900">Consultas</span>
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-500">Telefone</label>
-                        <p className="text-gray-900">
-                          {patient.emergency_phone ? formatPhone(patient.emergency_phone) : 'Não informado'}
-                        </p>
+                      <p className="text-2xl font-bold text-blue-900 mt-2">12</p>
+                    </div>
+                    <div className="bg-green-50 p-4 rounded-lg">
+                      <div className="flex items-center">
+                        <CalendarIcon className="h-5 w-5 text-green-600 mr-2" />
+                        <span className="text-sm font-medium text-green-900">Agendamentos</span>
                       </div>
+                      <p className="text-2xl font-bold text-green-900 mt-2">3</p>
+                    </div>
+                    <div className="bg-purple-50 p-4 rounded-lg">
+                      <div className="flex items-center">
+                        <BeakerIcon className="h-5 w-5 text-purple-600 mr-2" />
+                        <span className="text-sm font-medium text-purple-900">Exames</span>
+                      </div>
+                      <p className="text-2xl font-bold text-purple-900 mt-2">8</p>
                     </div>
                   </div>
-                )}
+                </div>
               </div>
             )}
 
-            {/* Consultas */}
-            {activeTab === 'consultations' && (
+            {/* SOAP Tab */}
+            {activeTab === 'soap' && (
+              <SOAPTab
+                patient={patient}
+                consultationId={activeConsultation?.id}
+                onSave={handleSOAPSave}
+              />
+            )}
+
+            {/* History Tab */}
+            {activeTab === 'history' && (
               <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium text-gray-900">Histórico de Consultas</h3>
-                  <span className="text-sm text-gray-500">{consultations.length} consulta(s)</span>
+                <h3 className="text-lg font-medium text-gray-900">Histórico de Atendimentos</h3>
+                <div className="space-y-4">
+                  <div className="border-l-4 border-blue-500 pl-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-medium text-gray-900">Consulta Médica</h4>
+                      <span className="text-sm text-gray-500">01/12/2024</span>
+                    </div>
+                    <p className="text-sm text-gray-600">Dr. João Silva - Clínico Geral</p>
+                    <p className="text-sm text-gray-800 mt-2">Consulta de rotina - Paciente apresentou melhora significativa</p>
+                  </div>
+                  <div className="border-l-4 border-green-500 pl-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-medium text-gray-900">Exame Laboratorial</h4>
+                      <span className="text-sm text-gray-500">28/11/2024</span>
+                    </div>
+                    <p className="text-sm text-gray-600">Hemograma completo</p>
+                    <p className="text-sm text-gray-800 mt-2">Resultados dentro da normalidade</p>
+                  </div>
                 </div>
-
-                {consultations.length === 0 ? (
-                  <div className="text-center py-12">
-                    <DocumentTextIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">Nenhuma consulta registrada</p>
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    {consultations.map((consultation) => (
-                      <div key={consultation.id} className="border border-gray-200 rounded-lg p-6">
-                        <div className="flex items-center justify-between mb-4">
-                          <h4 className="text-lg font-medium text-gray-900">
-                            Consulta - {formatDateTime(consultation.created_at)}
-                          </h4>
-                          <ClockIcon className="h-5 w-5 text-gray-400" />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div>
-                            <h5 className="font-medium text-gray-900 mb-2">Queixa Principal</h5>
-                            <p className="text-gray-700 text-sm">{consultation.chief_complaint}</p>
-                          </div>
-
-                          <div>
-                            <h5 className="font-medium text-gray-900 mb-2">Diagnóstico</h5>
-                            <p className="text-gray-700 text-sm">{consultation.diagnosis}</p>
-                          </div>
-
-                          <div>
-                            <h5 className="font-medium text-gray-900 mb-2">História da Doença Atual</h5>
-                            <p className="text-gray-700 text-sm">{consultation.present_illness}</p>
-                          </div>
-
-                          <div>
-                            <h5 className="font-medium text-gray-900 mb-2">Plano de Tratamento</h5>
-                            <p className="text-gray-700 text-sm">{consultation.treatment_plan}</p>
-                          </div>
-
-                          <div>
-                            <h5 className="font-medium text-gray-900 mb-2">Exame Físico</h5>
-                            <p className="text-gray-700 text-sm">{consultation.physical_examination}</p>
-                          </div>
-
-                          <div>
-                            <h5 className="font-medium text-gray-900 mb-2">Seguimento</h5>
-                            <p className="text-gray-700 text-sm">{consultation.follow_up}</p>
-                          </div>
-                        </div>
-
-                        {consultation.notes && (
-                          <div className="mt-4 pt-4 border-t border-gray-200">
-                            <h5 className="font-medium text-gray-900 mb-2">Observações</h5>
-                            <p className="text-gray-700 text-sm">{consultation.notes}</p>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             )}
 
-            {/* Agendamentos */}
+            {/* Prescriptions Tab */}
+            {activeTab === 'prescriptions' && (
+              <div className="space-y-6">
+                <h3 className="text-lg font-medium text-gray-900">Prescrições</h3>
+                <div className="text-center text-gray-500 py-8">
+                  <MedicationIcon className="h-12 w-12 mx-auto mb-4" />
+                  <p>Nenhuma prescrição registrada ainda</p>
+                </div>
+              </div>
+            )}
+
+            {/* Exams Tab */}
+            {activeTab === 'exams' && (
+              <div className="space-y-6">
+                <h3 className="text-lg font-medium text-gray-900">Exames</h3>
+                <div className="text-center text-gray-500 py-8">
+                  <BeakerIcon className="h-12 w-12 mx-auto mb-4" />
+                  <p>Nenhum exame registrado ainda</p>
+                </div>
+              </div>
+            )}
+
+            {/* Appointments Tab */}
             {activeTab === 'appointments' && (
               <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium text-gray-900">Histórico de Agendamentos</h3>
-                  <span className="text-sm text-gray-500">{appointments.length} agendamento(s)</span>
+                <h3 className="text-lg font-medium text-gray-900">Agendamentos</h3>
+                <div className="text-center text-gray-500 py-8">
+                  <CalendarIcon className="h-12 w-12 mx-auto mb-4" />
+                  <p>Nenhum agendamento registrado ainda</p>
                 </div>
+              </div>
+            )}
 
-                {appointments.length === 0 ? (
-                  <div className="text-center py-12">
-                    <CalendarIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">Nenhum agendamento registrado</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {appointments.map((appointment) => (
-                      <div key={appointment.id} className="border border-gray-200 rounded-lg p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <div className="text-center">
-                              <div className="text-lg font-semibold text-gray-900">
-                                {new Date(appointment.appointment_date).getDate()}
-                              </div>
-                              <div className="text-sm text-gray-500">
-                                {new Date(appointment.appointment_date).toLocaleDateString('pt-BR', { 
-                                  month: 'short', 
-                                  year: 'numeric' 
-                                })}
-                              </div>
-                            </div>
-                            <div>
-                              <p className="font-medium text-gray-900">
-                                {appointment.appointment_time} - {appointment.notes}
-                              </p>
-                              <p className="text-sm text-gray-600">
-                                Criado em {formatDateTime(appointment.created_at)}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {getStatusBadge(appointment.status)}
-                            {getPriorityBadge(appointment.priority)}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+            {/* Documents Tab */}
+            {activeTab === 'documents' && (
+              <div className="space-y-6">
+                <h3 className="text-lg font-medium text-gray-900">Documentos</h3>
+                <div className="text-center text-gray-500 py-8">
+                  <DocumentIcon className="h-12 w-12 mx-auto mb-4" />
+                  <p>Nenhum documento registrado ainda</p>
+                </div>
               </div>
             )}
           </div>

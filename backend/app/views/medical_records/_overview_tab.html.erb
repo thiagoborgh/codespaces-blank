@@ -1,0 +1,500 @@
+<div class="overview-dashboard">
+  <div class="row g-4">
+    <!-- Resumo Executivo -->
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-person-lines-fill"></i>
+            Resumo Executivo do Paciente
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-8">
+              <div class="patient-summary">
+                <h6 class="text-primary mb-3">Informações Gerais</h6>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="info-group">
+                      <label>Nome Completo:</label>
+                      <span><%= @patient.name %></span>
+                    </div>
+                    <div class="info-group">
+                      <label>Data de Nascimento:</label>
+                      <span><%= format_date(@patient.birth_date) %> (<%= calculate_age(@patient.birth_date) %> anos)</span>
+                    </div>
+                    <div class="info-group">
+                      <label>Sexo:</label>
+                      <span><%= @patient.sex.humanize %></span>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="info-group">
+                      <label>CPF:</label>
+                      <span><%= format_cpf(@patient.cpf) %></span>
+                    </div>
+                    <div class="info-group">
+                      <label>CNS:</label>
+                      <span><%= @patient.cns %></span>
+                    </div>
+                    <div class="info-group">
+                      <label>Telefone:</label>
+                      <span><%= format_phone(@patient.phone) %></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="quick-stats">
+                <h6 class="text-primary mb-3">Estatísticas Rápidas</h6>
+                <div class="stat-item">
+                  <div class="stat-number text-primary"><%= @consultations.count %></div>
+                  <div class="stat-label">Consultas Realizadas</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-number text-success"><%= @medications.count %></div>
+                  <div class="stat-label">Medicamentos Ativos</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-number text-warning"><%= @allergies.count %></div>
+                  <div class="stat-label">Alergias Conhecidas</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Condições Ativas -->
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-info text-white">
+          <h6 class="mb-0">
+            <i class="bi bi-heart-pulse"></i>
+            Condições Ativas
+          </h6>
+        </div>
+        <div class="card-body">
+          <% if @problems.any? %>
+            <div class="conditions-list">
+              <% @problems.each do |problem| %>
+                <div class="condition-item">
+                  <div class="condition-header">
+                    <h6 class="condition-name"><%= problem.name %></h6>
+                    <span class="badge bg-<%= problem.severity == 'severe' ? 'danger' : problem.severity == 'moderate' ? 'warning' : 'success' %>">
+                      <%= problem.severity&.humanize || 'Leve' %>
+                    </span>
+                  </div>
+                  <div class="condition-details">
+                    <small class="text-muted">
+                      <i class="bi bi-tag"></i> CIAP2: <%= problem.ciap2 %>
+                    </small>
+                    <% if problem.description.present? %>
+                      <div class="condition-description">
+                        <%= problem.description %>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="empty-state text-center py-4">
+              <i class="bi bi-heart text-muted" style="font-size: 3rem;"></i>
+              <p class="text-muted mt-2">Nenhuma condição ativa registrada</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alergias -->
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-warning text-white">
+          <h6 class="mb-0">
+            <i class="bi bi-exclamation-triangle"></i>
+            Alergias e Reações
+          </h6>
+        </div>
+        <div class="card-body">
+          <% if @allergies.any? %>
+            <div class="allergies-list">
+              <% @allergies.each do |allergy| %>
+                <div class="allergy-item">
+                  <div class="allergy-header">
+                    <h6 class="allergy-substance"><%= allergy.substance %></h6>
+                    <span class="badge bg-<%= allergy.severity == 'severe' ? 'danger' : allergy.severity == 'moderate' ? 'warning' : 'info' %>">
+                      <%= allergy.severity&.humanize || 'Leve' %>
+                    </span>
+                  </div>
+                  <% if allergy.description.present? %>
+                    <div class="allergy-description">
+                      <small class="text-muted"><%= allergy.description %></small>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="empty-state text-center py-4">
+              <i class="bi bi-shield-check text-success" style="font-size: 3rem;"></i>
+              <p class="text-muted mt-2">Nenhuma alergia conhecida</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Últimos Sinais Vitais -->
+    <div class="col-md-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-success text-white">
+          <h6 class="mb-0">
+            <i class="bi bi-activity"></i>
+            Últimos Sinais Vitais
+          </h6>
+        </div>
+        <div class="card-body">
+          <% if @vital_signs.any? %>
+            <% latest_vitals = @vital_signs.first %>
+            <div class="vitals-grid">
+              <div class="vital-item">
+                <div class="vital-icon bg-primary">
+                  <i class="bi bi-heart"></i>
+                </div>
+                <div class="vital-data">
+                  <div class="vital-value"><%= latest_vitals.blood_pressure %></div>
+                  <div class="vital-label">Pressão Arterial</div>
+                  <div class="vital-unit">mmHg</div>
+                </div>
+              </div>
+              
+              <div class="vital-item">
+                <div class="vital-icon bg-danger">
+                  <i class="bi bi-heart-pulse"></i>
+                </div>
+                <div class="vital-data">
+                  <div class="vital-value"><%= latest_vitals.heart_rate %></div>
+                  <div class="vital-label">Frequência Cardíaca</div>
+                  <div class="vital-unit">bpm</div>
+                </div>
+              </div>
+              
+              <div class="vital-item">
+                <div class="vital-icon bg-warning">
+                  <i class="bi bi-thermometer"></i>
+                </div>
+                <div class="vital-data">
+                  <div class="vital-value"><%= latest_vitals.temperature %></div>
+                  <div class="vital-label">Temperatura</div>
+                  <div class="vital-unit">°C</div>
+                </div>
+              </div>
+              
+              <div class="vital-item">
+                <div class="vital-icon bg-info">
+                  <i class="bi bi-lungs"></i>
+                </div>
+                <div class="vital-data">
+                  <div class="vital-value"><%= latest_vitals.oxygen_saturation %></div>
+                  <div class="vital-label">Saturação O₂</div>
+                  <div class="vital-unit">%</div>
+                </div>
+              </div>
+            </div>
+            <div class="vitals-date text-center mt-3">
+              <small class="text-muted">
+                Registrado em <%= time_ago_in_words(latest_vitals.created_at) %> atrás
+              </small>
+            </div>
+          <% else %>
+            <div class="empty-state text-center py-4">
+              <i class="bi bi-activity text-muted" style="font-size: 3rem;"></i>
+              <p class="text-muted mt-2">Nenhum sinal vital registrado</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-secondary text-white">
+          <h6 class="mb-0">
+            <i class="bi bi-lightning"></i>
+            Ações Rápidas
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="quick-actions-list">
+            <% if @active_consultation %>
+              <button class="btn btn-primary w-100 mb-2" @click="activeTab = 'soap'">
+                <i class="bi bi-clipboard-pulse"></i>
+                Continuar SOAP
+              </button>
+            <% else %>
+              <button class="btn btn-success w-100 mb-2" 
+                      onclick="document.getElementById('startConsultationModal').style.display = 'block'">
+                <i class="bi bi-play-circle"></i>
+                Iniciar Consulta
+              </button>
+            <% end %>
+            
+            <button class="btn btn-outline-primary w-100 mb-2" @click="activeTab = 'prescriptions'">
+              <i class="bi bi-prescription2"></i>
+              Nova Prescrição
+            </button>
+            
+            <button class="btn btn-outline-secondary w-100 mb-2" @click="activeTab = 'appointments'">
+              <i class="bi bi-calendar-plus"></i>
+              Agendar Retorno
+            </button>
+            
+            <button class="btn btn-outline-info w-100 mb-2" @click="activeTab = 'exams'">
+              <i class="bi bi-file-earmark-medical"></i>
+              Solicitar Exame
+            </button>
+            
+            <button class="btn btn-outline-warning w-100" @click="activeTab = 'documents'">
+              <i class="bi bi-file-earmark-text"></i>
+              Gerar Atestado
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Últimas Consultas -->
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-dark text-white">
+          <h6 class="mb-0">
+            <i class="bi bi-clock-history"></i>
+            Últimas Consultas
+          </h6>
+        </div>
+        <div class="card-body">
+          <% if @consultations.any? %>
+            <div class="consultations-timeline">
+              <% @consultations.limit(5).each do |consultation| %>
+                <div class="consultation-item">
+                  <div class="consultation-date">
+                    <div class="date-day"><%= consultation.consultation_date.strftime('%d') %></div>
+                    <div class="date-month"><%= consultation.consultation_date.strftime('%b') %></div>
+                    <div class="date-year"><%= consultation.consultation_date.strftime('%Y') %></div>
+                  </div>
+                  <div class="consultation-content">
+                    <div class="consultation-header">
+                      <h6 class="consultation-type">
+                        <%= consultation.consultation_type.humanize %>
+                        <span class="badge <%= badge_class_for_status(consultation.status) %>">
+                          <%= consultation.status.humanize %>
+                        </span>
+                      </h6>
+                      <small class="text-muted">
+                        <i class="bi bi-person"></i>
+                        <%= consultation.professional.name %>
+                      </small>
+                    </div>
+                    <% if consultation.description.present? %>
+                      <p class="consultation-description"><%= consultation.description %></p>
+                    <% end %>
+                    <% if consultation.soap_records.any? %>
+                      <div class="soap-summary">
+                        <small class="text-primary">
+                          <i class="bi bi-clipboard-data"></i>
+                          <%= consultation.soap_records.count %> registros SOAP
+                        </small>
+                      </div>
+                    <% end %>
+                  </div>
+                  <div class="consultation-actions">
+                    <button class="btn btn-sm btn-outline-primary" 
+                            onclick="window.open('/medical_records/<%= @patient.id %>?tab=soap&consultation_id=<%= consultation.id %>', '_blank')">
+                      <i class="bi bi-eye"></i>
+                      Ver Detalhes
+                    </button>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            
+            <% if @consultations.count > 5 %>
+              <div class="text-center mt-3">
+                <button class="btn btn-outline-secondary" @click="activeTab = 'history'">
+                  <i class="bi bi-arrow-right"></i>
+                  Ver Todas as Consultas (<%= @consultations.count %>)
+                </button>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="empty-state text-center py-4">
+              <i class="bi bi-calendar-x text-muted" style="font-size: 3rem;"></i>
+              <p class="text-muted mt-2">Nenhuma consulta realizada</p>
+              <button class="btn btn-primary mt-2" 
+                      onclick="document.getElementById('startConsultationModal').style.display = 'block'">
+                <i class="bi bi-plus-circle"></i>
+                Realizar Primeira Consulta
+              </button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Estilos específicos da visão geral */
+.overview-dashboard .info-group {
+  margin-bottom: 1rem;
+}
+
+.overview-dashboard .info-group label {
+  font-weight: 600;
+  color: #64748b;
+  margin-right: 0.5rem;
+}
+
+.overview-dashboard .info-group span {
+  color: #334155;
+}
+
+.quick-stats {
+  text-align: center;
+}
+
+.stat-item {
+  margin-bottom: 1.5rem;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+}
+
+.condition-item, .allergy-item {
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.condition-header, .allergy-header {
+  display: flex;
+  justify-content: between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.condition-name, .allergy-substance {
+  margin: 0;
+  font-size: 1rem;
+  color: #334155;
+}
+
+.vitals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.vital-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.vital-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  color: white;
+}
+
+.vital-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.vital-label {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.vital-unit {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.consultation-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.consultation-date {
+  text-align: center;
+  margin-right: 1rem;
+  min-width: 60px;
+}
+
+.date-day {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.date-month {
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.date-year {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.consultation-content {
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.consultation-type {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+}
+
+.consultation-description {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0.5rem 0;
+}
+
+.empty-state {
+  padding: 3rem 1rem;
+}
+</style>

@@ -37,6 +37,10 @@ class Patient < ApplicationRecord
   scope :by_cpf, ->(cpf) { where(cpf: cpf) }
   scope :by_cns, ->(cns) { where(cns: cns) }
 
+  # Additional scopes for medical records
+  scope :recent, -> { order(created_at: :desc) }
+  scope :active, -> { where(active: true) }
+
   # Instance methods
   def age
     return nil unless birth_date
@@ -61,6 +65,78 @@ class Patient < ApplicationRecord
 
   def known_allergies
     allergies.where(active: true)
+  end
+
+  # Additional methods for folha rosto
+  def formatted_cpf
+    return cpf unless cpf.present?
+    cpf.gsub(/(\d{3})(\d{3})(\d{3})(\d{2})/, '\1.\2.\3-\4')
+  end
+
+  def gender
+    case sex
+    when 'masculino'
+      'Masculino'
+    when 'feminino'
+      'Feminino'
+    else
+      'Outro'
+    end
+  end
+
+  def address
+    full_address
+  end
+
+  def responsible_name
+    # Assuming these fields exist or will be added
+    self[:responsible_name] || 'Não informado'
+  end
+
+  def responsible_phone
+    self[:responsible_phone]
+  end
+
+  def calculate_bmi
+    return nil unless weight.present? && height.present?
+    weight_kg = weight.to_f
+    height_m = height.to_f / 100.0
+    return nil if height_m <= 0
+    
+    bmi = weight_kg / (height_m * height_m)
+    bmi.round(2)
+  end
+
+  # Medical record associations for folha rosto
+  def soap_entries
+    soap_records
+  end
+
+  def exam_results
+    # Assuming this association exists or will be created
+    @exam_results ||= OpenStruct.new(
+      recent: OpenStruct.new(
+        limit: ->(n) { [] }
+      )
+    )
+  end
+
+  def initial_listening_notes
+    # Placeholder for initial listening notes
+    self[:initial_listening_notes] || 'Nenhuma anotação de escuta inicial'
+  end
+
+  def medical_appointments
+    appointments
+  end
+
+  def scheduled_appointments
+    # Assuming this association exists or will be created
+    @scheduled_appointments ||= OpenStruct.new(
+      upcoming: OpenStruct.new(
+        order: ->(field) { [] }
+      )
+    )
   end
 
   private

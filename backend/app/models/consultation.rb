@@ -28,7 +28,8 @@ class Consultation < ApplicationRecord
   scope :by_professional, ->(professional_id) { where(professional_id: professional_id) }
   scope :by_type, ->(type) { where(consultation_type: type) }
   scope :finished, -> { where(status: :finalizada) }
-  scope :active, -> { where(status: [:iniciada, :em_andamento]) }
+  scope :recent, -> { order(created_at: :desc) }
+  scope :active, -> { where(active: true) }
 
   # Instance methods
   def duration

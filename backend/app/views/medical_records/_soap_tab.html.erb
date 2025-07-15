@@ -1,0 +1,340 @@
+<div class="soap-interface" data-patient-id="<%= @patient.id %>">
+  <% if @active_consultation %>
+    <!-- Header do SOAP -->
+    <div class="soap-header bg-primary text-white p-3 rounded-top">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h5 class="mb-1">
+            <i class="bi bi-clipboard-pulse"></i>
+            Registro SOAP - Atendimento em Andamento
+          </h5>
+          <small>
+            Consulta iniciada em <%= format_datetime(@active_consultation.consultation_date) %>
+            por <%= @active_consultation.professional.name %>
+          </small>
+        </div>
+        <div class="col-md-4 text-end">
+          <div class="soap-status">
+            <span class="badge bg-success bg-opacity-25 text-success">
+              <i class="bi bi-record-circle"></i>
+              Atendimento Ativo
+            </span>
+            <div class="mt-1">
+              <small id="last-saved-indicator">
+                <i class="bi bi-cloud-check"></i>
+                Salvo automaticamente
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conteúdo SOAP -->
+    <div class="soap-content bg-white rounded-bottom border">
+      <form id="soap-form" data-consultation-id="<%= @active_consultation.id %>">
+        <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+        
+        <!-- Seção Subjetivo -->
+        <div class="soap-section" id="subjective-section">
+          <%= render 'attendance/soap_subjective' %>
+        </div>
+
+        <!-- Seção Objetivo -->
+        <div class="soap-section" id="objective-section">
+          <%= render 'attendance/soap_objective' %>
+        </div>
+
+        <!-- Seção Avaliação -->
+        <div class="soap-section" id="assessment-section">
+          <%= render 'attendance/soap_assessment' %>
+        </div>
+
+        <!-- Seção Plano -->
+        <div class="soap-section" id="plan-section">
+          <%= render 'attendance/soap_plan' %>
+        </div>
+
+        <!-- Finalização do Atendimento -->
+        <div class="soap-section" id="finalization-section">
+          <%= render 'attendance/soap_finalization' %>
+        </div>
+      </form>
+    </div>
+
+    <!-- Barra de Ações SOAP -->
+    <div class="soap-actions bg-light p-3 rounded border-top-0">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="d-flex align-items-center gap-3">
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="window.print()">
+              <i class="bi bi-printer"></i>
+              Imprimir SOAP
+            </button>
+            
+            <button type="button" class="btn btn-outline-info btn-sm" @click="manualSave()">
+              <i class="bi bi-cloud-upload"></i>
+              Salvar Manualmente
+            </button>
+            
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="auto-save-enabled" checked>
+              <label class="form-check-label" for="auto-save-enabled">
+                Auto-save ativo
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 text-end">
+          <button type="button" class="btn btn-warning me-2" onclick="pauseConsultation()">
+            <i class="bi bi-pause-circle"></i>
+            Pausar Atendimento
+          </button>
+          
+          <button type="button" class="btn btn-success" onclick="finalizeConsultation()">
+            <i class="bi bi-check-circle"></i>
+            Finalizar Consulta
+          </button>
+        </div>
+      </div>
+    </div>
+
+  <% else %>
+    <!-- Estado sem consulta ativa -->
+    <div class="soap-inactive text-center py-5">
+      <div class="mb-4">
+        <i class="bi bi-clipboard-x text-muted" style="font-size: 4rem;"></i>
+      </div>
+      <h4 class="text-muted mb-3">Nenhum Atendimento Ativo</h4>
+      <p class="text-muted mb-4">
+        Para utilizar o SOAP, é necessário iniciar um atendimento para este paciente.
+      </p>
+      
+      <div class="d-flex justify-content-center gap-3">
+        <button class="btn btn-success btn-lg" 
+                onclick="document.getElementById('startConsultationModal').style.display = 'block'">
+          <i class="bi bi-play-circle"></i>
+          Iniciar Novo Atendimento
+        </button>
+        
+        <% if @consultations.any? %>
+          <div class="dropdown">
+            <button class="btn btn-outline-primary btn-lg dropdown-toggle" 
+                    type="button" 
+                    data-bs-toggle="dropdown">
+              <i class="bi bi-clock-history"></i>
+              Retomar Consulta Anterior
+            </button>
+            <ul class="dropdown-menu">
+              <% @consultations.limit(5).each do |consultation| %>
+                <li>
+                  <a class="dropdown-item" 
+                     href="<%= medical_record_path(@patient, tab: 'soap', consultation_id: consultation.id) %>">
+                    <div class="d-flex justify-content-between">
+                      <span><%= consultation.consultation_type.humanize %></span>
+                      <small class="text-muted"><%= format_date(consultation.consultation_date) %></small>
+                    </div>
+                    <small class="text-muted">
+                      <%= consultation.professional.name %>
+                    </small>
+                  </a>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+      </div>
+      
+      <!-- Dicas para SOAP -->
+      <div class="soap-tips mt-5">
+        <div class="row">
+          <div class="col-md-8 mx-auto">
+            <div class="card border-0 bg-light">
+              <div class="card-body">
+                <h6 class="text-primary mb-3">
+                  <i class="bi bi-lightbulb"></i>
+                  Como usar o SOAP
+                </h6>
+                <div class="row text-start">
+                  <div class="col-md-6">
+                    <div class="tip-item mb-3">
+                      <div class="fw-bold text-primary">S - Subjetivo</div>
+                      <small class="text-muted">
+                        Informações relatadas pelo paciente: queixas, sintomas, histórico
+                      </small>
+                    </div>
+                    <div class="tip-item mb-3">
+                      <div class="fw-bold text-success">O - Objetivo</div>
+                      <small class="text-muted">
+                        Dados observáveis: sinais vitais, exame físico, resultados
+                      </small>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="tip-item mb-3">
+                      <div class="fw-bold text-warning">A - Avaliação</div>
+                      <small class="text-muted">
+                        Diagnósticos, impressões clínicas, análise dos dados
+                      </small>
+                    </div>
+                    <div class="tip-item mb-3">
+                      <div class="fw-bold text-info">P - Plano</div>
+                      <small class="text-muted">
+                        Tratamentos, medicações, orientações, seguimento
+                      </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<script>
+// Funções específicas para o SOAP
+function pauseConsultation() {
+  if (confirm('Deseja pausar o atendimento? Os dados serão salvos automaticamente.')) {
+    // Implementar lógica de pausa
+    window.location.href = '<%= medical_record_path(@patient, tab: 'overview') %>';
+  }
+}
+
+function finalizeConsultation() {
+  if (confirm('Finalizar consulta? Esta ação não pode ser desfeita.')) {
+    // Implementar lógica de finalização
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '<%= medical_record_path(@patient) %>/finalize_consultation';
+    
+    const token = document.createElement('input');
+    token.type = 'hidden';
+    token.name = 'authenticity_token';
+    token.value = document.querySelector('[name="csrf-token"]').content;
+    form.appendChild(token);
+    
+    const consultationId = document.createElement('input');
+    consultationId.type = 'hidden';
+    consultationId.name = 'consultation_id';
+    consultationId.value = '<%= @active_consultation&.id %>';
+    form.appendChild(consultationId);
+    
+    document.body.appendChild(form);
+    form.submit();
+  }
+}
+
+// Auto-save específico para SOAP
+document.addEventListener('DOMContentLoaded', function() {
+  const autoSaveCheckbox = document.getElementById('auto-save-enabled');
+  const lastSavedIndicator = document.getElementById('last-saved-indicator');
+  
+  if (autoSaveCheckbox) {
+    autoSaveCheckbox.addEventListener('change', function() {
+      if (!this.checked) {
+        console.log('Auto-save desabilitado pelo usuário');
+      }
+    });
+  }
+  
+  // Atualizar indicador de salvamento
+  window.updateSaveIndicator = function(status, timestamp) {
+    if (lastSavedIndicator) {
+      if (status === 'success') {
+        lastSavedIndicator.innerHTML = `
+          <i class="bi bi-cloud-check text-success"></i>
+          Salvo às ${timestamp}
+        `;
+      } else {
+        lastSavedIndicator.innerHTML = `
+          <i class="bi bi-cloud-x text-danger"></i>
+          Erro ao salvar
+        `;
+      }
+    }
+  };
+});
+</script>
+
+<style>
+/* Estilos específicos para interface SOAP */
+.soap-interface {
+  margin: -2rem;
+}
+
+.soap-header {
+  border-bottom: 3px solid #1d4ed8;
+}
+
+.soap-content {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.soap-section {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.soap-section:last-child {
+  border-bottom: none;
+}
+
+.soap-actions {
+  border-top: 3px solid #e2e8f0;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.soap-inactive {
+  margin: 2rem 0;
+}
+
+.tip-item {
+  padding: 0.5rem 0;
+}
+
+.soap-tips .card {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Indicador de status */
+.soap-status small {
+  font-size: 0.75rem;
+  opacity: 0.9;
+}
+
+/* Dropdown de consultas anteriores */
+.dropdown-menu .dropdown-item {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dropdown-menu .dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-menu .dropdown-item:hover {
+  background-color: #f8fafc;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .soap-interface {
+    margin: -1rem;
+  }
+  
+  .soap-header .row {
+    text-align: center;
+  }
+  
+  .soap-actions .row {
+    flex-direction: column-reverse;
+    gap: 1rem;
+  }
+  
+  .soap-actions .col-md-4 {
+    text-align: center !important;
+  }
+}
+</style>

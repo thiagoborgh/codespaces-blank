@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_27_163727) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_08_131216) do
   create_table "allergies", force: :cascade do |t|
     t.integer "patient_id", null: false
     t.string "allergen", null: false
@@ -75,6 +75,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_27_163727) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "attendance_type"
+    t.string "conduct"
+    t.json "shared_care"
+    t.boolean "municipality_participation", default: false
+    t.string "participation_form"
+    t.string "health_rationality"
+    t.string "outcome"
+    t.boolean "print_on_finish", default: false
+    t.text "observations"
+    t.json "notification_forms"
+    t.json "scheduled_appointment"
     t.index ["appointment_id"], name: "index_consultations_on_appointment_id"
     t.index ["consultation_date"], name: "index_consultations_on_consultation_date"
     t.index ["consultation_type"], name: "index_consultations_on_consultation_type"
@@ -142,17 +153,41 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_27_163727) do
     t.boolean "active", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "weight"
+    t.decimal "height"
+    t.string "blood_pressure"
+    t.string "heart_rate"
+    t.string "temperature"
+    t.string "oxygen_saturation"
+    t.string "responsible_name"
+    t.string "responsible_phone"
+    t.text "initial_listening_notes"
     t.index ["birth_date"], name: "index_patients_on_birth_date"
     t.index ["cns"], name: "index_patients_on_cns", unique: true
     t.index ["cpf"], name: "index_patients_on_cpf", unique: true
     t.index ["name"], name: "index_patients_on_name"
   end
 
+  create_table "problems", force: :cascade do |t|
+    t.string "name"
+    t.string "ciap2"
+    t.string "cid10"
+    t.boolean "active"
+    t.integer "patient_id", null: false
+    t.date "start_date"
+    t.date "end_date"
+    t.string "severity"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["patient_id"], name: "index_problems_on_patient_id"
+  end
+
   create_table "soap_records", force: :cascade do |t|
     t.integer "patient_id", null: false
     t.integer "consultation_id", null: false
     t.integer "professional_id", null: false
-    t.integer "soap_type", null: false
+    t.string "soap_type", null: false
     t.text "content", null: false
     t.json "vital_signs_data"
     t.json "measurements_data"
@@ -230,6 +265,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_27_163727) do
   add_foreign_key "measurements", "patients"
   add_foreign_key "measurements", "users", column: "recorded_by_id"
   add_foreign_key "medications", "patients"
+  add_foreign_key "problems", "patients"
   add_foreign_key "soap_records", "consultations"
   add_foreign_key "soap_records", "patients"
   add_foreign_key "soap_records", "users", column: "professional_id"

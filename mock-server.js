@@ -27,6 +27,33 @@ let users = [
   }
 ];
 
+// Mock data for patients
+let patients = [
+  {
+    id: 1,
+    name: 'João Silva Santos',
+    cpf: '123.456.789-00',
+    birth_date: '1990-05-15',
+    phone: '(11) 99999-9999',
+    active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: 2,
+    name: 'Maria Santos Lima',
+    cpf: '987.654.321-00',
+    birth_date: '1985-03-22',
+    phone: '(11) 88888-8888',
+    active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  }
+];
+
+// Mock data for attendance
+let attendanceData = {};
+
 // Helper function to generate JWT token (mock)
 function generateMockToken(user) {
   return `mock-jwt-token-${user.id}-${Date.now()}`;
@@ -153,6 +180,97 @@ app.delete('/api/v1/auth/logout', (req, res) => {
   });
 });
 
+// Attendance endpoints
+app.get('/api/v1/attendance/:consultationId', (req, res) => {
+  const { consultationId } = req.params;
+  
+  // Generate mock attendance data if it doesn't exist
+  if (!attendanceData[consultationId]) {
+    attendanceData[consultationId] = {
+      id: consultationId,
+      patient_id: consultationId,
+      soap: {
+        subjective: '',
+        objective: {
+          vital_signs: {
+            systolic_pressure: '',
+            diastolic_pressure: '',
+            heart_rate: '',
+            temperature: '',
+            respiratory_rate: '',
+            oxygen_saturation: ''
+          },
+          measurements: {
+            weight: '',
+            height: '',
+            bmi: ''
+          },
+          physical_exam: ''
+        },
+        assessment: '',
+        plan: ''
+      },
+      prescriptions: [],
+      follow_up: {
+        date: '',
+        type: 'return',
+        notes: ''
+      },
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+  }
+  
+  res.json({
+    success: true,
+    data: attendanceData[consultationId]
+  });
+});
+
+app.post('/api/v1/attendance/:consultationId/update_soap', (req, res) => {
+  const { consultationId } = req.params;
+  const { soap_section, soap_data } = req.body;
+  
+  if (!attendanceData[consultationId]) {
+    return res.status(404).json({
+      success: false,
+      message: 'Atendimento não encontrado'
+    });
+  }
+  
+  // Update SOAP section
+  attendanceData[consultationId].soap[soap_section] = soap_data;
+  attendanceData[consultationId].updated_at = new Date().toISOString();
+  
+  res.json({
+    success: true,
+    data: attendanceData[consultationId]
+  });
+});
+
+app.post('/api/v1/attendance/:consultationId/finalize', (req, res) => {
+  const { consultationId } = req.params;
+  const { finalization_data } = req.body;
+  
+  if (!attendanceData[consultationId]) {
+    return res.status(404).json({
+      success: false,
+      message: 'Atendimento não encontrado'
+    });
+  }
+  
+  // Finalize attendance
+  attendanceData[consultationId].status = 'completed';
+  attendanceData[consultationId].finalization_data = finalization_data;
+  attendanceData[consultationId].completed_at = new Date().toISOString();
+  
+  res.json({
+    success: true,
+    message: 'Atendimento finalizado com sucesso',
+    data: attendanceData[consultationId]
+  });
+});
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
@@ -165,4 +283,7 @@ app.listen(PORT, () => {
   console.log('- POST /api/v1/auth/register');
   console.log('- GET /api/v1/auth/me');
   console.log('- DELETE /api/v1/auth/logout');
+  console.log('- GET /api/v1/attendance/:consultationId');
+  console.log('- POST /api/v1/attendance/:consultationId/update_soap');
+  console.log('- POST /api/v1/attendance/:consultationId/finalize');
 });

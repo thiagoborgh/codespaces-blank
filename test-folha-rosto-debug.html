@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Debug Folha Rosto</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root" class="p-8"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const FolhaRostoTest = () => {
+            const [activeSubTab, setActiveSubTab] = useState('atendimento');
+
+            const handleTabChange = (tab) => {
+                console.log('Clicou no botão:', tab);
+                alert(`Mudando para aba: ${tab}`);
+                setActiveSubTab(tab);
+            };
+
+            return (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 max-w-4xl">
+                    <div className="px-6 py-4 border-b border-gray-200">
+                        <h3 className="text-lg font-semibold text-gray-900">
+                            Teste Folha Rosto - Debug
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                            Estado atual da aba: {activeSubTab}
+                        </p>
+                    </div>
+
+                    {/* Navegação entre sub-abas */}
+                    <div className="px-6 pt-4">
+                        <div className="border-b border-gray-200">
+                            <nav className="-mb-px flex space-x-8">
+                                <button
+                                    onClick={() => handleTabChange('atendimento')}
+                                    className={`py-2 px-1 border-b-2 font-medium text-sm cursor-pointer ${
+                                        activeSubTab === 'atendimento'
+                                            ? 'border-blue-500 text-blue-600'
+                                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    }`}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    <span className="mr-2">📋</span>
+                                    Informações do atendimento
+                                </button>
+                                <button
+                                    onClick={() => handleTabChange('medicoes')}
+                                    className={`py-2 px-1 border-b-2 font-medium text-sm cursor-pointer ${
+                                        activeSubTab === 'medicoes'
+                                            ? 'border-blue-500 text-blue-600'
+                                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    }`}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    <span className="mr-2">📊</span>
+                                    Medições
+                                </button>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <div className="px-6 py-4">
+                        {/* Conteúdo das abas */}
+                        {activeSubTab === 'atendimento' && (
+                            <div className="p-4 bg-blue-50 rounded">
+                                <h4 className="font-bold">Aba: Informações do atendimento</h4>
+                                <p>Conteúdo da aba de informações do atendimento...</p>
+                            </div>
+                        )}
+
+                        {activeSubTab === 'medicoes' && (
+                            <div className="p-4 bg-green-50 rounded">
+                                <h4 className="font-bold">Aba: Medições</h4>
+                                <p>Conteúdo da aba de medições...</p>
+                                
+                                <div className="mt-4 space-y-4">
+                                    <div className="bg-white p-4 rounded border">
+                                        <h5 className="font-medium">📏 Antropometria</h5>
+                                        <p>Dados de peso, altura, IMC...</p>
+                                    </div>
+                                    
+                                    <div className="bg-white p-4 rounded border">
+                                        <h5 className="font-medium">❤️ Sinais Vitais</h5>
+                                        <p>Pressão arterial, frequência cardíaca...</p>
+                                    </div>
+                                    
+                                    <div className="bg-white p-4 rounded border">
+                                        <h5 className="font-medium">🩸 Glicemia</h5>
+                                        <p>Valores de glicemia capilar...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<FolhaRostoTest />, document.getElementById('root'));
+    </script>
+</body>
+</html>

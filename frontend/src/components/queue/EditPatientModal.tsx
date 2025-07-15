@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Patient } from '../../types/types';
-import { XMarkIcon, UserIcon, PhoneIcon, EnvelopeIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, UserIcon, PhoneIcon, MapPinIcon } from '@heroicons/react/24/outline';
 
 interface EditPatientModalProps {
   isOpen: boolean;

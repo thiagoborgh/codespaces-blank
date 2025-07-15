@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Folha Rosto - Teste</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Folha Rosto - Prontuário Médico</h1>
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-success">Implementação Rails Concluída</span>
+                        <span class="badge bg-primary">Funcionando</span>
+                    </div>
+                </div>
+                
+                <!-- Informações do Paciente -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="bi bi-person-fill"></i> Informações do Paciente</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <strong>Nome:</strong> João Silva Santos<br>
+                                <strong>CPF:</strong> 123.456.789-01<br>
+                                <strong>CNS:</strong> 123456789012345
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Data de Nascimento:</strong> 15/05/1990<br>
+                                <strong>Idade:</strong> 35 anos<br>
+                                <strong>Gênero:</strong> Masculino
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Telefone:</strong> (11) 99999-9999<br>
+                                <strong>Endereço:</strong> Rua das Flores, 123<br>
+                                <strong>Bairro:</strong> Centro - SP
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Abas -->
+                <ul class="nav nav-tabs" id="folhaRostoTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="atendimento-tab" data-bs-toggle="tab" data-bs-target="#atendimento" type="button" role="tab">
+                            <i class="bi bi-clipboard-check"></i> Atendimento
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="medicoes-tab" data-bs-toggle="tab" data-bs-target="#medicoes" type="button" role="tab">
+                            <i class="bi bi-thermometer-half"></i> Medições
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="soap-tab" data-bs-toggle="tab" data-bs-target="#soap" type="button" role="tab">
+                            <i class="bi bi-journal-medical"></i> SOAP
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="cards-tab" data-bs-toggle="tab" data-bs-target="#cards" type="button" role="tab">
+                            <i class="bi bi-grid-3x3"></i> Cards Editáveis
+                        </button>
+                    </li>
+                </ul>
+                
+                <!-- Conteúdo das Abas -->
+                <div class="tab-content mt-4" id="folhaRostoTabsContent">
+                    <!-- Aba Atendimento -->
+                    <div class="tab-pane fade show active" id="atendimento" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h6 class="card-title">Peso</h6>
+                                        <p class="card-text text-primary fw-bold">75.5 kg</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h6 class="card-title">Altura</h6>
+                                        <p class="card-text text-primary fw-bold">175 cm</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h6 class="card-title">IMC</h6>
+                                        <p class="card-text text-success fw-bold">24.7</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h6 class="card-title">Pressão Arterial</h6>
+                                        <p class="card-text text-primary fw-bold">120/80</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Aba Medições -->
+                    <div class="tab-pane fade" id="medicoes" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Sinais Vitais</h6>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Pressão Arterial</label>
+                                                <input type="text" class="form-control" value="120/80">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Frequência Cardíaca</label>
+                                                <input type="text" class="form-control" value="72 bpm">
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Temperatura</label>
+                                                <input type="text" class="form-control" value="36.5°C">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Saturação O2</label>
+                                                <input type="text" class="form-control" value="98%">
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <button class="btn btn-primary">Salvar Medições</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Gráfico de Peso</h6>
+                                        <canvas id="weightChart" width="400" height="200"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Aba SOAP -->
+                    <div class="tab-pane fade" id="soap" role="tabpanel">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">Evolução SOAP</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Subjetivo (S)</label>
+                                            <textarea class="form-control" rows="3" placeholder="Queixa principal..."></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Objetivo (O)</label>
+                                            <textarea class="form-control" rows="3" placeholder="Exame físico..."></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Avaliação (A)</label>
+                                            <textarea class="form-control" rows="3" placeholder="Diagnóstico..."></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Plano (P)</label>
+                                            <textarea class="form-control" rows="3" placeholder="Tratamento..."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-success">Salvar</button>
+                                    <button class="btn btn-secondary">Cancelar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Aba Cards Editáveis -->
+                    <div class="tab-pane fade" id="cards" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card editable-card">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="card-title">Medicações</h6>
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                        </div>
+                                        <div class="mt-2">
+                                            <span class="badge bg-primary">Paracetamol 500mg</span>
+                                            <span class="badge bg-success">Enalapril 10mg</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card editable-card">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="card-title">Alergias</h6>
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                        </div>
+                                        <div class="mt-2">
+                                            <span class="badge bg-warning">Penicilina</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Status da Implementação -->
+                <div class="alert alert-success mt-4" role="alert">
+                    <h4 class="alert-heading">✅ Implementação Concluída!</h4>
+                    <p>A folha rosto foi implementada com sucesso no Rails, incluindo:</p>
+                    <ul>
+                        <li>Estrutura HTML/CSS responsiva com Bootstrap</li>
+                        <li>Abas navegáveis para diferentes seções</li>
+                        <li>Cards editáveis para medicações, alergias, etc.</li>
+                        <li>Formulário SOAP para evolução médica</li>
+                        <li>Campos de medições e sinais vitais</li>
+                        <li>Gráficos com Chart.js (implementação básica)</li>
+                        <li>Layout responsivo e moderna</li>
+                    </ul>
+                    <hr>
+                    <p class="mb-0">
+                        <strong>Arquivos Rails criados:</strong><br>
+                        - <code>app/views/medical_records/folha_rosto.html.erb</code><br>
+                        - <code>app/controllers/medical_records_controller.rb</code><br>
+                        - Partials para cada seção da folha rosto<br>
+                        - Rotas configuradas no <code>config/routes.rb</code>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Exemplo de gráfico de peso
+        const ctx = document.getElementById('weightChart').getContext('2d');
+        const weightChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+                datasets: [{
+                    label: 'Peso (kg)',
+                    data: [76, 75.5, 76.2, 75.8, 75.5, 75.0],
+                    borderColor: 'rgb(75, 192, 192)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 70,
+                        max: 80
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -36,6 +36,8 @@ class Appointment < ApplicationRecord
   scope :by_status, ->(status) { where(status: status) }
   scope :ordered_by_arrival, -> { order(:arrival_time) }
   scope :ordered_by_risk, -> { order(vulnerability: :desc, arrival_time: :asc) }
+  scope :recent, -> { order(created_at: :desc) }
+  scope :active, -> { where(active: true) }
 
   # Instance methods
   def waiting_time

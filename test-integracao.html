@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Integração - Fila para Prontuário</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+        .patient-info {
+            border-left: 4px solid #3b82f6;
+            padding-left: 15px;
+            margin-bottom: 15px;
+        }
+        .test-result {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        .info {
+            background-color: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🏥 Teste de Integração: Fila → Prontuário</h1>
+        <p>Esta página testa se o redirecionamento do botão "Atender" da fila de espera está funcionando corretamente.</p>
+        
+        <div class="test-result info">
+            <strong>ℹ️ Informações do Sistema:</strong><br>
+            • Frontend React: <code>http://localhost:3002</code><br>
+            • Backend Rails: <code>http://localhost:3001</code><br>
+            • Endpoint do Prontuário: <code>/medical_records/:id?tab=soap</code>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>📋 Simulação de Pacientes na Fila</h2>
+        <p>Clique no botão "Atender" para testar o redirecionamento:</p>
+        
+        <div class="patient-info">
+            <strong>👤 Maria Silva</strong><br>
+            CPF: 123.456.789-01 • Idade: 45 anos<br>
+            Tipo: Consulta Geral • Status: Aguardando
+        </div>
+        <a href="http://localhost:3001/medical_records/1?tab=soap" class="btn btn-primary">
+            🏥 Atender Paciente #1
+        </a>
+        
+        <div class="patient-info">
+            <strong>👤 João Santos</strong><br>
+            CPF: 987.654.321-00 • Idade: 32 anos<br>
+            Tipo: Consulta Geral • Status: Aguardando
+        </div>
+        <a href="http://localhost:3001/medical_records/2?tab=soap" class="btn btn-primary">
+            🏥 Atender Paciente #2
+        </a>
+        
+        <div class="patient-info">
+            <strong>👤 Ana Costa</strong><br>
+            CPF: 456.789.123-45 • Idade: 28 anos<br>
+            Tipo: Consulta Geral • Status: Aguardando
+        </div>
+        <a href="http://localhost:3001/medical_records/3?tab=soap" class="btn btn-primary">
+            🏥 Atender Paciente #3
+        </a>
+    </div>
+
+    <div class="card">
+        <h2>✅ Pontos de Validação</h2>
+        <p>Ao clicar nos botões acima, você deve observar:</p>
+        
+        <div class="test-result success">
+            <strong>✓ Redirecionamento Correto:</strong><br>
+            • A página deve carregar o prontuário unificado do paciente<br>
+            • A aba SOAP deve estar ativa automaticamente<br>
+            • Uma nova consulta deve ser criada se não existir uma ativa
+        </div>
+        
+        <div class="test-result success">
+            <strong>✓ Interface Unificada:</strong><br>
+            • Dados do paciente visíveis no cabeçalho<br>
+            • Abas: Overview, SOAP, Histórico, Prescrições, Exames, etc.<br>
+            • Formulário SOAP funcional com auto-save
+        </div>
+        
+        <div class="test-result success">
+            <strong>✓ Funcionalidades:</strong><br>
+            • Navegação entre abas<br>
+            • Edição e salvamento de dados SOAP<br>
+            • Acesso a todo histórico do paciente
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🔧 Configuração do Sistema</h2>
+        <p>Para testar completamente:</p>
+        
+        <div class="test-result info">
+            <strong>1. Inicie o Backend (Rails):</strong><br>
+            <code>cd backend && rails server -p 3001</code>
+        </div>
+        
+        <div class="test-result info">
+            <strong>2. Inicie o Frontend (React):</strong><br>
+            <code>cd frontend && PORT=3002 npm start</code>
+        </div>
+        
+        <div class="test-result info">
+            <strong>3. Acesse a Fila:</strong><br>
+            <code>http://localhost:3002/queue</code>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🎯 Resultado Esperado</h2>
+        <p>O botão "Atender" na fila de espera deve:</p>
+        
+        <ol>
+            <li><strong>Redirecionar</strong> para o prontuário unificado do paciente</li>
+            <li><strong>Abrir na aba SOAP</strong> automaticamente</li>
+            <li><strong>Criar uma nova consulta</strong> se não existir uma ativa</li>
+            <li><strong>Permitir navegação</strong> entre todas as abas do prontuário</li>
+            <li><strong>Centralizar todas as informações</strong> do paciente em um local</li>
+        </ol>
+        
+        <div class="test-result success">
+            <strong>🎉 Sucesso!</strong> A interface de atendimento agora é a mesma do prontuário, centralizando todas as informações do paciente como uma pasta física.
+        </div>
+    </div>
+</body>
+</html>
